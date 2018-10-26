@@ -18,7 +18,7 @@ int GameState::currentPlayer() const
 
 Common::GamePhase GameState::currentGamePhase()
 {
-
+    return 0;
 }
 
 void GameState::changeGamePhase(Common::GamePhase nextPhase)
