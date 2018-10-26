@@ -16,9 +16,9 @@ int GameState::currentPlayer() const
     return _currentPlayer;
 }
 
-Common::GamePhase GameState::currentGamePhase()
+Common::GamePhase GameState::currentGamePhase() const
 {
-    return 0;
+    return Common::GamePhase::MOVEMENT;
 }
 
 void GameState::changeGamePhase(Common::GamePhase nextPhase)

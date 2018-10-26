@@ -14,9 +14,7 @@ public:
     Mainwindow(QWidget *parent = 0);
 
 private:
-    GameBoard _board;
-    GameState _gameState;
-    Player _player;
+    std::vector<Common::IPlayer*> _players;
     Logic::GameEngine _gameEngine;
 };
 
