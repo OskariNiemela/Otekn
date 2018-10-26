@@ -14,7 +14,9 @@ CONFIG += c++14
 
 
 SOURCES += main.cc \
-    mainwindow.cpp
+    mainwindow.cpp \
+    gameboard.cpp \
+    player.cpp
 
 HEADERS  += \
     gameboard.hh \
