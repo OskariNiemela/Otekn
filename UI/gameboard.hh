@@ -13,14 +13,14 @@ class GameBoard : public Common::IGameBoard
 public:
     GameBoard();
     ~GameBoard();
-    /*int checkTileOccupation(Common::CubeCoordinate tileCoord) const;
+    int checkTileOccupation(Common::CubeCoordinate tileCoord) const;
     bool isWaterTile(Common::CubeCoordinate tileCoord) const;
     std::shared_ptr<Common::Hex> getHex(Common::CubeCoordinate hexCoord) const;
     void addPawn(int playerId, int pawnId);
     void movePawn(int pawnId, Common::CubeCoordinate pawnCoord);
     void removePawn(int pawnId);
     void moveActor(int actorId, Common::CubeCoordinate actorCoord);
-    void removeActor(int actorId)*/
+    void removeActor(int actorId);
     void addHex(std::shared_ptr<Common::Hex> newHex);
 
 private:
