@@ -1,17 +1,43 @@
 #ifndef GRAPHICALHEX_HH
 #define GRAPHICALHEX_HH
 
-#include <QWidget>
+#include "cubecoordinate.hh"
 
-class graphicalHex : public QWidget
+#include <QWidget>
+#include <QGraphicsItem>
+#include <QPen>
+#include <QPainter>
+#include <QPainterPath>
+#include <math.h>
+#include <cmath>
+#include <QPolygon>
+#include <QPoint>
+
+class graphicalHex : public QGraphicsItem
 {
-    Q_OBJECT
 public:
-    explicit graphicalHex(QWidget *parent = nullptr);
+    graphicalHex();
+    QRectF boundingRect() const final;
+    void paint(QPainter *painter,
+              const QStyleOptionGraphicsItem *option,
+              QWidget *widget);
+
+    QPainterPath shape() const;
+
+    void setPosition(Common::CubeCoordinate coord);
+
+protected:
+
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
 
 public slots:
+
+
+private:
+    bool pressed_;
 };
 
 #endif // GRAPHICALHEX_HH

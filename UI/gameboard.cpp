@@ -1,7 +1,8 @@
 #include "gameboard.hh"
 #include <iostream>
 
-GameBoard::GameBoard()
+GameBoard::GameBoard():
+    scene_(new QGraphicsScene)
 {
 
 }
@@ -53,5 +54,17 @@ void GameBoard::removeActor(int actorId)
 
 void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
 {
+
     _tiles.push_back(newHex);
+    graphicalHex* hex = new graphicalHex();
+    scene_->addItem(hex);
+    hex->setPosition(newHex->getCoordinates());
 }
+
+void GameBoard::showScene()
+{
+    QGraphicsView* view = new QGraphicsView(scene_);
+    view->show();
+}
+
+
