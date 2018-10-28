@@ -5,6 +5,8 @@
 #include "gamestate.hh"
 #include "player.hh"
 #include "gameengine.hh"
+#include "graphicalhex.hh"
+
 #include <QMainWindow>
 #include <QPolygon>
 #include <QVector>
@@ -14,6 +16,8 @@
 #include <QFrame>
 #include <QPainterPath>
 #include <QtGui>
+#include <QGraphicsScene>
+#include <QGraphicsView>
 
 class Mainwindow : public QMainWindow
 {
@@ -22,7 +26,7 @@ public:
     Mainwindow(QWidget *parent = 0);
 
 protected:
-    void paintEvent(QPaintEvent *event);
+    //void paintEvent(QPaintEvent *event);
 
 private:
     void setupLayout();

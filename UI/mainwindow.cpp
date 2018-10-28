@@ -6,15 +6,19 @@ Mainwindow::Mainwindow(QWidget *parent)
       _gameState(std::make_shared<GameState>()),
       _gameEngine(Logic::GameEngine(_board, _gameState, _players))
 {
+    _board->showScene();
+    /*
+    QGraphicsScene* scene = new QGraphicsScene(this);
+    graphicalHex* hex = new graphicalHex();
 
+    scene->addItem(hex);
+
+    QGraphicsView* view = new QGraphicsView(scene);
+
+    view->show();
+    */
 }
 
-void Mainwindow::paintEvent(QPaintEvent *event)
-{
-    QPainter painter(this);
-    painter.setPen(QPen(Qt::black, 12, Qt::DashDotLine, Qt::RoundCap));
-    painter.drawLine(0,0,200,200);
-}
 
 
 
