@@ -59,8 +59,10 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
     graphicalHex* hex = new graphicalHex();
     scene_->addItem(hex);
     hex->setPosition(newHex->getCoordinates());
+    hex->setHex(newHex);
 }
 
+//Kun scene on rakennettu, näytetään se
 void GameBoard::showScene()
 {
     QGraphicsView* view = new QGraphicsView(scene_);

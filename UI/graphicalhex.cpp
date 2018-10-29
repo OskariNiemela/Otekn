@@ -5,12 +5,13 @@ graphicalHex::graphicalHex():
 {
 
 }
-
+//Asettaa hexan maksimi piirto alueen
 QRectF graphicalHex::boundingRect() const
 {
     return QRectF(-50,-50,100,100);
 }
 
+//Piirtää hexan
 void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     QRectF rect = boundingRect();
@@ -64,6 +65,7 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
 }
 
+//Asettaa graafisen hexan muodon johon sitä voi painaa
 QPainterPath graphicalHex::shape() const
 {
     QPolygon polygon;
@@ -91,17 +93,24 @@ QPainterPath graphicalHex::shape() const
     return path;
 
 }
-
+/*
+ * Asettaa hexan graafiseen sceneen oikeisiin coordinaatteihin
+ * Param: hexan koordinaatit CubeCoordinaattina
+ *
+ */
 void graphicalHex::setPosition(Common::CubeCoordinate coord)
 {
+    //Asettaa koordinaatteihin 250,250 jos koordinaatti on 0,0,0
     if((coord.x==0)and(coord.y==0)and(coord.z==0))
     {
         setPos(250,250);
     }
     else
     {
+
         double xpos = 250;
         double ypos = 250;
+        //Liikutetaan xpos ja ypos kunnes olemme oikeassa paikassa (eli koordinaatit on 0,0,0)
         while(coord.x!=0 or coord.y!=0 or coord.z!=0)
         {
             if(coord.x<0 and coord.y>0)
@@ -148,7 +157,13 @@ void graphicalHex::setPosition(Common::CubeCoordinate coord)
         setPos(xpos,ypos);
     }
 }
+//Asettaa graafisen hexan koodihexa parin
+void graphicalHex::setHex(std::shared_ptr<Common::Hex> newHex)
+{
+    realHex_ = newHex;
+}
 
+//Kun hiirellä painetaan hexaa
 void graphicalHex::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     pressed_ = true;

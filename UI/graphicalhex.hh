@@ -2,6 +2,7 @@
 #define GRAPHICALHEX_HH
 
 #include "cubecoordinate.hh"
+#include "hex.hh"
 
 #include <QWidget>
 #include <QGraphicsItem>
@@ -25,7 +26,7 @@ public:
     QPainterPath shape() const;
 
     void setPosition(Common::CubeCoordinate coord);
-
+    void setHex(std::shared_ptr<Common::Hex> newHex);
 protected:
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -38,6 +39,7 @@ public slots:
 
 private:
     bool pressed_;
+    std::shared_ptr<Common::Hex> realHex_;
 };
 
 #endif // GRAPHICALHEX_HH
