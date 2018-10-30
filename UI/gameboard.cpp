@@ -60,6 +60,7 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
     scene_->addItem(hex);
     hex->setPosition(newHex->getCoordinates());
     hex->setHex(newHex);
+    hex->setColor();
 }
 
 //Kun scene on rakennettu, näytetään se

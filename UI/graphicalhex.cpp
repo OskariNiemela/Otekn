@@ -3,7 +3,6 @@
 graphicalHex::graphicalHex():
     pressed_(false)
 {
-
 }
 //Asettaa hexan maksimi piirto alueen
 QRectF graphicalHex::boundingRect() const
@@ -14,55 +13,31 @@ QRectF graphicalHex::boundingRect() const
 //Piirtää hexan
 void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    QRectF rect = boundingRect();
+    // Polygon-olio hexShape painteria varten
+    QPolygon hexShape;
 
-    if(pressed_)
+    // Lasketaan kuusikulmion kulmapisteet
+    int angle_deg;
+    double angle_rad;
+
+    for(int i = 1; i <= 6; i++)
     {
-        QPen pen(Qt::red,3);
-        painter->setPen(pen);
-        QPainterPath path;
+        angle_deg = 60 * i - 30;
+        angle_rad = M_PI / 180 * angle_deg;
+        hexShape << QPoint(50 * cos(angle_rad), 50 * sin(angle_rad));
 
-        int angle_deg = 60*1 -30;
-        double angle_rad = M_PI/180 * angle_deg;
-
-        path.moveTo(0+50*cos(angle_rad),0+50*sin(angle_rad));
-
-        for(int i = 2; i<=7;i++)
-        {
-            angle_deg = 60*i-30;
-            angle_rad = M_PI/180*angle_deg;
-            path.lineTo(0+50*cos(angle_rad),0+50*sin(angle_rad));
-            path.moveTo(0+50*cos(angle_rad),0+50*sin(angle_rad));
-
-        }
-
-
-        painter->drawPath(path);
-    }
-    else
-    {
-        QPen pen(Qt::black,3);
-        painter->setPen(pen);
-        QPainterPath path;
-
-        int angle_deg = 60*1 -30;
-        double angle_rad = M_PI/180 * angle_deg;
-
-        path.moveTo(0+50*cos(angle_rad),0+50*sin(angle_rad));
-
-        for(int i = 2; i<=7;i++)
-        {
-            angle_deg = 60*i-30;
-            angle_rad = M_PI/180*angle_deg;
-            path.lineTo(0+50*cos(angle_rad),0+50*sin(angle_rad));
-            path.moveTo(0+50*cos(angle_rad),0+50*sin(angle_rad));
-
-        }
-
-
-        painter->drawPath(path);
     }
 
+    QBrush brush(backgroundColor);
+    QPen pen(Qt::black, 3);
+    if (pressed_) {
+        pen.setColor(Qt::red);
+        pen.setWidth(3);
+    }
+
+    painter->setPen(pen);
+    painter->setBrush(brush);
+    painter->drawPolygon(hexShape);
 }
 
 //Asettaa graafisen hexan muodon johon sitä voi painaa
@@ -72,21 +47,18 @@ QPainterPath graphicalHex::shape() const
 
 
     QPainter* painter = new QPainter();
-    QPen pen(Qt::black,1);
+    QPen pen(Qt::black,3);
     painter->setPen(pen);
 
     QPainterPath path;
 
-    int angle_deg = 60*1 -30;
-    double angle_rad = M_PI/180 * angle_deg;
-
-    polygon << QPoint(50*cos(angle_rad),50*sin(angle_rad));
-
-    for(int i = 2; i<=6;i++)
+    int angle_deg;
+    double angle_rad;
+    for(int i = 1; i <= 6; i++)
     {
-        angle_deg = 60*i-30;
-        angle_rad = M_PI/180*angle_deg;
-        polygon<<QPoint(50*cos(angle_rad),50*sin(angle_rad));
+        angle_deg = 60 * i - 30;
+        angle_rad = M_PI / 180 * angle_deg;
+        polygon << QPoint(50 * cos(angle_rad), 50 * sin(angle_rad));
 
     }
     path.addPolygon(polygon);
@@ -161,6 +133,28 @@ void graphicalHex::setPosition(Common::CubeCoordinate coord)
 void graphicalHex::setHex(std::shared_ptr<Common::Hex> newHex)
 {
     realHex_ = newHex;
+}
+
+void graphicalHex::setColor()
+{
+    if (realHex_->getPieceType() == "Peak") {
+        backgroundColor.setRgb(198, 198, 198);
+    }
+    else if (realHex_->getPieceType() == "Mountain") {
+        backgroundColor.setRgb(132, 132, 132);
+    }
+    else if (realHex_->getPieceType() == "Forest") {
+        backgroundColor.setRgb(48, 178, 56);
+    }
+    else if (realHex_->getPieceType() == "Beach") {
+        backgroundColor.setRgb(219, 210, 129);
+    }
+    else if (realHex_->getPieceType() == "Water") {
+        backgroundColor.setRgb(112, 187, 224);
+    }
+    else if (realHex_->getPieceType() == "Coral") {
+        backgroundColor.setRgb(237, 216, 255);
+    }
 }
 
 //Kun hiirellä painetaan hexaa

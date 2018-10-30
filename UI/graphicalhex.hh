@@ -13,6 +13,8 @@
 #include <cmath>
 #include <QPolygon>
 #include <QPoint>
+#include <QColor>
+#include <QBrush>
 
 class graphicalHex : public QGraphicsItem
 {
@@ -27,6 +29,7 @@ public:
 
     void setPosition(Common::CubeCoordinate coord);
     void setHex(std::shared_ptr<Common::Hex> newHex);
+    void setColor();
 protected:
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -40,6 +43,7 @@ public slots:
 private:
     bool pressed_;
     std::shared_ptr<Common::Hex> realHex_;
+    QColor backgroundColor;
 };
 
 #endif // GRAPHICALHEX_HH
