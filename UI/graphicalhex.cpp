@@ -36,6 +36,7 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     }
 
     painter->setPen(pen);
+    painter->setRenderHint(QPainter::Antialiasing);
     painter->setBrush(brush);
     painter->drawPolygon(hexShape);
 }
@@ -66,63 +67,12 @@ QPainterPath graphicalHex::shape() const
  */
 void graphicalHex::setPosition(Common::CubeCoordinate coord)
 {
-    //Asettaa koordinaatteihin 250,250 jos koordinaatti on 0,0,0
-    if((coord.x==0)and(coord.y==0)and(coord.z==0))
-    {
-        setPos(250,250);
-    }
-    else
-    {
 
-        double xpos = 250;
-        double ypos = 250;
-        //Liikutetaan xpos ja ypos kunnes olemme oikeassa paikassa (eli koordinaatit on 0,0,0)
-        while(coord.x!=0 or coord.y!=0 or coord.z!=0)
-        {
-            if(coord.x<0 and coord.y>0)
-            {
-                coord.x = coord.x+1;
-                coord.y = coord.y-1;
-                xpos -= SIZE * sqrt(3);
-            }
-            else if(coord.x>0 and coord.y<0)
-            {
-                coord.x = coord.x-1;
-                coord.y = coord.y+1;
-                xpos += SIZE * sqrt(3);
-            }
-            else if(coord.z<0 and coord.y>0)
-            {
-                coord.z = coord.z+1;
-                coord.y = coord.y-1;
-                xpos -= (SIZE / 2) * sqrt(3);
-                ypos -= SIZE * 2 - (SIZE / 2);
-            }
-            else if(coord.x>0 and coord.z<0)
-            {
-                coord.z = coord.z+1;
-                coord.x = coord.x-1;
-                xpos += (SIZE / 2) *sqrt(3);
-                ypos -= SIZE * 2- (SIZE / 2);
-            }
-            else if(coord.x<0 and coord.z>0)
-            {
-                coord.z = coord.z-1;
-                coord.x = coord.x+1;
-                ypos += SIZE * 2- (SIZE / 2);
-                xpos -= (SIZE / 2) * sqrt(3);
-            }
-            else if(coord.z>0 and coord.y<0)
-            {
-                coord.z = coord.z-1;
-                coord.y = coord.y+1;
-                ypos += SIZE * 2- (SIZE / 2);
-                xpos += (SIZE / 2) * sqrt(3);
-            }
-        }
-        setPos(xpos,ypos);
-    }
+    double y_pos = (-3 * SIZE * coord.z) / 2 + 250;
+    double x_pos = SIZE * (sqrt(3) * coord.y  +  sqrt(3)/2 * coord.z);
+    setPos(x_pos, y_pos);
 }
+
 //Asettaa graafisen hexan koodihexa parin
 void graphicalHex::setHex(std::shared_ptr<Common::Hex> newHex)
 {
