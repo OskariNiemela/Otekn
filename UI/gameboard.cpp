@@ -63,11 +63,11 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
     hex->setColor();
 }
 
-//Kun scene on rakennettu, näytetään se
-void GameBoard::showScene()
+//Kun scene on rakennettu, palautetaan se mainwindowille
+QGraphicsView* GameBoard::showScene()
 {
     QGraphicsView* view = new QGraphicsView(scene_);
-    view->show();
+    return view;
 }
 
 

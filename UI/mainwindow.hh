@@ -18,6 +18,11 @@
 #include <QtGui>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+//Testailuun
+#include <QLabel>
+#include <QPixmap>
 
 class Mainwindow : public QMainWindow
 {

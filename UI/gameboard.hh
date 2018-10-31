@@ -25,7 +25,7 @@ public:
     void moveActor(int actorId, Common::CubeCoordinate actorCoord);
     void removeActor(int actorId);
     void addHex(std::shared_ptr<Common::Hex> newHex);
-    void showScene();
+    QGraphicsView *showScene();
 
 
 private:
