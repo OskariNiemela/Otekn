@@ -16,6 +16,8 @@
 #include <QColor>
 #include <QBrush>
 
+const int SIZE = 28;
+
 class graphicalHex : public QGraphicsItem
 {
 public:

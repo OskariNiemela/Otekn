@@ -17,22 +17,22 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     QPolygon hexShape;
 
     // Lasketaan kuusikulmion kulmapisteet
-    int angle_deg;
+    double angle_deg;
     double angle_rad;
 
     for(int i = 1; i <= 6; i++)
     {
         angle_deg = 60 * i - 30;
         angle_rad = M_PI / 180 * angle_deg;
-        hexShape << QPoint(50 * cos(angle_rad), 50 * sin(angle_rad));
+        hexShape << QPoint(SIZE * cos(angle_rad), SIZE * sin(angle_rad));
 
     }
 
     QBrush brush(backgroundColor);
-    QPen pen(Qt::black, 3);
+    QPen pen(Qt::black, 1);
     if (pressed_) {
         pen.setColor(Qt::red);
-        pen.setWidth(3);
+        pen.setWidth(1);
     }
 
     painter->setPen(pen);
@@ -44,21 +44,15 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 QPainterPath graphicalHex::shape() const
 {
     QPolygon polygon;
-
-
-    QPainter* painter = new QPainter();
-    QPen pen(Qt::black,3);
-    painter->setPen(pen);
-
     QPainterPath path;
 
-    int angle_deg;
+    double angle_deg;
     double angle_rad;
     for(int i = 1; i <= 6; i++)
     {
         angle_deg = 60 * i - 30;
         angle_rad = M_PI / 180 * angle_deg;
-        polygon << QPoint(50 * cos(angle_rad), 50 * sin(angle_rad));
+        polygon << QPoint(SIZE * cos(angle_rad), SIZE * sin(angle_rad));
 
     }
     path.addPolygon(polygon);
@@ -89,41 +83,41 @@ void graphicalHex::setPosition(Common::CubeCoordinate coord)
             {
                 coord.x = coord.x+1;
                 coord.y = coord.y-1;
-                xpos -= 50*sqrt(3);
+                xpos -= SIZE * sqrt(3);
             }
             else if(coord.x>0 and coord.y<0)
             {
                 coord.x = coord.x-1;
                 coord.y = coord.y+1;
-                xpos += 50*sqrt(3);
+                xpos += SIZE * sqrt(3);
             }
             else if(coord.z<0 and coord.y>0)
             {
                 coord.z = coord.z+1;
                 coord.y = coord.y-1;
-                xpos -= 25*sqrt(3);
-                ypos -= 50*2-25;
+                xpos -= (SIZE / 2) * sqrt(3);
+                ypos -= SIZE * 2 - (SIZE / 2);
             }
             else if(coord.x>0 and coord.z<0)
             {
                 coord.z = coord.z+1;
                 coord.x = coord.x-1;
-                xpos += 25*sqrt(3);
-                ypos -= 50*2-25;
+                xpos += (SIZE / 2) *sqrt(3);
+                ypos -= SIZE * 2- (SIZE / 2);
             }
             else if(coord.x<0 and coord.z>0)
             {
                 coord.z = coord.z-1;
                 coord.x = coord.x+1;
-                ypos += 50*2-25;
-                xpos -= 25*sqrt(3);
+                ypos += SIZE * 2- (SIZE / 2);
+                xpos -= (SIZE / 2) * sqrt(3);
             }
             else if(coord.z>0 and coord.y<0)
             {
                 coord.z = coord.z-1;
                 coord.y = coord.y+1;
-                ypos += 50*2-25;
-                xpos += 25*sqrt(3);
+                ypos += SIZE * 2- (SIZE / 2);
+                xpos += (SIZE / 2) * sqrt(3);
             }
         }
         setPos(xpos,ypos);

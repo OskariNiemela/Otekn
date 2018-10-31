@@ -7,16 +7,6 @@ Mainwindow::Mainwindow(QWidget *parent)
       _gameEngine(Logic::GameEngine(_board, _gameState, _players))
 {
     _board->showScene();
-    /*
-    QGraphicsScene* scene = new QGraphicsScene(this);
-    graphicalHex* hex = new graphicalHex();
-
-    scene->addItem(hex);
-
-    QGraphicsView* view = new QGraphicsView(scene);
-
-    view->show();
-    */
 }
 
 
