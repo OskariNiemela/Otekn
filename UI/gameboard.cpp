@@ -1,6 +1,7 @@
 #include "gameboard.hh"
 #include <iostream>
 
+
 namespace Student
 {
 
@@ -68,6 +69,26 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
     hex->setColor();
 }
 
+void GameBoard::addTransport(std::shared_ptr<Common::Transport> transport, Common::CubeCoordinate coord)
+{
+
+}
+
+void GameBoard::moveTransport(int id, Common::CubeCoordinate coord)
+{
+
+}
+
+void GameBoard::removeTransport(int id)
+{
+
+}
+
+void GameBoard::addActor(std::shared_ptr<Common::Actor> actor, Common::CubeCoordinate actorCoord)
+{
+
+}
+
 //Kun scene on rakennettu, palautetaan se mainwindowille
 QGraphicsView* GameBoard::showScene()
 {
@@ -75,5 +96,6 @@ QGraphicsView* GameBoard::showScene()
     return view;
 }
 
-
 }
+
+

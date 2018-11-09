@@ -3,7 +3,7 @@
 
 #include "igamestate.hh"
 
-namespace Common
+namespace Student
 {
 class GameState : public Common::IGameState
 {

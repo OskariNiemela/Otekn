@@ -1,6 +1,6 @@
 #include "graphicalhex.hh"
 
-namespace Common
+namespace Student
 {
 
 graphicalHex::graphicalHex():
