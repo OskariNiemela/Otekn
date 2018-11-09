@@ -1,5 +1,8 @@
 #include "graphicalhex.hh"
 
+namespace Common
+{
+
 graphicalHex::graphicalHex():
     pressed_(false)
 {
@@ -114,4 +117,5 @@ void graphicalHex::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     pressed_ = false;
     update();
     QGraphicsItem::mouseReleaseEvent(event);
+}
 }

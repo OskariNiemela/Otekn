@@ -3,7 +3,8 @@
 
 #include "iplayer.hh"
 
-
+namespace Common
+{
 class Player : public Common::IPlayer
 {
 public:
@@ -16,5 +17,5 @@ public:
 private:
     int _playerId = 0;
 };
-
+}
 #endif // PLAYER_HH

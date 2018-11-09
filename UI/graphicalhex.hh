@@ -18,6 +18,9 @@
 
 const int SIZE = 28;
 
+namespace Common
+{
+
 class graphicalHex : public QGraphicsItem
 {
 public:
@@ -47,5 +50,5 @@ private:
     std::shared_ptr<Common::Hex> realHex_;
     QColor backgroundColor;
 };
-
+}
 #endif // GRAPHICALHEX_HH
