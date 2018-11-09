@@ -1,5 +1,8 @@
 #include "gamestate.hh"
 
+namespace Student
+{
+
 GameState::GameState():
     _currentPlayer(0)
 {
@@ -29,4 +32,5 @@ void GameState::changeGamePhase(Common::GamePhase nextPhase)
 void GameState::changePlayerTurn(int nextPlayer)
 {
     _currentPlayer = nextPlayer;
+}
 }

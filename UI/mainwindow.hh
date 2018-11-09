@@ -38,7 +38,7 @@ private:
 
     std::shared_ptr<GameBoard> _board;
     std::shared_ptr<GameState> _gameState;
-    std::vector<Common::IPlayer*> _players;
+    std::vector<std::shared_ptr<Common::IPlayer>> _players;
     Logic::GameEngine _gameEngine;
 
 };

@@ -1,6 +1,11 @@
 #include "gameboard.hh"
 #include <iostream>
 
+namespace Student
+{
+
+
+
 GameBoard::GameBoard():
     scene_(new QGraphicsScene)
 {
@@ -71,3 +76,4 @@ QGraphicsView* GameBoard::showScene()
 }
 
 
+}

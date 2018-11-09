@@ -11,6 +11,12 @@
 #include "hex.hh"
 #include "graphicalhex.hh"
 
+namespace Student
+{
+
+
+
+
 class GameBoard : public Common::IGameBoard
 {
 public:
@@ -34,3 +40,4 @@ private:
 
 };
 #endif // GAMEBOARD_HH
+}
