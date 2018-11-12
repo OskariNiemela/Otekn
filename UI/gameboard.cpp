@@ -54,12 +54,18 @@ void GameBoard::removePawn(int pawnId)
 
 void GameBoard::moveActor(int actorId, Common::CubeCoordinate actorCoord)
 {
+    // Tarkistetaan onko actor olemassa ja jos on, vaihdetaan sen sijaintia
+    if (_actors.find(actorId) != _actors.end()) {
+        _actors.at(actorId)->move(_map_tiles.at(actorCoord));
+    }
 
 }
 
 void GameBoard::removeActor(int actorId)
 {
-
+    if (_actors.find(actorId) != _actors.end()) {
+        _actors.erase(actorId);
+    }
 }
 
 void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
@@ -91,7 +97,15 @@ void GameBoard::removeTransport(int id)
 
 void GameBoard::addActor(std::shared_ptr<Common::Actor> actor, Common::CubeCoordinate actorCoord)
 {
+    // Tarkistaa onko ruutu olemassa
+    if (_map_tiles.find(actorCoord) != _map_tiles.end()) {
 
+        // Lisää hex-oliolle actorin
+        actor->addHex(_map_tiles.at(actorCoord));
+
+        // Lisää actorin erilliseen mappiin
+        _actors.insert(std::pair<int, std::shared_ptr<Common::Actor>>(actor->getId(), actor));
+    }
 }
 
 //Kun scene on rakennettu, palautetaan se mainwindowille

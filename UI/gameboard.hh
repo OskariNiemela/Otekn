@@ -11,6 +11,7 @@
 #include "hex.hh"
 #include "graphicalhex.hh"
 #include "pawn.hh"
+#include "actor.hh"
 
 namespace Student
 {
@@ -38,6 +39,7 @@ public:
 private:
     std::map<Common::CubeCoordinate,std::shared_ptr<Common::Hex>> _map_tiles;
     std::vector<std::shared_ptr<Common::Hex>> _tiles;
+    std::map<int, std::shared_ptr<Common::Actor>> _actors;
     QGraphicsScene* scene_;
 
 };
