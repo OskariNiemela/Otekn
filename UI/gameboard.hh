@@ -13,10 +13,6 @@
 
 namespace Student
 {
-
-
-
-
 class GameBoard : public Common::IGameBoard
 {
 public:
@@ -31,6 +27,10 @@ public:
     void moveActor(int actorId, Common::CubeCoordinate actorCoord);
     void removeActor(int actorId);
     void addHex(std::shared_ptr<Common::Hex> newHex);
+    void addTransport(std::shared_ptr<Common::Transport> transport, Common::CubeCoordinate coord);
+    void moveTransport(int id, Common::CubeCoordinate coord) ;
+    void removeTransport(int id);
+    void addActor(std::shared_ptr<Common::Actor> actor, Common::CubeCoordinate actorCoord);
     QGraphicsView *showScene();
 
 
@@ -39,5 +39,7 @@ private:
     QGraphicsScene* scene_;
 
 };
-#endif // GAMEBOARD_HH
 }
+
+#endif // GAMEBOARD_HH
+

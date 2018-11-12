@@ -16,9 +16,11 @@ int main(int argc, char *argv[])
 
     startWindow startingInfo;
 
+    Student::Mainwindow w;
+
     startingInfo.exec();
 
-    Mainwindow w;
+
 
     //w.show();
     return a.exec();

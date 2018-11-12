@@ -18,7 +18,7 @@
 
 const int SIZE = 28;
 
-namespace Common
+namespace Student
 {
 
 class graphicalHex : public QGraphicsItem
