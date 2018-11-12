@@ -30,6 +30,10 @@ bool GameBoard::isWaterTile(Common::CubeCoordinate tileCoord) const
 
 std::shared_ptr<Common::Hex> GameBoard::getHex(Common::CubeCoordinate hexCoord) const
 {
+    if(_map_tiles.find(hexCoord) != _map_tiles.end())
+    {
+        return _map_tiles.at(hexCoord);
+    }
     return nullptr;
 }
 
@@ -46,7 +50,7 @@ void GameBoard::addPawn(int playerId, int pawnId)
 
 void GameBoard::movePawn(int pawnId, Common::CubeCoordinate pawnCoord)
 {
-
+    emit getHexFrom(pawnCoord);
 }
 
 void GameBoard::removePawn(int pawnId)
@@ -75,7 +79,7 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
     hex->setHex(newHex);
     hex->setColor();
     graphic_tiles[hex->getCoordinates()] = hex;
-    //Object::connect(hex,&graphicalHex::hexClicked,this,&GameBoard::hexClick);
+    connect(hex,&graphicalHex::hexClicked,this,&GameBoard::hexClick);
 }
 
 void GameBoard::addTransport(std::shared_ptr<Common::Transport> transport, Common::CubeCoordinate coord)
@@ -105,9 +109,34 @@ QGraphicsView* GameBoard::showScene()
     return view;
 }
 
+std::shared_ptr<Common::Pawn> GameBoard::getPlayerPawn(Common::CubeCoordinate coord, int playerId)
+{
+    return graphic_tiles.at(coord)->getPlayerPawn(playerId);
+}
+
+void GameBoard::setSelected(Common::CubeCoordinate coord)
+{
+    graphic_tiles.at(coord)->select();
+}
+
+void GameBoard::deSelect(Common::CubeCoordinate coord)
+{
+    graphic_tiles.at(coord)->deSelect();
+}
+
+
+
 void GameBoard::hexClick(std::shared_ptr<Common::Hex> clickedHex)
 {
     emit hexClicked(clickedHex);
+}
+
+void GameBoard::deleteOldPawn(Common::CubeCoordinate coordDelete, std::shared_ptr<Common::Pawn> pawn,Common::CubeCoordinate goTo)
+{
+    _map_tiles.at(goTo)->addPawn(pawn);
+    graphic_tiles.at(goTo)->addPawn(pawn);
+    _map_tiles.at(coordDelete)->removePawn(pawn);
+    graphic_tiles.at(coordDelete)->removePawn(pawn);
 }
 
 }

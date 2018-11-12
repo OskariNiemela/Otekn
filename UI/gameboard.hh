@@ -35,11 +35,15 @@ public:
     void removeTransport(int id);
     void addActor(std::shared_ptr<Common::Actor> actor, Common::CubeCoordinate actorCoord);
     QGraphicsView *showScene();
-
+    std::shared_ptr<Common::Pawn> getPlayerPawn(Common::CubeCoordinate coord, int playerId);
+    void setSelected(Common::CubeCoordinate coord);
+    void deSelect(Common::CubeCoordinate coord);
 public slots:
     void hexClick(std::shared_ptr<Common::Hex> clickedHex);
+    void deleteOldPawn(Common::CubeCoordinate coordDelete, std::shared_ptr<Common::Pawn> pawn, Common::CubeCoordinate goTo);
 signals:
     void hexClicked(std::shared_ptr<Common::Hex> clickHex);
+    void getHexFrom(Common::CubeCoordinate);
 private:
     std::map<Common::CubeCoordinate,std::shared_ptr<Common::Hex>> _map_tiles;
     std::map<Common::CubeCoordinate,Student::graphicalHex*> graphic_tiles;

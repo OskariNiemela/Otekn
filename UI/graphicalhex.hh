@@ -41,9 +41,12 @@ public:
     void setHex(std::shared_ptr<Common::Hex> newHex);
     void setColor();
     void addPawn(std::shared_ptr<Common::Pawn> pawn);
-    std::shared_ptr<Common::Pawn> getPawn;
+
     Common::CubeCoordinate getCoordinates();
-    void setSelect();
+    void select();
+    void deSelect();
+    void removePawn(std::shared_ptr<Common::Pawn> pawn);
+    std::shared_ptr<Common::Pawn> getPlayerPawn(int playerId);
 protected:
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event);

@@ -52,7 +52,10 @@ private:
 
 public slots:
     void initializePlayers(int amount);
-    void hexClick(std::shared_ptr<Common::Hex>);
+    void hexClick(std::shared_ptr<Common::Hex> chosenHex);
+    void giveHexFrom(Common::CubeCoordinate coorTo);
+signals:
+    void deleteOldPawn(Common::CubeCoordinate,std::shared_ptr<Common::Pawn> pawnId,Common::CubeCoordinate coorTo);
 
 };
 

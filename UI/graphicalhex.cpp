@@ -163,23 +163,46 @@ Common::CubeCoordinate graphicalHex::getCoordinates()
     return coordinate_;
 }
 
-void graphicalHex::setSelect()
+void graphicalHex::select()
 {
-    pressed_ = !pressed_;
+    pressed_ = true;
+}
+
+void graphicalHex::deSelect()
+{
+    pressed_ = false;
+}
+
+void graphicalHex::removePawn(std::shared_ptr<Common::Pawn> pawn)
+{
+    if (pawn != nullptr) {
+        pawns_.erase(pawn->getId());
+        update();
+    }
+}
+
+
+
+
+std::shared_ptr<Common::Pawn> graphicalHex::getPlayerPawn(int playerId)
+{
+    std::shared_ptr<Common::Pawn> pawnPointer = nullptr;
+    for(std::map<int,std::shared_ptr<Common::Pawn>>::const_iterator it = pawns_.begin();it!=pawns_.end();it++)
+    {
+        if(it->second->getPlayerId() == playerId)
+        {
+            return it->second;
+        }
+    }
+
+    return pawnPointer;
 }
 
 
 //Kun hiirellä painetaan hexaa
 void graphicalHex::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if (pressed_)
-    {
-        pressed_ = false;
-    }
-    else
-    {
-        pressed_ = true;
-    }
+
     emit hexClicked(realHex_);
     update();
     QGraphicsItem::mousePressEvent(event);
