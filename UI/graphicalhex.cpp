@@ -163,6 +163,12 @@ Common::CubeCoordinate graphicalHex::getCoordinates()
     return coordinate_;
 }
 
+void graphicalHex::setSelect()
+{
+    pressed_ = !pressed_;
+}
+
+
 //Kun hiirellä painetaan hexaa
 void graphicalHex::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
@@ -174,7 +180,7 @@ void graphicalHex::mousePressEvent(QGraphicsSceneMouseEvent *event)
     {
         pressed_ = true;
     }
-
+    emit hexClicked(realHex_);
     update();
     QGraphicsItem::mousePressEvent(event);
 }

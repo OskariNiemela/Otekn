@@ -44,9 +44,15 @@ private:
 
     int pawnCount;
 
+    //Muuttujat joita käytetään nappien liikuttelussa
+    std::shared_ptr<Common::Hex> selectedHex;
+    std::shared_ptr<Common::Hex> moveTo;
+    std::shared_ptr<Common::Pawn> selectedPawn;
+
+
 public slots:
     void initializePlayers(int amount);
-
+    void hexClick(std::shared_ptr<Common::Hex>);
 
 };
 

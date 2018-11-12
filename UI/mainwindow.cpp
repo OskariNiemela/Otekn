@@ -10,7 +10,7 @@ Mainwindow::Mainwindow(QWidget *parent)
       pawnCount(0)
       //_gameEngine(Logic::GameEngine(_board, _gameState, _players))
 {
-
+    //connect(_board.get(),&Student::GameBoard::hexClicked,this,&Mainwindow::hexClick);
 
 }
 
@@ -56,6 +56,11 @@ void Mainwindow::initializePlayers(int amount)
     QWidget* widget = new QWidget();
     widget->setLayout(hLayout);
     widget->show();
+}
+
+void Mainwindow::hexClick(std::shared_ptr<Common::Hex>)
+{
+    //TO DO: MAKE HEX CLICKS DO STUFF
 }
 
 

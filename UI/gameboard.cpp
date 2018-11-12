@@ -75,6 +75,7 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
     hex->setHex(newHex);
     hex->setColor();
     graphic_tiles[hex->getCoordinates()] = hex;
+    //Object::connect(hex,&graphicalHex::hexClicked,this,&GameBoard::hexClick);
 }
 
 void GameBoard::addTransport(std::shared_ptr<Common::Transport> transport, Common::CubeCoordinate coord)
@@ -102,6 +103,11 @@ QGraphicsView* GameBoard::showScene()
 {
     QGraphicsView* view = new QGraphicsView(scene_);
     return view;
+}
+
+void GameBoard::hexClick(std::shared_ptr<Common::Hex> clickedHex)
+{
+    emit hexClicked(clickedHex);
 }
 
 }

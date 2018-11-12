@@ -25,8 +25,9 @@ namespace Student
 
 enum PLAYER_COLORS{Blue,Red,Green,Black};
 
-class graphicalHex : public QGraphicsItem
+class graphicalHex : public QObject, public QGraphicsItem
 {
+    Q_OBJECT
 public:
     graphicalHex();
     QRectF boundingRect() const final;
@@ -40,14 +41,16 @@ public:
     void setHex(std::shared_ptr<Common::Hex> newHex);
     void setColor();
     void addPawn(std::shared_ptr<Common::Pawn> pawn);
+    std::shared_ptr<Common::Pawn> getPawn;
     Common::CubeCoordinate getCoordinates();
+    void setSelect();
 protected:
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
-
+    void hexClicked(std::shared_ptr<Common::Hex> hexClick);
 public slots:
 
 
