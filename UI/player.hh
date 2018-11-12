@@ -15,7 +15,8 @@ public:
     unsigned int getActionsLeft() const;
 
 private:
-    int _playerId = 0;
+    int _playerId ;
+    unsigned int _actions;
 };
 }
 #endif // PLAYER_HH

@@ -7,11 +7,15 @@ Mainwindow::Mainwindow(QWidget *parent)
       _board(std::make_shared<Student::GameBoard>()),
       _gameState(std::make_shared<Student::GameState>()),
       _gameEngine(nullptr),
-      pawnCount(0)
+      pawnCount(1),
+      selectedHex(nullptr),
+      moveTo(nullptr),
+      selectedPawn(nullptr)
       //_gameEngine(Logic::GameEngine(_board, _gameState, _players))
 {
-
-
+    connect(_board.get(),&Student::GameBoard::hexClicked,this,&Mainwindow::hexClick);
+    connect(_board.get(),&Student::GameBoard::getHexFrom,this,&Mainwindow::giveHexFrom);
+    connect(this,&Mainwindow::deleteOldPawn,_board.get(),&Student::GameBoard::deleteOldPawn);
 }
 
 void Mainwindow::initializePlayers(int amount)
@@ -27,7 +31,6 @@ void Mainwindow::initializePlayers(int amount)
     for(auto player:_players)
     {
         int ID = player->getPlayerId();
-        //TO DO: CREATE PAWN AND ADD IT TO THE 0,0,0 COORDINATES
         _board->addPawn(ID,pawnCount);
         pawnCount++;
     }
@@ -56,6 +59,46 @@ void Mainwindow::initializePlayers(int amount)
     QWidget* widget = new QWidget();
     widget->setLayout(hLayout);
     widget->show();
+}
+
+void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
+{
+    //TO DO: MAKE HEX CLICKS DO STUFF
+    if(_gameState->currentGamePhase() == Common::MOVEMENT)
+    {
+        if (selectedHex == nullptr)
+        {
+            selectedHex = chosenHex;
+            int currentPlayer = _gameState->currentPlayer();
+            //Find a pawn belonging to the current player
+            selectedPawn = _board->getPlayerPawn(selectedHex->getCoordinates(),currentPlayer);
+            if (selectedPawn == nullptr)
+            {
+
+                selectedHex = nullptr;
+            }
+            else
+            {
+                _board->setSelected(selectedHex->getCoordinates());
+            }
+        }
+        else
+        {
+            //If we already have a hex selected
+            _gameEngine->movePawn(selectedHex->getCoordinates(),chosenHex->getCoordinates(),selectedPawn->getId());
+
+        }
+    }
+}
+
+void Mainwindow::giveHexFrom(Common::CubeCoordinate coorTo)
+{
+    Common::CubeCoordinate coord = selectedHex->getCoordinates();
+    _board->deSelect(selectedHex->getCoordinates());
+    emit deleteOldPawn(coord,selectedPawn,coorTo);
+
+    selectedHex = nullptr;
+    selectedPawn = nullptr;
 }
 
 
