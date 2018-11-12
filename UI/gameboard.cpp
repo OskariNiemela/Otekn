@@ -40,6 +40,8 @@ void GameBoard::addPawn(int playerId, int pawnId)
     newPawn->setId(pawnId,playerId);
     newPawn->setCoordinates(coord);
     _map_tiles[coord]->addPawn(newPawn);
+    graphic_tiles[coord]->addPawn(newPawn);
+
 }
 
 void GameBoard::movePawn(int pawnId, Common::CubeCoordinate pawnCoord)
@@ -72,6 +74,7 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
     hex->setPosition(newHex->getCoordinates());
     hex->setHex(newHex);
     hex->setColor();
+    graphic_tiles[hex->getCoordinates()] = hex;
 }
 
 void GameBoard::addTransport(std::shared_ptr<Common::Transport> transport, Common::CubeCoordinate coord)

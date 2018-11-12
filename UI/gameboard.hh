@@ -37,6 +37,7 @@ public:
 
 private:
     std::map<Common::CubeCoordinate,std::shared_ptr<Common::Hex>> _map_tiles;
+    std::map<Common::CubeCoordinate,Student::graphicalHex*> graphic_tiles;
     std::vector<std::shared_ptr<Common::Hex>> _tiles;
     QGraphicsScene* scene_;
 

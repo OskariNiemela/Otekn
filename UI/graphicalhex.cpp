@@ -43,6 +43,50 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     painter->setBrush(brush);
     painter->drawPolygon(hexShape);
 
+    QString pawnMarker = "X";
+    std::map<int,std::shared_ptr<Common::Pawn>>::const_iterator mapIterator = pawns_.begin();
+    //Piirretään hexan sisällä olevat pawnit
+    for(int c=0;c<=3;c++)
+    {
+        if (mapIterator == pawns_.end())
+        {
+            break;
+        }
+        angle_deg = 60*c;
+        angle_rad = M_PI/180*angle_deg;
+
+
+        switch(mapIterator->second->getPlayerId())
+        {
+            case 0:
+                pen.setColor(Qt::blue);
+                painter->setPen(pen);
+                painter->drawText(QPoint( (SIZE/2) * cos(angle_rad), (SIZE/2) * sin(angle_rad)),pawnMarker);
+            break;
+
+            case 1:
+                pen.setColor(Qt::red);
+                painter->setPen(pen);
+                painter->drawText(QPoint( (SIZE/2) * cos(angle_rad), (SIZE/2) * sin(angle_rad)),pawnMarker);
+            break;
+
+            case 2:
+                pen.setColor(Qt::green);
+                painter->setPen(pen);
+                painter->drawText(QPoint( (SIZE/2) * cos(angle_rad), (SIZE/2) * sin(angle_rad)),pawnMarker);
+            break;
+
+            case 3:
+                pen.setColor(Qt::black);
+                painter->setPen(pen);
+                painter->drawText(QPoint( (SIZE/2) * cos(angle_rad), (SIZE/2) * sin(angle_rad)),pawnMarker);
+            break;
+        }
+
+
+        mapIterator++;
+    }
+
 }
 
 //Asettaa graafisen hexan muodon johon sitä voi painaa
@@ -105,10 +149,32 @@ void graphicalHex::setColor()
     }
 }
 
+void graphicalHex::addPawn(std::shared_ptr<Common::Pawn> pawn)
+{
+    if(pawn==nullptr)
+    {
+        return;
+    }
+    pawns_[pawn->getId()] = pawn;
+}
+
+Common::CubeCoordinate graphicalHex::getCoordinates()
+{
+    return coordinate_;
+}
+
 //Kun hiirellä painetaan hexaa
 void graphicalHex::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    pressed_ = true;
+    if (pressed_)
+    {
+        pressed_ = false;
+    }
+    else
+    {
+        pressed_ = true;
+    }
+
     update();
     QGraphicsItem::mousePressEvent(event);
 }
