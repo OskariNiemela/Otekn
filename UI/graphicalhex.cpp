@@ -42,6 +42,7 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setBrush(brush);
     painter->drawPolygon(hexShape);
+
 }
 
 //Asettaa graafisen hexan muodon johon sitä voi painaa
@@ -70,7 +71,7 @@ QPainterPath graphicalHex::shape() const
  */
 void graphicalHex::setPosition(Common::CubeCoordinate coord)
 {
-
+    coordinate_ = coord;
     double y_pos = (-3 * SIZE * coord.z) / 2 + 250;
     double x_pos = SIZE * (sqrt(3) * coord.y  +  sqrt(3)/2 * coord.z);
     setPos(x_pos, y_pos);

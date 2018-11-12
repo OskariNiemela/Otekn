@@ -24,10 +24,6 @@
 #include <QLabel>
 #include <QPixmap>
 
-namespace Student
-{
-
-
 
 class Mainwindow : public QMainWindow
 {
@@ -44,12 +40,14 @@ private:
     std::shared_ptr<Student::GameBoard> _board;
     std::shared_ptr<Student::GameState> _gameState;
     std::vector<std::shared_ptr<Common::IPlayer>> _players;
-    Logic::GameEngine _gameEngine;
+    std::shared_ptr<Logic::GameEngine> _gameEngine;
+
+    int pawnCount;
 
 public slots:
     void initializePlayers(int amount);
 
 
 };
-}
+
 #endif // MAINWINDOW_HH

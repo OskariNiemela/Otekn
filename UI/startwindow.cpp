@@ -1,13 +1,12 @@
 #include "startwindow.hh"
 
 startWindow::startWindow(QWidget *parent):
-    QDialog(parent)
+    QDialog(parent),_playerNumber(new QSpinBox())
 {
     QGridLayout* layout = new QGridLayout(this);
 
-    QSpinBox* playerNumber = new QSpinBox();
-    playerNumber->setMinimum(1);
-    playerNumber->setMaximum(4);
+    _playerNumber->setMinimum(1);
+    _playerNumber->setMaximum(4);
 
     QLabel* playerLabel = new QLabel();
     playerLabel->setText("Number of players: ");
@@ -16,7 +15,7 @@ startWindow::startWindow(QWidget *parent):
     confirm->setText("Confirm");
 
     layout->addWidget(playerLabel);
-    layout->addWidget(playerNumber);
+    layout->addWidget(_playerNumber);
     layout->addWidget(confirm);
 
     QWidget* widget = new QWidget(this);
@@ -30,7 +29,7 @@ void startWindow::accept()
 {
     QDialog::accept();
 
-    emit accepted();
+    emit sendValue(_playerNumber->value());
 
 }
 
