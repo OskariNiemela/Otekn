@@ -10,6 +10,7 @@
 #include "igameboard.hh"
 #include "hex.hh"
 #include "graphicalhex.hh"
+#include "pawn.hh"
 
 namespace Student
 {
@@ -35,6 +36,7 @@ public:
 
 
 private:
+    std::map<Common::CubeCoordinate,std::shared_ptr<Common::Hex>> _map_tiles;
     std::vector<std::shared_ptr<Common::Hex>> _tiles;
     QGraphicsScene* scene_;
 

@@ -28,6 +28,7 @@ public slots:
 
 private:
     Ui::startWindow *ui;
+    QSpinBox* _playerNumber;
 };
 
 #endif // STARTWINDOW_HH

@@ -35,7 +35,11 @@ std::shared_ptr<Common::Hex> GameBoard::getHex(Common::CubeCoordinate hexCoord) 
 
 void GameBoard::addPawn(int playerId, int pawnId)
 {
-
+    Common::CubeCoordinate coord(0,0,0);
+    std::shared_ptr<Common::Pawn> newPawn = std::make_shared<Common::Pawn>();
+    newPawn->setId(pawnId,playerId);
+    newPawn->setCoordinates(coord);
+    _map_tiles[coord]->addPawn(newPawn);
 }
 
 void GameBoard::movePawn(int pawnId, Common::CubeCoordinate pawnCoord)
@@ -62,6 +66,7 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
 {
 
     _tiles.push_back(newHex);
+    _map_tiles[newHex->getCoordinates()] = newHex;
     graphicalHex* hex = new graphicalHex();
     scene_->addItem(hex);
     hex->setPosition(newHex->getCoordinates());

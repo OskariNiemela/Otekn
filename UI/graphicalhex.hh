@@ -21,6 +21,8 @@ const int SIZE = 28;
 namespace Student
 {
 
+enum PLAYER_COLORS{Blue,Red,Green,Black};
+
 class graphicalHex : public QGraphicsItem
 {
 public:
@@ -48,6 +50,8 @@ public slots:
 private:
     bool pressed_;
     std::shared_ptr<Common::Hex> realHex_;
+    Common::CubeCoordinate coordinate_;
+    std::vector<std::shared_ptr<Common::Pawn>> pawns_;
     QColor backgroundColor;
 };
 }
