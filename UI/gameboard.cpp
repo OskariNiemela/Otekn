@@ -20,11 +20,26 @@ GameBoard::~GameBoard()
 
 int GameBoard::checkTileOccupation(Common::CubeCoordinate tileCoord) const
 {
-    return 0;
+    // Onko ruutu olemassa
+    if (_map_tiles.find(tileCoord) == _map_tiles.end()) {
+        return -1;
+    }
+
+    // Pawnien lukumäärä
+    return _map_tiles.at(tileCoord)->getPawnAmount();
 }
 
 bool GameBoard::isWaterTile(Common::CubeCoordinate tileCoord) const
 {
+    // Onko ruutu olemassa
+    if (_map_tiles.find(tileCoord) == _map_tiles.end()) {
+        return false;
+    }
+
+    if (_map_tiles.at(tileCoord)->getPieceType() == "Water") {
+        return true;
+    }
+
     return false;
 }
 
@@ -58,13 +73,25 @@ void GameBoard::removePawn(int pawnId)
 
 }
 
+void GameBoard::addActor(std::shared_ptr<Common::Actor> actor, Common::CubeCoordinate actorCoord)
+{
+    // Tarkistaa onko ruutu olemassa
+    if (_map_tiles.find(actorCoord) != _map_tiles.end()) {
+
+        // Lisää hex-oliolle actorin
+        actor->addHex(_map_tiles.at(actorCoord));
+
+        // Lisää actorin erilliseen mappiin
+        _actors.insert(std::pair<int, std::shared_ptr<Common::Actor>>(actor->getId(), actor));
+    }
+}
+
 void GameBoard::moveActor(int actorId, Common::CubeCoordinate actorCoord)
 {
     // Tarkistetaan onko actor olemassa ja jos on, vaihdetaan sen sijaintia
     if (_actors.find(actorId) != _actors.end()) {
         _actors.at(actorId)->move(_map_tiles.at(actorCoord));
     }
-
 }
 
 void GameBoard::removeActor(int actorId)
@@ -103,19 +130,6 @@ void GameBoard::removeTransport(int id)
 
 }
 
-void GameBoard::addActor(std::shared_ptr<Common::Actor> actor, Common::CubeCoordinate actorCoord)
-{
-    // Tarkistaa onko ruutu olemassa
-    if (_map_tiles.find(actorCoord) != _map_tiles.end()) {
-
-        // Lisää hex-oliolle actorin
-        actor->addHex(_map_tiles.at(actorCoord));
-
-        // Lisää actorin erilliseen mappiin
-        _actors.insert(std::pair<int, std::shared_ptr<Common::Actor>>(actor->getId(), actor));
-    }
-}
-
 //Kun scene on rakennettu, palautetaan se mainwindowille
 QGraphicsView* GameBoard::showScene()
 {
@@ -137,8 +151,6 @@ void GameBoard::deSelect(Common::CubeCoordinate coord)
 {
     graphic_tiles.at(coord)->deSelect();
 }
-
-
 
 void GameBoard::hexClick(std::shared_ptr<Common::Hex> clickedHex)
 {

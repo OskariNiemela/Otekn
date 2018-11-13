@@ -13,6 +13,7 @@
 #include "graphicalhex.hh"
 #include "pawn.hh"
 #include "actor.hh"
+#include "actorfactory.hh"
 
 namespace Student
 {
@@ -28,13 +29,13 @@ public:
     void addPawn(int playerId, int pawnId);
     void movePawn(int pawnId, Common::CubeCoordinate pawnCoord);
     void removePawn(int pawnId);
+    void addActor(std::shared_ptr<Common::Actor> actor, Common::CubeCoordinate actorCoord);
     void moveActor(int actorId, Common::CubeCoordinate actorCoord);
     void removeActor(int actorId);
     void addHex(std::shared_ptr<Common::Hex> newHex);
     void addTransport(std::shared_ptr<Common::Transport> transport, Common::CubeCoordinate coord);
-    void moveTransport(int id, Common::CubeCoordinate coord) ;
+    void moveTransport(int id, Common::CubeCoordinate coord);
     void removeTransport(int id);
-    void addActor(std::shared_ptr<Common::Actor> actor, Common::CubeCoordinate actorCoord);
     QGraphicsView *showScene();
     std::shared_ptr<Common::Pawn> getPlayerPawn(Common::CubeCoordinate coord, int playerId);
     void setSelected(Common::CubeCoordinate coord);
