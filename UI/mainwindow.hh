@@ -8,6 +8,9 @@
 #include "graphicalhex.hh"
 #include "ioexception.hh"
 #include "gameexception.hh"
+#include "initialize.hh"
+#include "illegalmoveexception.hh"
+#include "scoretracker.hh"
 
 #include <iostream>
 #include <QMainWindow>
@@ -43,7 +46,8 @@ private:
     std::shared_ptr<Student::GameBoard> _board;
     std::shared_ptr<Student::GameState> _gameState;
     std::vector<std::shared_ptr<Common::IPlayer>> _players;
-    std::shared_ptr<Logic::GameEngine> _gameEngine;
+    std::shared_ptr<Common::IGameRunner> _gameEngine;
+    std::shared_ptr<Student::ScoreTracker> _trackingScore;
 
     int pawnCount;
 

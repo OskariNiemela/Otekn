@@ -135,6 +135,11 @@ void GameBoard::removeTransport(int id)
 
 }
 
+void GameBoard::flipTile(Common::CubeCoordinate coord)
+{
+    graphic_tiles.at(coord)->setColor();
+}
+
 //Kun scene on rakennettu, palautetaan se mainwindowille
 QGraphicsView* GameBoard::showScene()
 {

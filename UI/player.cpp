@@ -16,7 +16,7 @@ int Player::getPlayerId() const
 
 void Player::setActionsLeft(unsigned int actionsLeft)
 {
-
+    _actions = actionsLeft;
 }
 
 unsigned int Player::getActionsLeft() const

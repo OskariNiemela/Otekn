@@ -147,6 +147,7 @@ void graphicalHex::setColor()
     else if (realHex_->getPieceType() == "Coral") {
         backgroundColor.setRgb(237, 216, 255);
     }
+    update();
 }
 
 void graphicalHex::addPawn(std::shared_ptr<Common::Pawn> pawn)

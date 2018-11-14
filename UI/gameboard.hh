@@ -37,6 +37,7 @@ public:
     void addTransport(std::shared_ptr<Common::Transport> transport, Common::CubeCoordinate coord);
     void moveTransport(int id, Common::CubeCoordinate coord);
     void removeTransport(int id);
+    void flipTile(Common::CubeCoordinate coord);
     QGraphicsView *showScene();
     std::shared_ptr<Common::Pawn> getPlayerPawn(Common::CubeCoordinate coord, int playerId);
     void setSelected(Common::CubeCoordinate coord);
@@ -51,6 +52,7 @@ private:
     std::map<Common::CubeCoordinate,std::shared_ptr<Common::Hex>> _map_tiles;
     std::map<Common::CubeCoordinate,Student::graphicalHex*> graphic_tiles;
     std::vector<std::shared_ptr<Common::Hex>> _tiles;
+    std::map<int, std::shared_ptr<Common::Pawn>> _game_pawns;
     std::map<int, std::shared_ptr<Common::Actor>> _actors;
     QGraphicsScene* scene_;
 

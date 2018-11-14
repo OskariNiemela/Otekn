@@ -19,7 +19,8 @@ SOURCES += main.cc \
     player.cpp \
     gamestate.cpp \
     graphicalhex.cpp \
-    startwindow.cpp
+    startwindow.cpp \
+    scoretracker.cpp
 
 HEADERS  += \
     gameboard.hh \
@@ -27,7 +28,8 @@ HEADERS  += \
     gamestate.hh \
     mainwindow.hh \
     graphicalhex.hh \
-    startwindow.hh
+    startwindow.hh \
+    scoretracker.hh
 
 INCLUDEPATH += $$PWD/../GameLogic/Engine
 DEPENDPATH += $$PWD/../GameLogic/Engine
