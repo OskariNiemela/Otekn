@@ -27,6 +27,7 @@ public:
     bool isWaterTile(Common::CubeCoordinate tileCoord) const;
     std::shared_ptr<Common::Hex> getHex(Common::CubeCoordinate hexCoord) const;
     void addPawn(int playerId, int pawnId);
+    void addPawn(int playerId, int pawnId, Common::CubeCoordinate coord);
     void movePawn(int pawnId, Common::CubeCoordinate pawnCoord);
     void removePawn(int pawnId);
     void addActor(std::shared_ptr<Common::Actor> actor, Common::CubeCoordinate actorCoord);

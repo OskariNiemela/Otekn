@@ -6,7 +6,10 @@
 #include "player.hh"
 #include "gameengine.hh"
 #include "graphicalhex.hh"
+#include "ioexception.hh"
+#include "gameexception.hh"
 
+#include <iostream>
 #include <QMainWindow>
 #include <QPolygon>
 #include <QVector>

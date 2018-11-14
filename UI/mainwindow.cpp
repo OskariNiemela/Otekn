@@ -27,7 +27,14 @@ void Mainwindow::initializePlayers(int amount)
 
 
     }
-    _gameEngine = std::make_shared<Logic::GameEngine>(_board,_gameState,_players);
+    //try {
+        _gameEngine = std::make_shared<Logic::GameEngine>(_board,_gameState,_players);
+    /*}
+    catch (Common::GameException e) {
+        std::cout << e.msg() << std::endl;
+    }*/
+
+
     for(auto player:_players)
     {
         int ID = player->getPlayerId();
@@ -84,8 +91,9 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
         }
         else
         {
+            moveTo = chosenHex;
             //If we already have a hex selected
-            _gameEngine->movePawn(selectedHex->getCoordinates(),chosenHex->getCoordinates(),selectedPawn->getId());
+            _gameEngine->movePawn(selectedHex->getCoordinates(),moveTo->getCoordinates(),selectedPawn->getId());
 
         }
     }

@@ -63,6 +63,11 @@ void GameBoard::addPawn(int playerId, int pawnId)
 
 }
 
+void GameBoard::addPawn(int playerId, int pawnId, Common::CubeCoordinate coord)
+{
+
+}
+
 void GameBoard::movePawn(int pawnId, Common::CubeCoordinate pawnCoord)
 {
     emit getHexFrom(pawnCoord);
@@ -117,7 +122,7 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
 
 void GameBoard::addTransport(std::shared_ptr<Common::Transport> transport, Common::CubeCoordinate coord)
 {
-
+    _map_tiles.at(coord)->addTransport(transport);
 }
 
 void GameBoard::moveTransport(int id, Common::CubeCoordinate coord)
