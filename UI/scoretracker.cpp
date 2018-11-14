@@ -18,6 +18,14 @@ ScoreTracker::ScoreTracker():
 
 }
 
+void ScoreTracker::scorePlayer(int playerId)
+{
+    playerScores.at(playerId)++;
+    std::string scoreText = "Player " + std::to_string(playerId) +" score: " + std::to_string(playerScores.at(playerId));
+    QString scoreTextQ = QString::fromStdString(scoreText);
+    playerLabels.at(playerId)->setText(scoreTextQ);
+}
+
 
 void ScoreTracker::changePlayer(int currentPlayer)
 {

@@ -17,6 +17,7 @@ Mainwindow::Mainwindow(QWidget *parent)
     connect(_board.get(),&Student::GameBoard::hexClicked,this,&Mainwindow::hexClick);
     connect(_board.get(),&Student::GameBoard::getHexFrom,this,&Mainwindow::giveHexFrom);
     connect(this,&Mainwindow::deleteOldPawn,_board.get(),&Student::GameBoard::deleteOldPawn);
+    connect(_board.get(),&Student::GameBoard::hexScore,this,&Mainwindow::hexScore);
 }
 
 void Mainwindow::initializePlayers(int amount)
@@ -100,8 +101,11 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
             {
                 //Move the pawn while setting the actions left of the player
                 _players.at(_gameState->currentPlayer())->setActionsLeft(static_cast<unsigned int>(_gameEngine->movePawn(selectedHex->getCoordinates(),chosenHex->getCoordinates(),selectedPawn->getId())));
+                selectedHex = nullptr;
+                selectedPawn = nullptr;
                 if(_players.at(_gameState->currentPlayer())->getActionsLeft() <= 0)
                 {
+
                     //Change player turn
                     if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
                     {
@@ -166,7 +170,10 @@ void Mainwindow::giveHexFrom(Common::CubeCoordinate coorTo)
 
 
 
-
+void Mainwindow::hexScore()
+{
+    _trackingScore->scorePlayer(_gameEngine->currentPlayer());
+}
 
 
 

@@ -60,22 +60,54 @@ void GameBoard::addPawn(int playerId, int pawnId)
     newPawn->setCoordinates(coord);
     _map_tiles[coord]->addPawn(newPawn);
     graphic_tiles[coord]->addPawn(newPawn);
+    _game_pawns[pawnId] = newPawn;
 
 }
 
 void GameBoard::addPawn(int playerId, int pawnId, Common::CubeCoordinate coord)
 {
-
+    std::shared_ptr<Common::Pawn> newPawn = std::make_shared<Common::Pawn>();
+    newPawn->setId(pawnId,playerId);
+    newPawn->setCoordinates(coord);
+    _map_tiles[coord]->addPawn(newPawn);
+    graphic_tiles[coord]->addPawn(newPawn);
+    _game_pawns[pawnId] = newPawn;
 }
 
 void GameBoard::movePawn(int pawnId, Common::CubeCoordinate pawnCoord)
 {
-    emit getHexFrom(pawnCoord);
+    //emit getHexFrom(pawnCoord);
+    if(_map_tiles.at(pawnCoord)->getPieceType() != "Coral")
+    {
+        std::shared_ptr<Common::Pawn> movingPawn= _game_pawns.at(pawnId);
+        graphic_tiles.at(movingPawn->getCoordinates())->deSelect();
+        _map_tiles.at(movingPawn->getCoordinates())->removePawn(movingPawn);
+        graphic_tiles.at(movingPawn->getCoordinates())->removePawn(movingPawn);
+        _game_pawns.at(pawnId)->setCoordinates(pawnCoord);
+        _map_tiles.at(pawnCoord)->addPawn(movingPawn);
+        graphic_tiles.at(pawnCoord)->addPawn(movingPawn);
+    }
+    else
+    {
+        std::shared_ptr<Common::Pawn> movingPawn= _game_pawns.at(pawnId);
+        graphic_tiles.at(movingPawn->getCoordinates())->deSelect();
+        _map_tiles.at(movingPawn->getCoordinates())->removePawn(movingPawn);
+        graphic_tiles.at(movingPawn->getCoordinates())->removePawn(movingPawn);
+        _game_pawns.erase(pawnId);
+        emit hexScore();
+    }
+
 }
 
 void GameBoard::removePawn(int pawnId)
 {
-
+    if(_game_pawns.find(pawnId) != _game_pawns.end())
+    {
+        std::shared_ptr<Common::Pawn> pawnRemoved = _game_pawns.at(pawnId);
+        _game_pawns.erase(pawnId);
+        _map_tiles.at(pawnRemoved->getCoordinates())->removePawn(pawnRemoved);
+        graphic_tiles.at(pawnRemoved->getCoordinates())->removePawn(pawnRemoved);
+    }
 }
 
 void GameBoard::addActor(std::shared_ptr<Common::Actor> actor, Common::CubeCoordinate actorCoord)

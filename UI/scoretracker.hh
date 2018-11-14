@@ -18,6 +18,7 @@ class ScoreTracker : public QFrame
      Q_OBJECT
 public:
     ScoreTracker();
+    void scorePlayer(int playerId);
 public slots:
     void changePlayer(int currentPlayer);
     void initializeScores(int playerAmount);
