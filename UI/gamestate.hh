@@ -5,6 +5,7 @@
 
 namespace Student
 {
+
 class GameState : public Common::IGameState
 {
 public:
@@ -17,6 +18,7 @@ public:
 
 private:
     int _currentPlayer;
+    Common::GamePhase _gamePhase;
 };
 }
 

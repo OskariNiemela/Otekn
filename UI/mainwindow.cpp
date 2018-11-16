@@ -10,12 +10,14 @@ Mainwindow::Mainwindow(QWidget *parent)
       pawnCount(1),
       selectedHex(nullptr),
       moveTo(nullptr),
-      selectedPawn(nullptr)
+      selectedPawn(nullptr),
+      _trackingScore(std::make_shared<Student::ScoreTracker>())
       //_gameEngine(Logic::GameEngine(_board, _gameState, _players))
 {
     connect(_board.get(),&Student::GameBoard::hexClicked,this,&Mainwindow::hexClick);
     connect(_board.get(),&Student::GameBoard::getHexFrom,this,&Mainwindow::giveHexFrom);
     connect(this,&Mainwindow::deleteOldPawn,_board.get(),&Student::GameBoard::deleteOldPawn);
+    connect(_board.get(),&Student::GameBoard::hexScore,this,&Mainwindow::hexScore);
 }
 
 void Mainwindow::initializePlayers(int amount)
@@ -27,12 +29,8 @@ void Mainwindow::initializePlayers(int amount)
 
 
     }
-    //try {
-        _gameEngine = std::make_shared<Logic::GameEngine>(_board,_gameState,_players);
-    /*}
-    catch (Common::GameException e) {
-        std::cout << e.msg() << std::endl;
-    }*/
+
+        _gameEngine = Common::Initialization::getGameRunner(_board,_gameState,_players);
 
 
     for(auto player:_players)
@@ -53,6 +51,9 @@ void Mainwindow::initializePlayers(int amount)
     QPixmap colorMap(64,64);
 
     QLabel* label = new QLabel(this);
+    _trackingScore->changeGamePhase(_gameState->currentGamePhase());
+    _trackingScore->initializeScores(_gameEngine->playerAmount());
+    vLayout->addWidget(_trackingScore.get());
 
     colorMap.fill(colour);
 
@@ -91,10 +92,68 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
         }
         else
         {
-            moveTo = chosenHex;
             //If we already have a hex selected
-            _gameEngine->movePawn(selectedHex->getCoordinates(),moveTo->getCoordinates(),selectedPawn->getId());
+            if(chosenHex == selectedHex)
+            {
+                return;
+            }
+            try
+            {
+                //Move the pawn while setting the actions left of the player
+                _players.at(_gameState->currentPlayer())->setActionsLeft(static_cast<unsigned int>(_gameEngine->movePawn(selectedHex->getCoordinates(),chosenHex->getCoordinates(),selectedPawn->getId())));
+                selectedHex = nullptr;
+                selectedPawn = nullptr;
+                if(_players.at(_gameState->currentPlayer())->getActionsLeft() <= 0)
+                {
 
+                    //Change player turn
+                    if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
+                    {
+                        _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
+                        _trackingScore->changePlayer(_gameState->currentPlayer());
+                        _players.at(_gameState->currentPlayer())->setActionsLeft(3);
+                    }
+                    else
+                    {
+                        _gameState->changeGamePhase(Common::SINKING);
+                        _trackingScore->changeGamePhase(_gameState->currentGamePhase());
+                        _gameState->changePlayerTurn(0);
+                        _trackingScore->changePlayer(_gameState->currentPlayer());
+                    }
+                }
+            }
+            catch(Common::IllegalMoveException i)
+            {
+                std::cout<<i.msg()<<std::endl;
+            }
+
+
+        }
+    }
+    else if (_gameState->currentGamePhase()==Common::SINKING)
+    {
+        try
+        {
+            _gameEngine->flipTile(chosenHex->getCoordinates());
+            _board->flipTile(chosenHex->getCoordinates());
+            //Change player turn
+            if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
+            {
+                _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
+                _trackingScore->changePlayer(_gameState->currentPlayer());
+            }
+            else
+            {
+                _gameState->changeGamePhase(Common::MOVEMENT);
+                _trackingScore->changeGamePhase(_gameState->currentGamePhase());
+                _gameState->changePlayerTurn(0);
+                _trackingScore->changePlayer(_gameState->currentPlayer());
+                _players.at(_gameState->currentPlayer())->setActionsLeft(3);
+            }
+        }
+        catch (Common::IllegalMoveException i)
+        {
+            std::cout<<i.msg()<<std::endl;
         }
     }
 }
@@ -110,6 +169,11 @@ void Mainwindow::giveHexFrom(Common::CubeCoordinate coorTo)
 }
 
 
+
+void Mainwindow::hexScore()
+{
+    _trackingScore->scorePlayer(_gameEngine->currentPlayer());
+}
 
 
 
