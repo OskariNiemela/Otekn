@@ -48,6 +48,7 @@ private:
     std::vector<std::shared_ptr<Common::IPlayer>> _players;
     std::shared_ptr<Common::IGameRunner> _gameEngine;
     std::shared_ptr<Student::ScoreTracker> _trackingScore;
+    QGraphicsScene* _scene;
 
     int pawnCount;
 

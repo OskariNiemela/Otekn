@@ -6,13 +6,14 @@
 
 QT       += testlib
 
-QT       += gui
+QT       += core gui
 
 QT       += widgets
 
 TARGET = tst_gameboardtest
 CONFIG   += console
 CONFIG   -= app_bundle
+CONFIG += c++14
 
 TEMPLATE = app
 

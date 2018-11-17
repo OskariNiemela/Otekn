@@ -11,9 +11,11 @@ Mainwindow::Mainwindow(QWidget *parent)
       selectedHex(nullptr),
       moveTo(nullptr),
       selectedPawn(nullptr),
-      _trackingScore(std::make_shared<Student::ScoreTracker>())
+      _trackingScore(std::make_shared<Student::ScoreTracker>()),
+      _scene(new QGraphicsScene)
       //_gameEngine(Logic::GameEngine(_board, _gameState, _players))
 {
+    _board->setScene(_scene);
     connect(_board.get(),&Student::GameBoard::hexClicked,this,&Mainwindow::hexClick);
     connect(_board.get(),&Student::GameBoard::getHexFrom,this,&Mainwindow::giveHexFrom);
     connect(this,&Mainwindow::deleteOldPawn,_board.get(),&Student::GameBoard::deleteOldPawn);

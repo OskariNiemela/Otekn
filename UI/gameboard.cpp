@@ -8,7 +8,7 @@ namespace Student
 
 
 GameBoard::GameBoard():
-    scene_(new QGraphicsScene)
+    scene_(nullptr)
 {
 
 }
@@ -144,7 +144,10 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
     _tiles.push_back(newHex);
     _map_tiles[newHex->getCoordinates()] = newHex;
     graphicalHex* hex = new graphicalHex();
-    scene_->addItem(hex);
+    if(scene_ != nullptr)
+    {
+        scene_->addItem(hex);
+    }
     hex->setPosition(newHex->getCoordinates());
     hex->setHex(newHex);
     hex->setColor();
@@ -194,6 +197,16 @@ void GameBoard::deSelect(Common::CubeCoordinate coord)
     graphic_tiles.at(coord)->deSelect();
 }
 
+void GameBoard::initializeScene()
+{
+    scene_ = new QGraphicsScene(this);
+}
+
+void GameBoard::setScene(QGraphicsScene* scene)
+{
+    scene_ = scene;
+}
+
 void GameBoard::hexClick(std::shared_ptr<Common::Hex> clickedHex)
 {
     emit hexClicked(clickedHex);
@@ -206,6 +219,25 @@ void GameBoard::deleteOldPawn(Common::CubeCoordinate coordDelete, std::shared_pt
     _map_tiles.at(coordDelete)->removePawn(pawn);
     graphic_tiles.at(coordDelete)->removePawn(pawn);
 }
+
+std::shared_ptr<Common::Pawn> GameBoard::getPawn(int pawnId) const
+{
+    if(_game_pawns.find(pawnId) != _game_pawns.end())
+    {
+        return _game_pawns.at(pawnId);
+    }
+    return nullptr;
+}
+
+Common::CubeCoordinate GameBoard::getPawnCoordinate(int pawnId) const
+{
+    if(_game_pawns.find(pawnId) != _game_pawns.end())
+    {
+        return _game_pawns.at(pawnId)->getCoordinates();
+    }
+    throw Common::GameException("No such pawn when getting pawn coordinate");
+}
+
 
 }
 
