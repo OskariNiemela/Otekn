@@ -17,7 +17,7 @@ GameBoard::~GameBoard()
 {
     if(scene_!=nullptr)
     {
-        free(scene_);
+        delete(scene_);
     }
 }
 
