@@ -10,7 +10,7 @@ class GameState : public Common::IGameState
 {
 public:
     GameState();
-    ~GameState();
+    ~GameState() = default;
     Common::GamePhase currentGamePhase() const;
     int currentPlayer() const;
     void changeGamePhase(Common::GamePhase nextPhase);

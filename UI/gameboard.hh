@@ -49,11 +49,9 @@ public:
     Common::CubeCoordinate getPawnCoordinate(int pawnId) const;
 public slots:
     void hexClick(std::shared_ptr<Common::Hex> clickedHex);
-    void deleteOldPawn(Common::CubeCoordinate coordDelete, std::shared_ptr<Common::Pawn> pawn, Common::CubeCoordinate goTo);
     void updateHexes();
 signals:
     void hexClicked(std::shared_ptr<Common::Hex> clickHex);
-    void getHexFrom(Common::CubeCoordinate);
     void hexScore();
     void hexUpdate();
 private:

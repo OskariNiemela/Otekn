@@ -9,6 +9,8 @@
 #include <QPushButton>
 #include <QGridLayout>
 
+namespace Student
+{
 
 namespace Ui {
     class startWindow;
@@ -29,6 +31,7 @@ public slots:
 private:
     Ui::startWindow *ui;
     QSpinBox* _playerNumber;
+    QWidget* _widget;
 };
-
+}
 #endif // STARTWINDOW_HH

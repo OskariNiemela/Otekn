@@ -15,7 +15,10 @@ GameBoard::GameBoard():
 
 GameBoard::~GameBoard()
 {
-
+    if(scene_!=nullptr)
+    {
+        free(scene_);
+    }
 }
 
 int GameBoard::checkTileOccupation(Common::CubeCoordinate tileCoord) const
@@ -206,14 +209,6 @@ void GameBoard::setScene(QGraphicsScene* scene)
 void GameBoard::hexClick(std::shared_ptr<Common::Hex> clickedHex)
 {
     emit hexClicked(clickedHex);
-}
-
-void GameBoard::deleteOldPawn(Common::CubeCoordinate coordDelete, std::shared_ptr<Common::Pawn> pawn,Common::CubeCoordinate goTo)
-{
-    _map_tiles.at(goTo)->addPawn(pawn);
-
-    _map_tiles.at(coordDelete)->removePawn(pawn);
-
 }
 
 void GameBoard::updateHexes()

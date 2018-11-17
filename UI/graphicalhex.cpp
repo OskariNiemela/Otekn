@@ -44,8 +44,12 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     painter->drawPolygon(hexShape);
 
     QString pawnMarker = "X";
-    std::vector<std::shared_ptr<Common::Pawn>> pawnsHere = realHex_->getPawns();
-    std::vector<std::shared_ptr<Common::Pawn>>::const_iterator vecIterator = pawnsHere.begin();
+    std::vector<std::shared_ptr<Common::Pawn>> pawnsHere
+            = realHex_->getPawns();
+
+    std::vector<std::shared_ptr<Common::Pawn>>::const_iterator vecIterator
+            = pawnsHere.begin();
+
     //Piirretään hexan sisällä olevat pawnit
     for(int c=0;c<=3;c++)
     {
@@ -62,26 +66,39 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
             case 0:
                 pen.setColor(Qt::blue);
                 painter->setPen(pen);
-                painter->drawText(QPoint( (SIZE/2) * cos(angle_rad), (SIZE/2) * sin(angle_rad)),pawnMarker);
+                painter->drawText(QPoint( (SIZE/2) * cos(angle_rad),
+                                          (SIZE/2) * sin(angle_rad)),
+                                          pawnMarker);
             break;
 
             case 1:
                 pen.setColor(Qt::red);
                 painter->setPen(pen);
-                painter->drawText(QPoint( (SIZE/2) * cos(angle_rad), (SIZE/2) * sin(angle_rad)),pawnMarker);
+                painter->drawText(QPoint( (SIZE/2) * cos(angle_rad),
+                                          (SIZE/2) * sin(angle_rad)),
+                                           pawnMarker);
             break;
 
             case 2:
                 pen.setColor(Qt::green);
                 painter->setPen(pen);
-                painter->drawText(QPoint( (SIZE/2) * cos(angle_rad), (SIZE/2) * sin(angle_rad)),pawnMarker);
+                painter->drawText(QPoint( (SIZE/2) * cos(angle_rad),
+                                          (SIZE/2) * sin(angle_rad)),
+                                          pawnMarker);
             break;
 
+            default:
+                pen.setColor(Qt::black);
+                painter->setPen(pen);
+                painter->drawText(QPoint( (SIZE/2) * cos(angle_rad),
+                                          (SIZE/2) * sin(angle_rad)),
+                                          pawnMarker);
+            break;
 
         }
 
 
-        vecIterator++;
+        ++vecIterator;
     }
 
 }
@@ -143,6 +160,10 @@ void graphicalHex::setColor()
     }
     else if (realHex_->getPieceType() == "Coral") {
         backgroundColor.setRgb(237, 216, 255);
+    }
+    else
+    {
+        backgroundColor.setRgb(0,0,0);
     }
     update();
 }
