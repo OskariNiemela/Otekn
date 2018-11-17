@@ -14,6 +14,7 @@
 #include "pawn.hh"
 #include "actor.hh"
 #include "actorfactory.hh"
+#include "gameexception.hh"
 
 namespace Student
 {
@@ -42,6 +43,10 @@ public:
     std::shared_ptr<Common::Pawn> getPlayerPawn(Common::CubeCoordinate coord, int playerId);
     void setSelected(Common::CubeCoordinate coord);
     void deSelect(Common::CubeCoordinate coord);
+    void initializeScene();
+    void setScene(QGraphicsScene *scene);
+    std::shared_ptr<Common::Pawn> getPawn(int pawnId) const;
+    Common::CubeCoordinate getPawnCoordinate(int pawnId) const;
 public slots:
     void hexClick(std::shared_ptr<Common::Hex> clickedHex);
     void deleteOldPawn(Common::CubeCoordinate coordDelete, std::shared_ptr<Common::Pawn> pawn, Common::CubeCoordinate goTo);
