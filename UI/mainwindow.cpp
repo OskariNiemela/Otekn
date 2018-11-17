@@ -16,9 +16,11 @@ Mainwindow::Mainwindow(QWidget *parent)
       //_gameEngine(Logic::GameEngine(_board, _gameState, _players))
 {
     _board->setScene(_scene);
+    connect(this,&Mainwindow::updateHexes,_board.get(),&Student::GameBoard::updateHexes);
     connect(_board.get(),&Student::GameBoard::hexClicked,this,&Mainwindow::hexClick);
     connect(_board.get(),&Student::GameBoard::getHexFrom,this,&Mainwindow::giveHexFrom);
-    connect(this,&Mainwindow::deleteOldPawn,_board.get(),&Student::GameBoard::deleteOldPawn);
+    // TO DO: DELETE THE OLD deleteOldPawn method of moving pawns
+    //connect(this,&Mainwindow::deleteOldPawn,_board.get(),&Student::GameBoard::deleteOldPawn);
     connect(_board.get(),&Student::GameBoard::hexScore,this,&Mainwindow::hexScore);
 }
 
@@ -32,8 +34,7 @@ void Mainwindow::initializePlayers(int amount)
 
     }
 
-        _gameEngine = Common::Initialization::getGameRunner(_board,_gameState,_players);
-
+    _gameEngine = Common::Initialization::getGameRunner(_board,_gameState,_players);
 
     for(auto player:_players)
     {
@@ -91,6 +92,7 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
             {
                 _board->setSelected(selectedHex->getCoordinates());
             }
+            emit updateHexes();
         }
         else
         {
@@ -158,6 +160,7 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
             std::cout<<i.msg()<<std::endl;
         }
     }
+    emit updateHexes();
 }
 
 void Mainwindow::giveHexFrom(Common::CubeCoordinate coorTo)

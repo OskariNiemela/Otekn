@@ -40,13 +40,12 @@ public:
     void setPosition(Common::CubeCoordinate coord);
     void setHex(std::shared_ptr<Common::Hex> newHex);
     void setColor();
-    void addPawn(std::shared_ptr<Common::Pawn> pawn);
 
     Common::CubeCoordinate getCoordinates();
     void select();
     void deSelect();
-    void removePawn(std::shared_ptr<Common::Pawn> pawn);
     std::shared_ptr<Common::Pawn> getPlayerPawn(int playerId);
+
 protected:
 
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
@@ -55,13 +54,12 @@ protected:
 signals:
     void hexClicked(std::shared_ptr<Common::Hex> hexClick);
 public slots:
-
+    void updateGraphicHex();
 
 private:
     bool pressed_;
-    std::shared_ptr<Common::Hex> realHex_;
     Common::CubeCoordinate coordinate_;
-    std::map<int,std::shared_ptr<Common::Pawn>> pawns_;
+    std::shared_ptr<Common::Hex> realHex_;
     QColor backgroundColor;
 };
 }

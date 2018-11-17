@@ -65,7 +65,7 @@ public slots:
     void hexScore();
 signals:
     void deleteOldPawn(Common::CubeCoordinate,std::shared_ptr<Common::Pawn> pawnId,Common::CubeCoordinate coorTo);
-
+    void updateHexes();
 };
 
 #endif // MAINWINDOW_HH

@@ -44,11 +44,12 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     painter->drawPolygon(hexShape);
 
     QString pawnMarker = "X";
-    std::map<int,std::shared_ptr<Common::Pawn>>::const_iterator mapIterator = pawns_.begin();
+    std::vector<std::shared_ptr<Common::Pawn>> pawnsHere = realHex_->getPawns();
+    std::vector<std::shared_ptr<Common::Pawn>>::const_iterator vecIterator = pawnsHere.begin();
     //Piirretään hexan sisällä olevat pawnit
     for(int c=0;c<=3;c++)
     {
-        if (mapIterator == pawns_.end())
+        if (vecIterator == pawnsHere.end())
         {
             break;
         }
@@ -56,7 +57,7 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         angle_rad = M_PI/180*angle_deg;
 
 
-        switch(mapIterator->second->getPlayerId())
+        switch(vecIterator->get()->getPlayerId())
         {
             case 0:
                 pen.setColor(Qt::blue);
@@ -76,15 +77,11 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
                 painter->drawText(QPoint( (SIZE/2) * cos(angle_rad), (SIZE/2) * sin(angle_rad)),pawnMarker);
             break;
 
-            case 3:
-                pen.setColor(Qt::black);
-                painter->setPen(pen);
-                painter->drawText(QPoint( (SIZE/2) * cos(angle_rad), (SIZE/2) * sin(angle_rad)),pawnMarker);
-            break;
+
         }
 
 
-        mapIterator++;
+        vecIterator++;
     }
 
 }
@@ -150,14 +147,6 @@ void graphicalHex::setColor()
     update();
 }
 
-void graphicalHex::addPawn(std::shared_ptr<Common::Pawn> pawn)
-{
-    if(pawn==nullptr)
-    {
-        return;
-    }
-    pawns_[pawn->getId()] = pawn;
-}
 
 Common::CubeCoordinate graphicalHex::getCoordinates()
 {
@@ -174,29 +163,21 @@ void graphicalHex::deSelect()
     pressed_ = false;
 }
 
-void graphicalHex::removePawn(std::shared_ptr<Common::Pawn> pawn)
-{
-    if (pawn != nullptr) {
-        pawns_.erase(pawn->getId());
-        update();
-    }
-}
-
 
 
 
 std::shared_ptr<Common::Pawn> graphicalHex::getPlayerPawn(int playerId)
 {
-    std::shared_ptr<Common::Pawn> pawnPointer = nullptr;
-    for(std::map<int,std::shared_ptr<Common::Pawn>>::const_iterator it = pawns_.begin();it!=pawns_.end();it++)
+    std::vector<std::shared_ptr<Common::Pawn>> pawns = realHex_->getPawns();
+    for(std::shared_ptr<Common::Pawn> pawn:pawns)
     {
-        if(it->second->getPlayerId() == playerId)
+        if(pawn->getPlayerId() == playerId)
         {
-            return it->second;
+            return pawn;
         }
     }
 
-    return pawnPointer;
+    return nullptr;
 }
 
 
@@ -214,5 +195,10 @@ void graphicalHex::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     pressed_ = false;
     update();
     QGraphicsItem::mouseReleaseEvent(event);
+}
+
+void graphicalHex::updateGraphicHex()
+{
+    update();
 }
 }
