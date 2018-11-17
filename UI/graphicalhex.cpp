@@ -57,7 +57,7 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         {
             break;
         }
-        angle_deg = 60*c;
+        angle_deg = 140*c-120;
         angle_rad = M_PI/180*angle_deg;
 
 

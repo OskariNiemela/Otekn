@@ -26,6 +26,7 @@ BuildUnitTests:
       - Tests/UnitTests/*/bin
       - Tests/IntegrationTests/*/bin
       - Tests/UnitTests/GameBoardTest/tst_gameboardtest
+      - Tests/UnitTests/GameStateTest/tst_gamestatetest
     expire_in: 2d
 
 GameBoardTest:
@@ -35,6 +36,16 @@ GameBoardTest:
   script:
     - cd Tests/UnitTests/GameBoardTest
     - ./tst_gameboardtest
+  dependencies:
+    - BuildUnitTests
+
+GameStateTest:
+  stage: test
+  tags:
+    - qt
+  script:
+    - cd Tests/UnitTests/GameStateTest
+    - ./tst_gamestatetest
   dependencies:
     - BuildUnitTests
 
