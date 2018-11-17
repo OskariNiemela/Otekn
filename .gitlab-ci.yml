@@ -25,6 +25,7 @@ BuildUnitTests:
     paths:
       - Tests/UnitTests/*/bin
       - Tests/IntegrationTests/*/bin
+      - Tests/UnitTests/GameBoardTest/tst_gameboardtest
     expire_in: 2d
 
 GameBoardTest:
@@ -36,6 +37,7 @@ GameBoardTest:
     - ./tst_gameboardtest
   dependencies:
     - BuildUnitTests
+
 # Compile and prepare the source code for analysis.
 # The output is stored in directory bw_output
 PrepareAnalysis:
