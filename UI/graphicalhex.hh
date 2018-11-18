@@ -5,6 +5,7 @@
 #include "hex.hh"
 #include "pawn.hh"
 #include "actor.hh"
+#include "transport.hh"
 
 #include <iostream>
 #include <QWidget>

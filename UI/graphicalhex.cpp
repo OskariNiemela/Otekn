@@ -150,26 +150,29 @@ void graphicalHex::setBackground()
 {
     // Actors on tile
     if (!realHex_->getActorTypes().empty()) {
-        if (realHex_->getActorTypes().at(0) == "Boat") {
-            _backgroundImage.load(":Images/coral.png");
-        }
-        else if (realHex_->getActorTypes().at(0) == "Dolphin") {
-            _backgroundImage.load(":Images/dolphin.png");
-        }
-        else if (realHex_->getActorTypes().at(0) == "Shark") {
+        if (realHex_->getActorTypes().at(0) == "shark") {
             _backgroundImage.load(":Images/shark.png");
         }
-        else if (realHex_->getActorTypes().at(0) == "Seamonster") {
+        else if (realHex_->getActorTypes().at(0) == "sea munster") {
             _backgroundImage.load(":Images/seamonster.png");
         }
-        else if (realHex_->getActorTypes().at(0) == "Kraken") {
+        else if (realHex_->getActorTypes().at(0) == "kraken") {
             _backgroundImage.load(":Images/kraken.png");
         }
-        else if (realHex_->getActorTypes().at(0) == "Vortex") {
+        else if (realHex_->getActorTypes().at(0) == "vortex") {
             _backgroundImage.load(":Images/vortex.png");
         }
     }
-    // No actors
+    // Transports on tile
+    else if (!realHex_->getTransports().empty()) {
+        if (realHex_->getTransports().at(0)->getTransportType() == "dolphin") {
+            _backgroundImage.load(":Images/dolphin.png");
+        }
+        else if (realHex_->getTransports().at(0)->getTransportType() == "boat") {
+            _backgroundImage.load(":Images/boat.png");
+        }
+    }
+    // No actors or transports (at least yet)
     else {
         if (realHex_->getPieceType() == "Peak") {
             _backgroundImage.load(":Images/peak.png");
