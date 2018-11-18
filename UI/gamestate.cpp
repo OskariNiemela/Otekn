@@ -10,11 +10,6 @@ GameState::GameState():
 
 }
 
-GameState::~GameState()
-{
-
-}
-
 int GameState::currentPlayer() const
 {
     return _currentPlayer;

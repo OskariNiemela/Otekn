@@ -30,7 +30,8 @@
 #include <QLabel>
 #include <QPixmap>
 
-
+namespace Student
+{
 class Mainwindow : public QMainWindow
 {
     Q_OBJECT
@@ -58,14 +59,19 @@ private:
     std::shared_ptr<Common::Pawn> selectedPawn;
 
 
+    void changePlayers(Common::GamePhase phase);
+
+    QWidget* _widget;
 public slots:
     void initializePlayers(int amount);
     void hexClick(std::shared_ptr<Common::Hex> chosenHex);
-    void giveHexFrom(Common::CubeCoordinate coorTo);
+
     void hexScore();
 signals:
-    void deleteOldPawn(Common::CubeCoordinate,std::shared_ptr<Common::Pawn> pawnId,Common::CubeCoordinate coorTo);
-
+    void updateHexes();
 };
+
+
+}
 
 #endif // MAINWINDOW_HH

@@ -1,6 +1,7 @@
 #include "mainwindow.hh"
 
-
+namespace Student
+{
 
 Mainwindow::Mainwindow(QWidget *parent)
     : QMainWindow(parent),
@@ -12,28 +13,82 @@ Mainwindow::Mainwindow(QWidget *parent)
       moveTo(nullptr),
       selectedPawn(nullptr),
       _trackingScore(std::make_shared<Student::ScoreTracker>()),
-      _scene(new QGraphicsScene)
+      _scene(new QGraphicsScene),
+      _widget(nullptr)
       //_gameEngine(Logic::GameEngine(_board, _gameState, _players))
 {
     _board->setScene(_scene);
-    connect(_board.get(),&Student::GameBoard::hexClicked,this,&Mainwindow::hexClick);
-    connect(_board.get(),&Student::GameBoard::getHexFrom,this,&Mainwindow::giveHexFrom);
-    connect(this,&Mainwindow::deleteOldPawn,_board.get(),&Student::GameBoard::deleteOldPawn);
-    connect(_board.get(),&Student::GameBoard::hexScore,this,&Mainwindow::hexScore);
+
+    connect(this,&Mainwindow::updateHexes,
+            _board.get(),&Student::GameBoard::updateHexes);
+
+    connect(_board.get(),&Student::GameBoard::hexClicked,
+            this,&Mainwindow::hexClick);
+
+    //connect(_board.get(),&Student::GameBoard::getHexFrom,
+    //        this,&Mainwindow::giveHexFrom);
+
+    connect(_board.get(),&Student::GameBoard::hexScore,
+            this,&Mainwindow::hexScore);
+}
+
+void Mainwindow::changePlayers(Common::GamePhase phase)
+{
+    switch(phase)
+    {
+        case Common::MOVEMENT:
+            //Change player turn
+            if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
+            {
+                _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
+                _trackingScore->changePlayer(_gameState->currentPlayer());
+                _players.at(_gameState->currentPlayer())->setActionsLeft(3);
+            }
+            else
+            {
+                _gameState->changeGamePhase(Common::SINKING);
+                _trackingScore->changeGamePhase(_gameState->currentGamePhase());
+                _gameState->changePlayerTurn(0);
+                _trackingScore->changePlayer(_gameState->currentPlayer());
+            }
+        break;
+
+        case Common::SINKING:
+            if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
+            {
+                _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
+                _trackingScore->changePlayer(_gameState->currentPlayer());
+            }
+            else
+            {
+                _gameState->changeGamePhase(Common::MOVEMENT);
+                _trackingScore->changeGamePhase(_gameState->currentGamePhase());
+                _gameState->changePlayerTurn(0);
+                _trackingScore->changePlayer(_gameState->currentPlayer());
+                _players.at(_gameState->currentPlayer())->setActionsLeft(3);
+            }
+        break;
+
+        default:
+
+        break;
+
+
+    }
+
 }
 
 void Mainwindow::initializePlayers(int amount)
 {
     for(int a = 0;a<amount;a++)
     {
-        std::shared_ptr<Common::IPlayer> newPlayer = std::make_shared<Student::Player>(a);
+        std::shared_ptr<Common::IPlayer> newPlayer =
+                std::make_shared<Student::Player>(a);
+
         _players.push_back(newPlayer);
-
-
     }
 
-        _gameEngine = Common::Initialization::getGameRunner(_board,_gameState,_players);
-
+    _gameEngine = Common::Initialization::getGameRunner(_board,_gameState,_players);
 
     for(auto player:_players)
     {
@@ -49,31 +104,22 @@ void Mainwindow::initializePlayers(int amount)
 
     QVBoxLayout* vLayout = new QVBoxLayout(this);
 
-    QColor colour(100,100,100);
-    QPixmap colorMap(64,64);
 
-    QLabel* label = new QLabel(this);
     _trackingScore->changeGamePhase(_gameState->currentGamePhase());
     _trackingScore->initializeScores(_gameEngine->playerAmount());
     vLayout->addWidget(_trackingScore.get());
 
-    colorMap.fill(colour);
-
-    label->setPixmap(colorMap);
-
-    vLayout->addWidget(label);
-
 
     hLayout->addLayout(vLayout);
 
-    QWidget* widget = new QWidget();
-    widget->setLayout(hLayout);
-    widget->show();
+    _widget = new QWidget();
+    _widget->setLayout(hLayout);
+    _widget->show();
 }
 
 void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
 {
-    //TO DO: MAKE HEX CLICKS DO STUFF
+
     if(_gameState->currentGamePhase() == Common::MOVEMENT)
     {
         if (selectedHex == nullptr)
@@ -91,6 +137,7 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
             {
                 _board->setSelected(selectedHex->getCoordinates());
             }
+            emit updateHexes();
         }
         else
         {
@@ -107,21 +154,8 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
                 selectedPawn = nullptr;
                 if(_players.at(_gameState->currentPlayer())->getActionsLeft() <= 0)
                 {
+                    changePlayers(_gameState->currentGamePhase());
 
-                    //Change player turn
-                    if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
-                    {
-                        _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
-                        _trackingScore->changePlayer(_gameState->currentPlayer());
-                        _players.at(_gameState->currentPlayer())->setActionsLeft(3);
-                    }
-                    else
-                    {
-                        _gameState->changeGamePhase(Common::SINKING);
-                        _trackingScore->changeGamePhase(_gameState->currentGamePhase());
-                        _gameState->changePlayerTurn(0);
-                        _trackingScore->changePlayer(_gameState->currentPlayer());
-                    }
                 }
             }
             catch(Common::IllegalMoveException i)
@@ -139,35 +173,20 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
             _gameEngine->flipTile(chosenHex->getCoordinates());
             _board->flipTile(chosenHex->getCoordinates());
             //Change player turn
-            if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
-            {
-                _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
-                _trackingScore->changePlayer(_gameState->currentPlayer());
-            }
-            else
-            {
-                _gameState->changeGamePhase(Common::MOVEMENT);
-                _trackingScore->changeGamePhase(_gameState->currentGamePhase());
-                _gameState->changePlayerTurn(0);
-                _trackingScore->changePlayer(_gameState->currentPlayer());
-                _players.at(_gameState->currentPlayer())->setActionsLeft(3);
-            }
+
+            changePlayers(_gameState->currentGamePhase());
+
         }
         catch (Common::IllegalMoveException i)
         {
             std::cout<<i.msg()<<std::endl;
         }
     }
-}
+    else
+    {
 
-void Mainwindow::giveHexFrom(Common::CubeCoordinate coorTo)
-{
-    Common::CubeCoordinate coord = selectedHex->getCoordinates();
-    _board->deSelect(selectedHex->getCoordinates());
-    emit deleteOldPawn(coord,selectedPawn,coorTo);
-
-    selectedHex = nullptr;
-    selectedPawn = nullptr;
+    }
+    emit updateHexes();
 }
 
 
@@ -178,4 +197,4 @@ void Mainwindow::hexScore()
 }
 
 
-
+}

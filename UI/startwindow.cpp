@@ -1,5 +1,7 @@
 #include "startwindow.hh"
 
+namespace Student
+{
 startWindow::startWindow(QWidget *parent):
     QDialog(parent),_playerNumber(new QSpinBox())
 {
@@ -18,9 +20,9 @@ startWindow::startWindow(QWidget *parent):
     layout->addWidget(_playerNumber);
     layout->addWidget(confirm);
 
-    QWidget* widget = new QWidget(this);
-    widget->setLayout(layout);
-    widget->show();
+    _widget = new QWidget(this);
+    _widget->setLayout(layout);
+    _widget->show();
 
     connect(confirm, &QPushButton::clicked, this, &startWindow::accept);
 }
@@ -28,9 +30,7 @@ startWindow::startWindow(QWidget *parent):
 void startWindow::accept()
 {
     QDialog::accept();
-
     emit sendValue(_playerNumber->value());
-
 }
 
 void startWindow::reject()
@@ -39,3 +39,7 @@ void startWindow::reject()
 
     emit rejected();
 }
+
+}
+
+

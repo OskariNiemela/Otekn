@@ -4,12 +4,15 @@
 
 #include "gameboard.hh"
 
+
+
+
 class GameBoardTest : public QObject
 {
     Q_OBJECT
 
 public:
-    GameBoardTest();
+    GameBoardTest() = default;
 
 private Q_SLOTS:
     void testAddHex();
@@ -19,9 +22,6 @@ private Q_SLOTS:
     void testMovePawn();
 };
 
-GameBoardTest::GameBoardTest()
-{
-}
 
 void GameBoardTest::testAddHex()
 {
@@ -95,3 +95,4 @@ void GameBoardTest::testMovePawn()
 QTEST_APPLESS_MAIN(GameBoardTest)
 
 #include "tst_gameboardtest.moc"
+

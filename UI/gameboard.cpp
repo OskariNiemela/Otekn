@@ -15,7 +15,10 @@ GameBoard::GameBoard():
 
 GameBoard::~GameBoard()
 {
-
+    if(scene_!=nullptr)
+    {
+        delete(scene_);
+    }
 }
 
 int GameBoard::checkTileOccupation(Common::CubeCoordinate tileCoord) const
@@ -59,7 +62,6 @@ void GameBoard::addPawn(int playerId, int pawnId)
     newPawn->setId(pawnId,playerId);
     newPawn->setCoordinates(coord);
     _map_tiles[coord]->addPawn(newPawn);
-    graphic_tiles[coord]->addPawn(newPawn);
     _game_pawns[pawnId] = newPawn;
 
 }
@@ -70,7 +72,6 @@ void GameBoard::addPawn(int playerId, int pawnId, Common::CubeCoordinate coord)
     newPawn->setId(pawnId,playerId);
     newPawn->setCoordinates(coord);
     _map_tiles[coord]->addPawn(newPawn);
-    graphic_tiles[coord]->addPawn(newPawn);
     _game_pawns[pawnId] = newPawn;
 }
 
@@ -82,17 +83,15 @@ void GameBoard::movePawn(int pawnId, Common::CubeCoordinate pawnCoord)
         std::shared_ptr<Common::Pawn> movingPawn= _game_pawns.at(pawnId);
         graphic_tiles.at(movingPawn->getCoordinates())->deSelect();
         _map_tiles.at(movingPawn->getCoordinates())->removePawn(movingPawn);
-        graphic_tiles.at(movingPawn->getCoordinates())->removePawn(movingPawn);
         _game_pawns.at(pawnId)->setCoordinates(pawnCoord);
         _map_tiles.at(pawnCoord)->addPawn(movingPawn);
-        graphic_tiles.at(pawnCoord)->addPawn(movingPawn);
+
     }
     else
     {
         std::shared_ptr<Common::Pawn> movingPawn= _game_pawns.at(pawnId);
         graphic_tiles.at(movingPawn->getCoordinates())->deSelect();
         _map_tiles.at(movingPawn->getCoordinates())->removePawn(movingPawn);
-        graphic_tiles.at(movingPawn->getCoordinates())->removePawn(movingPawn);
         _game_pawns.erase(pawnId);
         emit hexScore();
     }
@@ -106,7 +105,6 @@ void GameBoard::removePawn(int pawnId)
         std::shared_ptr<Common::Pawn> pawnRemoved = _game_pawns.at(pawnId);
         _game_pawns.erase(pawnId);
         _map_tiles.at(pawnRemoved->getCoordinates())->removePawn(pawnRemoved);
-        graphic_tiles.at(pawnRemoved->getCoordinates())->removePawn(pawnRemoved);
     }
 }
 
@@ -153,6 +151,7 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
     hex->setColor();
     graphic_tiles[hex->getCoordinates()] = hex;
     connect(hex,&graphicalHex::hexClicked,this,&GameBoard::hexClick);
+    connect(this,&GameBoard::hexUpdate,hex,&graphicalHex::updateGraphicHex);
 }
 
 void GameBoard::addTransport(std::shared_ptr<Common::Transport> transport, Common::CubeCoordinate coord)
@@ -212,12 +211,9 @@ void GameBoard::hexClick(std::shared_ptr<Common::Hex> clickedHex)
     emit hexClicked(clickedHex);
 }
 
-void GameBoard::deleteOldPawn(Common::CubeCoordinate coordDelete, std::shared_ptr<Common::Pawn> pawn,Common::CubeCoordinate goTo)
+void GameBoard::updateHexes()
 {
-    _map_tiles.at(goTo)->addPawn(pawn);
-    graphic_tiles.at(goTo)->addPawn(pawn);
-    _map_tiles.at(coordDelete)->removePawn(pawn);
-    graphic_tiles.at(coordDelete)->removePawn(pawn);
+    emit hexUpdate();
 }
 
 std::shared_ptr<Common::Pawn> GameBoard::getPawn(int pawnId) const
