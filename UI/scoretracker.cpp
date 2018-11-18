@@ -26,6 +26,39 @@ void ScoreTracker::scorePlayer(int playerId)
     playerLabels.at(playerId)->setText(scoreTextQ);
 }
 
+std::vector<int> ScoreTracker::getScores()
+{
+    return playerScores;
+}
+
+void ScoreTracker::displayWinner()
+{
+    for(auto a:playerLabels)
+    {
+        a->setText("");
+    }
+    std::string phaseText = "Congrats";
+    QString phaseTextQ = QString::fromStdString(phaseText);
+    gamePhase->setText(phaseTextQ);
+
+    int player = -1;
+    int maxScore = -1;
+    int nowPlayer = 0;
+    for(int a:playerScores)
+    {
+        if(a>maxScore)
+        {
+            maxScore = a;
+            player = nowPlayer;
+        }
+
+        ++nowPlayer;
+    }
+    std::string playerText = "Player " + std::to_string(player) +" Wins";
+    QString playerTextQ = QString::fromStdString(playerText);
+    playerTurn->setText(playerTextQ);
+}
+
 
 void ScoreTracker::changePlayer(int currentPlayer)
 {

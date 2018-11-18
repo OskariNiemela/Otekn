@@ -141,17 +141,17 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
 
     _tiles.push_back(newHex);
     _map_tiles[newHex->getCoordinates()] = newHex;
-    graphicalHex* hex = new graphicalHex();
+    std::shared_ptr<graphicalHex> hex = std::make_shared<graphicalHex>();
     if(scene_ != nullptr)
     {
-        scene_->addItem(hex);
+        scene_->addItem(hex.get());
     }
     hex->setPosition(newHex->getCoordinates());
     hex->setHex(newHex);
     hex->setColor();
     graphic_tiles[hex->getCoordinates()] = hex;
-    connect(hex,&graphicalHex::hexClicked,this,&GameBoard::hexClick);
-    connect(this,&GameBoard::hexUpdate,hex,&graphicalHex::updateGraphicHex);
+    connect(hex.get(),&graphicalHex::hexClicked,this,&GameBoard::hexClick);
+    connect(this,&GameBoard::hexUpdate,hex.get(),&graphicalHex::updateGraphicHex);
 }
 
 void GameBoard::addTransport(std::shared_ptr<Common::Transport> transport, Common::CubeCoordinate coord)
@@ -232,6 +232,30 @@ Common::CubeCoordinate GameBoard::getPawnCoordinate(int pawnId) const
         return _game_pawns.at(pawnId)->getCoordinates();
     }
     throw Common::GameException("No such pawn when getting pawn coordinate");
+}
+
+bool GameBoard::playerHasPawns(int playerId)
+{
+    std::map<int, std::shared_ptr<Common::Pawn>>::const_iterator it = _game_pawns.begin();
+
+    while(it != _game_pawns.end())
+    {
+        if(it->second->getPlayerId() == playerId)
+        {
+            return true;
+        }
+        it++;
+    }
+    return false;
+}
+
+bool GameBoard::anyPawnsIngame()
+{
+    if(_game_pawns.size()>0)
+    {
+        return true;
+    }
+    return false;
 }
 
 
