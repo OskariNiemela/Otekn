@@ -31,6 +31,9 @@ HEADERS  += \
     startwindow.hh \
     scoretracker.hh
 
+RESOURCES += \
+    Images
+
 INCLUDEPATH += $$PWD/../GameLogic/Engine
 DEPENDPATH += $$PWD/../GameLogic/Engine
 
