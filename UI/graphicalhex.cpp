@@ -31,7 +31,12 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
     }
 
-    QBrush brush(backgroundColor);
+    QBrush brush(_backgroundImage);
+    QTransform transform;
+    transform.scale(0.35, 0.4);
+    transform.translate(-60, -60);
+    brush.setTransform(transform);
+
     QPen pen(Qt::black, 1);
     if (pressed_) {
         pen.setColor(Qt::red);
@@ -141,29 +146,52 @@ void graphicalHex::setHex(std::shared_ptr<Common::Hex> newHex)
     realHex_ = newHex;
 }
 
-void graphicalHex::setColor()
+void graphicalHex::setBackground()
 {
-    if (realHex_->getPieceType() == "Peak") {
-        backgroundColor.setRgb(198, 198, 198);
+    // Actors on tile
+    if (!realHex_->getActorTypes().empty()) {
+        if (realHex_->getActorTypes().at(0) == "shark") {
+            _backgroundImage.load(":Images/shark.png");
+        }
+        else if (realHex_->getActorTypes().at(0) == "sea munster") {
+            _backgroundImage.load(":Images/seamonster.png");
+        }
+        else if (realHex_->getActorTypes().at(0) == "kraken") {
+            _backgroundImage.load(":Images/kraken.png");
+        }
+        else if (realHex_->getActorTypes().at(0) == "vortex") {
+            _backgroundImage.load(":Images/vortex.png");
+        }
     }
-    else if (realHex_->getPieceType() == "Mountain") {
-        backgroundColor.setRgb(132, 132, 132);
+    // Transports on tile
+    else if (!realHex_->getTransports().empty()) {
+        if (realHex_->getTransports().at(0)->getTransportType() == "dolphin") {
+            _backgroundImage.load(":Images/dolphin.png");
+        }
+        else if (realHex_->getTransports().at(0)->getTransportType() == "boat") {
+            _backgroundImage.load(":Images/boat.png");
+        }
     }
-    else if (realHex_->getPieceType() == "Forest") {
-        backgroundColor.setRgb(48, 178, 56);
-    }
-    else if (realHex_->getPieceType() == "Beach") {
-        backgroundColor.setRgb(219, 210, 129);
-    }
-    else if (realHex_->getPieceType() == "Water") {
-        backgroundColor.setRgb(112, 187, 224);
-    }
-    else if (realHex_->getPieceType() == "Coral") {
-        backgroundColor.setRgb(237, 216, 255);
-    }
-    else
-    {
-        backgroundColor.setRgb(0,0,0);
+    // No actors or transports (at least yet)
+    else {
+        if (realHex_->getPieceType() == "Peak") {
+            _backgroundImage.load(":Images/peak.png");
+        }
+        else if (realHex_->getPieceType() == "Mountain") {
+            _backgroundImage.load(":Images/mountain.png");
+        }
+        else if (realHex_->getPieceType() == "Forest") {
+            _backgroundImage.load(":Images/forest.png");
+        }
+        else if (realHex_->getPieceType() == "Beach") {
+            _backgroundImage.load(":Images/beach.png");
+        }
+        else if (realHex_->getPieceType() == "Water") {
+            _backgroundImage.load(":Images/water.png");
+        }
+        else if (realHex_->getPieceType() == "Coral") {
+            _backgroundImage.load(":Images/coral.png");
+        }
     }
     update();
 }

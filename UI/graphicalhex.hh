@@ -4,7 +4,10 @@
 #include "cubecoordinate.hh"
 #include "hex.hh"
 #include "pawn.hh"
+#include "actor.hh"
+#include "transport.hh"
 
+#include <iostream>
 #include <QWidget>
 #include <QGraphicsItem>
 #include <QPen>
@@ -17,6 +20,8 @@
 #include <QColor>
 #include <QBrush>
 #include <QString>
+#include <QImage>
+#include <QTransform>
 
 const int SIZE = 28;
 
@@ -39,7 +44,7 @@ public:
 
     void setPosition(Common::CubeCoordinate coord);
     void setHex(std::shared_ptr<Common::Hex> newHex);
-    void setColor();
+    void setBackground();
 
     Common::CubeCoordinate getCoordinates();
     void select();
@@ -61,6 +66,7 @@ private:
     Common::CubeCoordinate coordinate_;
     std::shared_ptr<Common::Hex> realHex_;
     QColor backgroundColor;
+    QImage _backgroundImage;
 };
 }
 #endif // GRAPHICALHEX_HH
