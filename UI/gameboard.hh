@@ -48,6 +48,8 @@ public:
     void setScene(QGraphicsScene *scene);
     std::shared_ptr<Common::Pawn> getPawn(int pawnId) const;
     Common::CubeCoordinate getPawnCoordinate(int pawnId) const;
+    bool playerHasPawns(int playerId);
+    bool anyPawnsIngame();
 public slots:
     void hexClick(std::shared_ptr<Common::Hex> clickedHex);
     void updateHexes();
@@ -57,7 +59,8 @@ signals:
     void hexUpdate();
 private:
     std::map<Common::CubeCoordinate,std::shared_ptr<Common::Hex>> _tiles;
-    std::map<Common::CubeCoordinate,Student::graphicalHex*> graphic_tiles;
+    std::map<Common::CubeCoordinate,std::shared_ptr<Student::graphicalHex>> graphic_tiles;
+
     std::map<int, std::shared_ptr<Common::Pawn>> _game_pawns;
     std::map<int, std::shared_ptr<Common::Actor>> _actors;
     std::map<int, std::shared_ptr<Common::Transport>> _transports;

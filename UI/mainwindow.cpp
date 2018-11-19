@@ -34,10 +34,16 @@ Mainwindow::Mainwindow(QWidget *parent)
 
 void Mainwindow::changePlayers(Common::GamePhase phase)
 {
+    if(!_board->anyPawnsIngame())
+    {
+        _trackingScore->displayWinner();
+        return;
+    }
     switch(phase)
     {
         case Common::MOVEMENT:
             //Change player turn
+
             if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
             {
                 _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
@@ -50,7 +56,27 @@ void Mainwindow::changePlayers(Common::GamePhase phase)
                 _trackingScore->changeGamePhase(_gameState->currentGamePhase());
                 _gameState->changePlayerTurn(0);
                 _trackingScore->changePlayer(_gameState->currentPlayer());
+                break;
             }
+
+            while(!_board->playerHasPawns(_gameState->currentPlayer()))
+            {
+                if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
+                {
+                    _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
+                    _trackingScore->changePlayer(_gameState->currentPlayer());
+                    _players.at(_gameState->currentPlayer())->setActionsLeft(3);
+                }
+                else
+                {
+                    _gameState->changeGamePhase(Common::SINKING);
+                    _trackingScore->changeGamePhase(_gameState->currentGamePhase());
+                    _gameState->changePlayerTurn(0);
+                    _trackingScore->changePlayer(_gameState->currentPlayer());
+                    break;
+                }
+            }
+
         break;
 
         case Common::SINKING:
@@ -61,11 +87,28 @@ void Mainwindow::changePlayers(Common::GamePhase phase)
             }
             else
             {
-                _gameState->changeGamePhase(Common::MOVEMENT);
-                _trackingScore->changeGamePhase(_gameState->currentGamePhase());
                 _gameState->changePlayerTurn(0);
-                _trackingScore->changePlayer(_gameState->currentPlayer());
                 _players.at(_gameState->currentPlayer())->setActionsLeft(3);
+                _gameState->changeGamePhase(Common::MOVEMENT);
+                _trackingScore->changePlayer(_gameState->currentPlayer());
+                _trackingScore->changeGamePhase(_gameState->currentGamePhase());
+                while(!_board->playerHasPawns(_gameState->currentPlayer()))
+                {
+                    if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
+                    {
+                        _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
+                        _trackingScore->changePlayer(_gameState->currentPlayer());
+                        _players.at(_gameState->currentPlayer())->setActionsLeft(3);
+                    }
+                    else
+                    {
+                        _gameState->changeGamePhase(Common::SINKING);
+                        _trackingScore->changeGamePhase(_gameState->currentGamePhase());
+                        _gameState->changePlayerTurn(0);
+                        _trackingScore->changePlayer(_gameState->currentPlayer());
+                        break;
+                    }
+                }
             }
         break;
 

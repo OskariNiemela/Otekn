@@ -19,6 +19,8 @@ class ScoreTracker : public QFrame
 public:
     ScoreTracker();
     void scorePlayer(int playerId);
+    std::vector<int> getScores();
+    void displayWinner();
 public slots:
     void changePlayer(int currentPlayer);
     void initializeScores(int playerAmount);
