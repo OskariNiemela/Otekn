@@ -24,22 +24,22 @@ GameBoard::~GameBoard()
 int GameBoard::checkTileOccupation(Common::CubeCoordinate tileCoord) const
 {
     // Onko ruutu olemassa
-    if (_map_tiles.find(tileCoord) == _map_tiles.end()) {
+    if (_tiles.find(tileCoord) == _tiles.end()) {
         return -1;
     }
 
     // Pawnien lukumäärä
-    return _map_tiles.at(tileCoord)->getPawnAmount();
+    return _tiles.at(tileCoord)->getPawnAmount();
 }
 
 bool GameBoard::isWaterTile(Common::CubeCoordinate tileCoord) const
 {
     // Onko ruutu olemassa
-    if (_map_tiles.find(tileCoord) == _map_tiles.end()) {
+    if (_tiles.find(tileCoord) == _tiles.end()) {
         return false;
     }
 
-    if (_map_tiles.at(tileCoord)->getPieceType() == "Water") {
+    if (_tiles.at(tileCoord)->getPieceType() == "Water") {
         return true;
     }
 
@@ -48,9 +48,9 @@ bool GameBoard::isWaterTile(Common::CubeCoordinate tileCoord) const
 
 std::shared_ptr<Common::Hex> GameBoard::getHex(Common::CubeCoordinate hexCoord) const
 {
-    if(_map_tiles.find(hexCoord) != _map_tiles.end())
+    if (_tiles.find(hexCoord) != _tiles.end())
     {
-        return _map_tiles.at(hexCoord);
+        return _tiles.at(hexCoord);
     }
     return nullptr;
 }
@@ -61,7 +61,7 @@ void GameBoard::addPawn(int playerId, int pawnId)
     std::shared_ptr<Common::Pawn> newPawn = std::make_shared<Common::Pawn>();
     newPawn->setId(pawnId,playerId);
     newPawn->setCoordinates(coord);
-    _map_tiles[coord]->addPawn(newPawn);
+    _tiles[coord]->addPawn(newPawn);
     _game_pawns[pawnId] = newPawn;
 
 }
@@ -71,27 +71,27 @@ void GameBoard::addPawn(int playerId, int pawnId, Common::CubeCoordinate coord)
     std::shared_ptr<Common::Pawn> newPawn = std::make_shared<Common::Pawn>();
     newPawn->setId(pawnId,playerId);
     newPawn->setCoordinates(coord);
-    _map_tiles[coord]->addPawn(newPawn);
+    _tiles[coord]->addPawn(newPawn);
     _game_pawns[pawnId] = newPawn;
 }
 
 void GameBoard::movePawn(int pawnId, Common::CubeCoordinate pawnCoord)
 {
     //emit getHexFrom(pawnCoord);
-    if(_map_tiles.at(pawnCoord)->getPieceType() != "Coral")
+    if(_tiles.at(pawnCoord)->getPieceType() != "Coral")
     {
         std::shared_ptr<Common::Pawn> movingPawn= _game_pawns.at(pawnId);
         graphic_tiles.at(movingPawn->getCoordinates())->deSelect();
-        _map_tiles.at(movingPawn->getCoordinates())->removePawn(movingPawn);
+        _tiles.at(movingPawn->getCoordinates())->removePawn(movingPawn);
         _game_pawns.at(pawnId)->setCoordinates(pawnCoord);
-        _map_tiles.at(pawnCoord)->addPawn(movingPawn);
+        _tiles.at(pawnCoord)->addPawn(movingPawn);
 
     }
     else
     {
         std::shared_ptr<Common::Pawn> movingPawn= _game_pawns.at(pawnId);
         graphic_tiles.at(movingPawn->getCoordinates())->deSelect();
-        _map_tiles.at(movingPawn->getCoordinates())->removePawn(movingPawn);
+        _tiles.at(movingPawn->getCoordinates())->removePawn(movingPawn);
         _game_pawns.erase(pawnId);
         emit hexScore();
     }
@@ -104,17 +104,17 @@ void GameBoard::removePawn(int pawnId)
     {
         std::shared_ptr<Common::Pawn> pawnRemoved = _game_pawns.at(pawnId);
         _game_pawns.erase(pawnId);
-        _map_tiles.at(pawnRemoved->getCoordinates())->removePawn(pawnRemoved);
+        _tiles.at(pawnRemoved->getCoordinates())->removePawn(pawnRemoved);
     }
 }
 
 void GameBoard::addActor(std::shared_ptr<Common::Actor> actor, Common::CubeCoordinate actorCoord)
 {
-    // Tarkistaa onko ruutu olemassa
-    if (_map_tiles.find(actorCoord) != _map_tiles.end()) {
+    // Tarkistaa onko ruutu ja actor olemassa
+    if (_tiles.find(actorCoord) != _tiles.end() && actor != nullptr) {
 
         // Lisää hex-oliolle actorin
-        actor->addHex(_map_tiles.at(actorCoord));
+        actor->addHex(_tiles.at(actorCoord));
 
         // Lisää actorin erilliseen mappiin
         _actors.insert(std::pair<int, std::shared_ptr<Common::Actor>>(actor->getId(), actor));
@@ -123,9 +123,11 @@ void GameBoard::addActor(std::shared_ptr<Common::Actor> actor, Common::CubeCoord
 
 void GameBoard::moveActor(int actorId, Common::CubeCoordinate actorCoord)
 {
-    // Tarkistetaan onko actor olemassa ja jos on, vaihdetaan sen sijaintia
-    if (_actors.find(actorId) != _actors.end()) {
-        _actors.at(actorId)->move(_map_tiles.at(actorCoord));
+    // Tarkistetaan onko koordinaatit olemassa
+    if (_tiles.find(actorCoord) != _tiles.end()) {
+
+        // Asetetaan actor-osoitin uusiin koordinaatteihin
+        _actors.at(actorId)->move(_tiles.at(actorCoord));
     }
 }
 
@@ -148,7 +150,7 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
     }
     hex->setPosition(newHex->getCoordinates());
     hex->setHex(newHex);
-    hex->setColor();
+    hex->setBackground();
     graphic_tiles[hex->getCoordinates()] = hex;
     connect(hex.get(),&graphicalHex::hexClicked,this,&GameBoard::hexClick);
     connect(this,&GameBoard::hexUpdate,hex.get(),&graphicalHex::updateGraphicHex);
@@ -156,22 +158,31 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
 
 void GameBoard::addTransport(std::shared_ptr<Common::Transport> transport, Common::CubeCoordinate coord)
 {
-    _map_tiles.at(coord)->addTransport(transport);
+    _tiles.at(coord)->addTransport(transport);
+    _transports.insert(std::pair<int, std::shared_ptr<Common::Transport>>(transport->getId(), transport));
 }
 
 void GameBoard::moveTransport(int id, Common::CubeCoordinate coord)
 {
+    if (_tiles.find(coord) != _tiles.end()) {
+        // Remove transport from its previous location
+        _transports.at(id)->getHex()->removeTransport(_transports.at(id));
 
+        // Add transport to new coordinates
+        _tiles.at(coord)->addTransport(_transports.at(id));
+    }
 }
 
 void GameBoard::removeTransport(int id)
 {
-
+    // Remove transport from hex and _transports map
+    _transports.at(id)->getHex()->removeTransport(_transports.at(id));
+    _transports.erase(id);
 }
 
 void GameBoard::flipTile(Common::CubeCoordinate coord)
 {
-    graphic_tiles.at(coord)->setColor();
+    graphic_tiles.at(coord)->setBackground();
 }
 
 //Kun scene on rakennettu, palautetaan se mainwindowille

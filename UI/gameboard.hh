@@ -15,6 +15,7 @@
 #include "actor.hh"
 #include "actorfactory.hh"
 #include "gameexception.hh"
+#include "transport.hh"
 
 namespace Student
 {
@@ -62,6 +63,7 @@ private:
     std::vector<std::shared_ptr<Common::Hex>> _tiles;
     std::map<int, std::shared_ptr<Common::Pawn>> _game_pawns;
     std::map<int, std::shared_ptr<Common::Actor>> _actors;
+    std::map<int, std::shared_ptr<Common::Transport>> _transports;
     QGraphicsScene* scene_;
 
 };
