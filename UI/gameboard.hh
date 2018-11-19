@@ -58,7 +58,6 @@ signals:
     void hexScore();
     void hexUpdate();
 private:
-
     std::map<Common::CubeCoordinate,std::shared_ptr<Common::Hex>> _tiles;
     std::map<Common::CubeCoordinate,std::shared_ptr<Student::graphicalHex>> graphic_tiles;
 

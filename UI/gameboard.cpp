@@ -143,6 +143,7 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
     _tiles[newHex->getCoordinates()] = newHex;
     std::shared_ptr<graphicalHex> hex = std::make_shared<graphicalHex>();
 
+
     if(scene_ != nullptr)
     {
         scene_->addItem(hex.get());
