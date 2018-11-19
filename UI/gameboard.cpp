@@ -77,6 +77,9 @@ void GameBoard::addPawn(int playerId, int pawnId, Common::CubeCoordinate coord)
 
 void GameBoard::movePawn(int pawnId, Common::CubeCoordinate pawnCoord)
 {
+    if (_tiles.find(pawnCoord) == _tiles.end()) {
+        return;
+    }
     //emit getHexFrom(pawnCoord);
     if(_tiles.at(pawnCoord)->getPieceType() != "Coral")
     {

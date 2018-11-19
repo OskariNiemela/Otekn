@@ -46,26 +46,6 @@ GameBoard:
   dependencies: 
     - BuildUnitTests
 
-GameBoardTest:
-  stage: test
-  tags:
-    - qt
-  script:
-    - cd Tests/UnitTests/GameBoardTest
-    - ./tst_gameboardtest
-  dependencies:
-    - BuildUnitTests
-
-GameStateTest:
-  stage: test
-  tags:
-    - qt
-  script:
-    - cd Tests/UnitTests/GameStateTest
-    - ./tst_gamestatetest
-  dependencies:
-    - BuildUnitTests
-
 # Compile and prepare the source code for analysis.
 # The output is stored in directory bw_output
 PrepareAnalysis:
