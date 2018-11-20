@@ -25,7 +25,7 @@ BuildUnitTests:
     paths:
       - "Tests/UnitTests/*/bin/*"
       - "Tests/UnitTests/*/*.gcno"
-      - Tests/UnitTests/GameStateTest/tst_gamestatetst
+      - Tests/UnitTests/GameStateTest/tst_gamestatetest
     expire_in: 2d
 
 #
