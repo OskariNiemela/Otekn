@@ -77,22 +77,40 @@ void GameBoard::addPawn(int playerId, int pawnId, Common::CubeCoordinate coord)
 
 void GameBoard::movePawn(int pawnId, Common::CubeCoordinate pawnCoord)
 {
-    //emit getHexFrom(pawnCoord);
+    if (_tiles.find(pawnCoord) == _tiles.end()
+            || _game_pawns.find(pawnId)==_game_pawns.end())
+    {
+        return;
+    }
     if(_tiles.at(pawnCoord)->getPieceType() != "Coral")
     {
         std::shared_ptr<Common::Pawn> movingPawn= _game_pawns.at(pawnId);
+
+        //Deselect the graphic tile that were moving from
         graphic_tiles.at(movingPawn->getCoordinates())->deSelect();
+
+        //remove the pawn from the coordinate it is in before moving
         _tiles.at(movingPawn->getCoordinates())->removePawn(movingPawn);
+
+        //Set the new coordinate for the pawn
         _game_pawns.at(pawnId)->setCoordinates(pawnCoord);
+        //Add the pawn at the appropriate hex coordinate
         _tiles.at(pawnCoord)->addPawn(movingPawn);
 
     }
+    //If were moving into a coral tile
     else
     {
+
         std::shared_ptr<Common::Pawn> movingPawn= _game_pawns.at(pawnId);
+
         graphic_tiles.at(movingPawn->getCoordinates())->deSelect();
+
+        //Remove the pawn from the game
         _tiles.at(movingPawn->getCoordinates())->removePawn(movingPawn);
         _game_pawns.erase(pawnId);
+
+        //And give the player a point for a job well done
         emit hexScore();
     }
 
@@ -140,19 +158,27 @@ void GameBoard::removeActor(int actorId)
 
 void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
 {
+    //Add hex to hex map
     _tiles[newHex->getCoordinates()] = newHex;
     std::shared_ptr<graphicalHex> hex = std::make_shared<graphicalHex>();
-
-
     if(scene_ != nullptr)
     {
         scene_->addItem(hex.get());
     }
+    //Sets the position of the graphical hex in the scene
     hex->setPosition(newHex->getCoordinates());
+    //Links the "real" hex and the graphical representation
     hex->setHex(newHex);
     hex->setBackground();
+
+    //Add graphical hex to its own map
     graphic_tiles[hex->getCoordinates()] = hex;
+
+    //Connect the hexclicked signal to our hexClick slot
+    //Needed to process hex clicks
     connect(hex.get(),&graphicalHex::hexClicked,this,&GameBoard::hexClick);
+    //Connects our hexUpdate to graphical hexes updateGraphicHex,
+    //needed to make the hexes update when moving pawns for example.
     connect(this,&GameBoard::hexUpdate,hex.get(),&graphicalHex::updateGraphicHex);
 }
 
@@ -182,34 +208,45 @@ void GameBoard::removeTransport(int id)
 
 void GameBoard::flipTile(Common::CubeCoordinate coord)
 {
-    graphic_tiles.at(coord)->setBackground();
+    if(graphic_tiles.find(coord) != graphic_tiles.end())
+    {
+       graphic_tiles.at(coord)->setBackground();
+    }
+
 }
 
 //Kun scene on rakennettu, palautetaan se mainwindowille
 QGraphicsView* GameBoard::showScene()
 {
+
     QGraphicsView* view = new QGraphicsView(scene_);
     return view;
 }
 
 std::shared_ptr<Common::Pawn> GameBoard::getPlayerPawn(Common::CubeCoordinate coord, int playerId)
 {
-    return graphic_tiles.at(coord)->getPlayerPawn(playerId);
+    if(graphic_tiles.find(coord) != graphic_tiles.end())
+    {
+        return graphic_tiles.at(coord)->getPlayerPawn(playerId);
+    }
+    return nullptr;
 }
 
 void GameBoard::setSelected(Common::CubeCoordinate coord)
 {
-    graphic_tiles.at(coord)->select();
+    if(graphic_tiles.find(coord)!=graphic_tiles.end())
+    {
+        graphic_tiles.at(coord)->select();
+    }
+
 }
 
 void GameBoard::deSelect(Common::CubeCoordinate coord)
 {
-    graphic_tiles.at(coord)->deSelect();
-}
-
-void GameBoard::initializeScene()
-{
-    scene_ = new QGraphicsScene(this);
+    if(graphic_tiles.find(coord)!=graphic_tiles.end())
+    {
+        graphic_tiles.at(coord)->deSelect();
+    }
 }
 
 void GameBoard::setScene(QGraphicsScene* scene)
@@ -219,44 +256,31 @@ void GameBoard::setScene(QGraphicsScene* scene)
 
 void GameBoard::hexClick(std::shared_ptr<Common::Hex> clickedHex)
 {
+    //When hex is clicked, emit it to the mainwindow which will actually
+    //process the click
     emit hexClicked(clickedHex);
 }
 
 void GameBoard::updateHexes()
 {
+    //Updates all the appearances of the hexes
     emit hexUpdate();
 }
 
-std::shared_ptr<Common::Pawn> GameBoard::getPawn(int pawnId) const
-{
-    if(_game_pawns.find(pawnId) != _game_pawns.end())
-    {
-        return _game_pawns.at(pawnId);
-    }
-    return nullptr;
-}
 
-Common::CubeCoordinate GameBoard::getPawnCoordinate(int pawnId) const
-{
-    if(_game_pawns.find(pawnId) != _game_pawns.end())
-    {
-        return _game_pawns.at(pawnId)->getCoordinates();
-    }
-    throw Common::GameException("No such pawn when getting pawn coordinate");
-}
 
 bool GameBoard::playerHasPawns(int playerId)
 {
-    std::map<int, std::shared_ptr<Common::Pawn>>::const_iterator it = _game_pawns.begin();
-
-    while(it != _game_pawns.end())
+    //Make a const iterator and set it to the beginning of _game_pawns
+    for(std::map<int,std::shared_ptr<Common::Pawn>>::const_iterator it =_game_pawns.begin();
+        it!=_game_pawns.end();it++)
     {
         if(it->second->getPlayerId() == playerId)
         {
             return true;
         }
-        it++;
     }
+
     return false;
 }
 

@@ -10,7 +10,7 @@ graphicalHex::graphicalHex():
 //Asettaa hexan maksimi piirto alueen
 QRectF graphicalHex::boundingRect() const
 {
-    return QRectF(-50,-50,100,100);
+    return QRectF(-SIZE,-SIZE,2*SIZE,2*SIZE);
 }
 
 //Piirtää hexan

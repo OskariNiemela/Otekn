@@ -25,6 +25,7 @@ BuildUnitTests:
     paths:
       - "Tests/UnitTests/*/bin/*"
       - "Tests/UnitTests/*/*.gcno"
+      - Tests/UnitTests/GameStateTest/tst_gamestatetest
     expire_in: 2d
 
 #
@@ -46,17 +47,7 @@ GameBoard:
   dependencies: 
     - BuildUnitTests
 
-GameBoardTest:
-  stage: test
-  tags:
-    - qt
-  script:
-    - cd Tests/UnitTests/GameBoardTest
-    - ./tst_gameboardtest
-  dependencies:
-    - BuildUnitTests
-
-GameStateTest:
+GameState:
   stage: test
   tags:
     - qt
