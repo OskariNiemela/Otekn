@@ -37,7 +37,7 @@ class Mainwindow : public QMainWindow
     Q_OBJECT
 public:
     Mainwindow(QWidget *parent = 0);
-
+    ~Mainwindow();
 protected:
     //void paintEvent(QPaintEvent *event);
 
@@ -49,19 +49,22 @@ private:
     std::vector<std::shared_ptr<Common::IPlayer>> _players;
     std::shared_ptr<Common::IGameRunner> _gameEngine;
     std::shared_ptr<Student::ScoreTracker> _trackingScore;
-    QGraphicsScene* _scene;
+
 
     int pawnCount;
 
     //Muuttujat joita käytetään nappien liikuttelussa
     std::shared_ptr<Common::Hex> selectedHex;
-    std::shared_ptr<Common::Hex> moveTo;
     std::shared_ptr<Common::Pawn> selectedPawn;
 
 
     void changePlayers(Common::GamePhase phase);
 
+    //Variables for showing the gameBoard
+    QGraphicsScene* _scene;
     QWidget* _widget;
+    QGraphicsView* _gameView;
+
 public slots:
     void initializePlayers(int amount);
     void hexClick(std::shared_ptr<Common::Hex> chosenHex);

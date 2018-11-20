@@ -8,14 +8,13 @@ Mainwindow::Mainwindow(QWidget *parent)
       _board(std::make_shared<Student::GameBoard>()),
       _gameState(std::make_shared<Student::GameState>()),
       _gameEngine(nullptr),
+      _trackingScore(std::make_shared<Student::ScoreTracker>()),
       pawnCount(1),
       selectedHex(nullptr),
-      moveTo(nullptr),
       selectedPawn(nullptr),
-      _trackingScore(std::make_shared<Student::ScoreTracker>()),
       _scene(new QGraphicsScene),
-      _widget(nullptr)
-      //_gameEngine(Logic::GameEngine(_board, _gameState, _players))
+      _widget(nullptr),
+      _gameView(nullptr)
 {
     _board->setScene(_scene);
 
@@ -25,11 +24,13 @@ Mainwindow::Mainwindow(QWidget *parent)
     connect(_board.get(),&Student::GameBoard::hexClicked,
             this,&Mainwindow::hexClick);
 
-    //connect(_board.get(),&Student::GameBoard::getHexFrom,
-    //        this,&Mainwindow::giveHexFrom);
-
     connect(_board.get(),&Student::GameBoard::hexScore,
             this,&Mainwindow::hexScore);
+}
+
+Mainwindow::~Mainwindow()
+{
+
 }
 
 void Mainwindow::changePlayers(Common::GamePhase phase)
@@ -140,10 +141,10 @@ void Mainwindow::initializePlayers(int amount)
         pawnCount++;
     }
 
-    QGraphicsView* gameView = _board->showScene();
+    _gameView = _board->showScene();
     QHBoxLayout* hLayout = new QHBoxLayout(this);
 
-    hLayout->addWidget(gameView);
+    hLayout->addWidget(_gameView);
 
     QVBoxLayout* vLayout = new QVBoxLayout(this);
 
