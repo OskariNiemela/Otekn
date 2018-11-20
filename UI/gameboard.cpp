@@ -271,9 +271,10 @@ void GameBoard::updateHexes()
 
 bool GameBoard::playerHasPawns(int playerId)
 {
-    //Make a const iterator and set it to the beginning of _game_pawns
-    for(std::map<int,std::shared_ptr<Common::Pawn>>::const_iterator it =_game_pawns.begin();
-        it!=_game_pawns.end();it++)
+    //Make a for loop that goes through
+    for(std::map<int,std::shared_ptr<Common::Pawn>>::const_iterator
+        it =_game_pawns.begin();
+        it!=_game_pawns.end();++it)
     {
         if(it->second->getPlayerId() == playerId)
         {

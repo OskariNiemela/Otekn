@@ -30,8 +30,12 @@ Mainwindow::Mainwindow(QWidget *parent)
 
 Mainwindow::~Mainwindow()
 {
-
+    delete _scene;
+    delete _widget;
+    delete _gameView;
 }
+
+
 
 void Mainwindow::changePlayers(Common::GamePhase phase)
 {
@@ -60,23 +64,7 @@ void Mainwindow::changePlayers(Common::GamePhase phase)
                 break;
             }
 
-            while(!_board->playerHasPawns(_gameState->currentPlayer()))
-            {
-                if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
-                {
-                    _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
-                    _trackingScore->changePlayer(_gameState->currentPlayer());
-                    _players.at(_gameState->currentPlayer())->setActionsLeft(3);
-                }
-                else
-                {
-                    _gameState->changeGamePhase(Common::SINKING);
-                    _trackingScore->changeGamePhase(_gameState->currentGamePhase());
-                    _gameState->changePlayerTurn(0);
-                    _trackingScore->changePlayer(_gameState->currentPlayer());
-                    break;
-                }
-            }
+            checkPlayersPawns();
 
         break;
 
@@ -93,23 +81,8 @@ void Mainwindow::changePlayers(Common::GamePhase phase)
                 _gameState->changeGamePhase(Common::MOVEMENT);
                 _trackingScore->changePlayer(_gameState->currentPlayer());
                 _trackingScore->changeGamePhase(_gameState->currentGamePhase());
-                while(!_board->playerHasPawns(_gameState->currentPlayer()))
-                {
-                    if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
-                    {
-                        _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
-                        _trackingScore->changePlayer(_gameState->currentPlayer());
-                        _players.at(_gameState->currentPlayer())->setActionsLeft(3);
-                    }
-                    else
-                    {
-                        _gameState->changeGamePhase(Common::SINKING);
-                        _trackingScore->changeGamePhase(_gameState->currentGamePhase());
-                        _gameState->changePlayerTurn(0);
-                        _trackingScore->changePlayer(_gameState->currentPlayer());
-                        break;
-                    }
-                }
+
+                checkPlayersPawns();
             }
         break;
 
@@ -120,6 +93,27 @@ void Mainwindow::changePlayers(Common::GamePhase phase)
 
     }
 
+}
+
+void Mainwindow::checkPlayersPawns()
+{
+    while(!_board->playerHasPawns(_gameState->currentPlayer()))
+    {
+        if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
+        {
+            _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
+            _trackingScore->changePlayer(_gameState->currentPlayer());
+            _players.at(_gameState->currentPlayer())->setActionsLeft(3);
+        }
+        else
+        {
+            _gameState->changeGamePhase(Common::SINKING);
+            _trackingScore->changeGamePhase(_gameState->currentGamePhase());
+            _gameState->changePlayerTurn(0);
+            _trackingScore->changePlayer(_gameState->currentPlayer());
+            break;
+        }
+    }
 }
 
 void Mainwindow::initializePlayers(int amount)
@@ -202,7 +196,7 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
 
                 }
             }
-            catch(Common::IllegalMoveException i)
+            catch(Common::IllegalMoveException &i)
             {
                 std::cout<<i.msg()<<std::endl;
             }
@@ -221,7 +215,7 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
             changePlayers(_gameState->currentGamePhase());
 
         }
-        catch (Common::IllegalMoveException i)
+        catch (Common::IllegalMoveException &i)
         {
             std::cout<<i.msg()<<std::endl;
         }

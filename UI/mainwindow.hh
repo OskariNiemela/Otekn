@@ -36,7 +36,7 @@ class Mainwindow : public QMainWindow
 {
     Q_OBJECT
 public:
-    Mainwindow(QWidget *parent = 0);
+    explicit Mainwindow(QWidget *parent = 0);
     ~Mainwindow();
 protected:
     //void paintEvent(QPaintEvent *event);
@@ -59,6 +59,7 @@ private:
 
 
     void changePlayers(Common::GamePhase phase);
+    void checkPlayersPawns();
 
     //Variables for showing the gameBoard
     QGraphicsScene* _scene;

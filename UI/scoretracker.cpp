@@ -106,7 +106,7 @@ void ScoreTracker::changeGamePhase(Common::GamePhase phase)
         }
 
 
-        case Common::SPINNING:
+        default:
         {
             std::string phaseText = "Phase: Spinning";
             QString phaseTextQ = QString::fromStdString(phaseText);

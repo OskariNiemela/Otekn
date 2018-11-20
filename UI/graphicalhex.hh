@@ -13,7 +13,6 @@
 #include <QPen>
 #include <QPainter>
 #include <QPainterPath>
-#include <math.h>
 #include <cmath>
 #include <QPolygon>
 #include <QPoint>
@@ -24,6 +23,7 @@
 #include <QTransform>
 
 const int SIZE = 28;
+const double pi = 3.14159265359;
 
 namespace Student
 {
