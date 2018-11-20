@@ -25,6 +25,7 @@ BuildUnitTests:
     paths:
       - "Tests/UnitTests/*/bin/*"
       - "Tests/UnitTests/*/*.gcno"
+      - Tests/UnitTests/GameStateTest/tst_gamestatetst
     expire_in: 2d
 
 #
@@ -44,6 +45,16 @@ GameBoard:
       - "Tests/UnitTests/*/gameboard.*.gcov"
     expire_in: 2d
   dependencies: 
+    - BuildUnitTests
+
+GameState:
+  stage: test
+  tags:
+    - qt
+  script:
+    - cd Tests/UnitTests/GameStateTest
+    - ./tst_gamestatetest
+  dependencies:
     - BuildUnitTests
 
 # Compile and prepare the source code for analysis.
