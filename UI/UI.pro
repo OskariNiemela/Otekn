@@ -20,7 +20,8 @@ SOURCES += main.cc \
     gamestate.cpp \
     graphicalhex.cpp \
     startwindow.cpp \
-    scoretracker.cpp
+    scoretracker.cpp \
+    graphicalwheel.cpp
 
 HEADERS  += \
     gameboard.hh \
@@ -29,7 +30,8 @@ HEADERS  += \
     mainwindow.hh \
     graphicalhex.hh \
     startwindow.hh \
-    scoretracker.hh
+    scoretracker.hh \
+    graphicalwheel.hh
 
 RESOURCES += \
     Images

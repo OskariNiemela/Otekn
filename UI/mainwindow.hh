@@ -11,6 +11,8 @@
 #include "initialize.hh"
 #include "illegalmoveexception.hh"
 #include "scoretracker.hh"
+#include "wheellayoutparser.hh"
+#include "graphicalwheel.hh"
 
 #include <iostream>
 #include <QMainWindow>
@@ -42,13 +44,12 @@ protected:
     //void paintEvent(QPaintEvent *event);
 
 private:
-    void setupLayout();
-
     std::shared_ptr<Student::GameBoard> _board;
     std::shared_ptr<Student::GameState> _gameState;
     std::vector<std::shared_ptr<Common::IPlayer>> _players;
     std::shared_ptr<Common::IGameRunner> _gameEngine;
     std::shared_ptr<Student::ScoreTracker> _trackingScore;
+    std::shared_ptr<Student::GraphicalWheel> _wheel;
 
 
     int pawnCount;
@@ -64,9 +65,11 @@ private:
     QGraphicsScene* _scene;
     QWidget* _widget;
     QGraphicsView* _gameView;
+    QGraphicsView* _wheelView;
+    QGraphicsScene* _wheelScene;
 
 public slots:
-    void initializePlayers(int amount);
+    void initializeGame(int players);
     void hexClick(std::shared_ptr<Common::Hex> chosenHex);
 
     void hexScore();

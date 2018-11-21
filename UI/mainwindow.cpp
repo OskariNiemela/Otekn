@@ -14,9 +14,13 @@ Mainwindow::Mainwindow(QWidget *parent)
       selectedPawn(nullptr),
       _scene(new QGraphicsScene),
       _widget(nullptr),
-      _gameView(nullptr)
+      _gameView(nullptr),
+      _wheel(std::make_shared<Student::GraphicalWheel>()),
+      _wheelScene(new QGraphicsScene),
+      _wheelView(nullptr)
 {
     _board->setScene(_scene);
+    _wheel->setScene(_wheelScene);
 
     connect(this,&Mainwindow::updateHexes,
             _board.get(),&Student::GameBoard::updateHexes);
@@ -122,9 +126,10 @@ void Mainwindow::changePlayers(Common::GamePhase phase)
 
 }
 
-void Mainwindow::initializePlayers(int amount)
+void Mainwindow::initializeGame(int players)
 {
-    for(int a = 0;a<amount;a++)
+    // Setup players
+    for(int a = 0;a<players;a++)
     {
         std::shared_ptr<Common::IPlayer> newPlayer =
                 std::make_shared<Student::Player>(a);
@@ -132,7 +137,9 @@ void Mainwindow::initializePlayers(int amount)
         _players.push_back(newPlayer);
     }
 
+    // Now the game engine can be initialized
     _gameEngine = Common::Initialization::getGameRunner(_board,_gameState,_players);
+
 
     for(auto player:_players)
     {
@@ -140,6 +147,10 @@ void Mainwindow::initializePlayers(int amount)
         _board->addPawn(ID,pawnCount);
         pawnCount++;
     }
+
+    // Initialize the wheel
+    _wheel->initializeSegments(_gameEngine->getSpinnerLayout());
+    _wheelView = _wheel->showScene();
 
     _gameView = _board->showScene();
     QHBoxLayout* hLayout = new QHBoxLayout(this);
@@ -159,6 +170,7 @@ void Mainwindow::initializePlayers(int amount)
     _widget = new QWidget();
     _widget->setLayout(hLayout);
     _widget->show();
+
 }
 
 void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
