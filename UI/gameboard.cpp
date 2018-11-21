@@ -146,12 +146,16 @@ void GameBoard::moveActor(int actorId, Common::CubeCoordinate actorCoord)
 
         // Asetetaan actor-osoitin uusiin koordinaatteihin
         _actors.at(actorId)->move(_tiles.at(actorCoord));
+        _actors.at(actorId)->doAction();
     }
 }
 
 void GameBoard::removeActor(int actorId)
 {
     if (_actors.find(actorId) != _actors.end()) {
+        std::shared_ptr<Common::Actor> actor = _actors.at(actorId);
+        std::shared_ptr<Common::Hex> hex = actor->getHex();
+        hex->removeActor(actor);
         _actors.erase(actorId);
     }
 }
@@ -190,20 +194,23 @@ void GameBoard::addTransport(std::shared_ptr<Common::Transport> transport, Commo
 
 void GameBoard::moveTransport(int id, Common::CubeCoordinate coord)
 {
+    /*
     if (_tiles.find(coord) != _tiles.end()) {
         // Remove transport from its previous location
         _transports.at(id)->getHex()->removeTransport(_transports.at(id));
 
         // Add transport to new coordinates
         _tiles.at(coord)->addTransport(_transports.at(id));
-    }
+    }*/
 }
 
 void GameBoard::removeTransport(int id)
 {
+    /*
     // Remove transport from hex and _transports map
     _transports.at(id)->getHex()->removeTransport(_transports.at(id));
     _transports.erase(id);
+    */
 }
 
 void GameBoard::flipTile(Common::CubeCoordinate coord)
@@ -315,6 +322,37 @@ void GameBoard::checkPawnValidity()
     {
 
     }
+}
+
+bool GameBoard::checkActor(std::string type)
+{
+    std::map<int,std::shared_ptr<Common::Actor>>::const_iterator it = _actors.begin();
+    while(it != _actors.end())
+    {
+        if(it->second->getActorType() == type)
+        {
+            return true;
+        }
+        ++it;
+    }
+    return false;
+
+}
+
+std::shared_ptr<Common::Actor> GameBoard::getActor(Common::CubeCoordinate coord, std::string type)
+{
+    if(_tiles.find(coord)!=_tiles.end())
+    {
+        std::vector<std::shared_ptr<Common::Actor>> actors =_tiles.at(coord)->getActors();
+        for(std::shared_ptr<Common::Actor> actor:actors)
+        {
+            if(actor->getActorType()==type)
+            {
+                return actor;
+            }
+        }
+    }
+    return nullptr;
 }
 
 

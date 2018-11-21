@@ -172,6 +172,11 @@ public:
     bool anyPawnsIngame();
 
     void checkPawnValidity();
+
+    bool checkActor(std::string type);
+    std::shared_ptr<Common::Actor> getActor(Common::CubeCoordinate coord,
+                                            std::string type);
+
 public slots:
     /**
      * @brief Code run when a hex emits the hexClicked signal

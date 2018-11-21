@@ -57,7 +57,8 @@ private:
     //Muuttujat joita käytetään nappien liikuttelussa
     std::shared_ptr<Common::Hex> selectedHex;
     std::shared_ptr<Common::Pawn> selectedPawn;
-
+    std::shared_ptr<Common::Actor> selectedActor;
+    std::pair<std::string,std::string> _pair;
 
     void changePlayers(Common::GamePhase phase);
     void checkPlayersPawns();
@@ -69,6 +70,7 @@ private:
     QGraphicsView* _gameView;
     QGraphicsView* _wheelView = new QGraphicsView();
     QGraphicsScene _wheelScene;
+    bool wheelClicked;
 
 public slots:
     void initializeGame(int players);

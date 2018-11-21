@@ -15,7 +15,8 @@ Mainwindow::Mainwindow(QWidget *parent)
       _scene(new QGraphicsScene),
       _widget(nullptr),
       _gameView(nullptr),
-      _wheel(std::make_shared<Student::GraphicalWheel>())
+      _wheel(std::make_shared<Student::GraphicalWheel>()),
+      wheelClicked(false)
 {
     _board->setScene(_scene);
 
@@ -187,7 +188,7 @@ void Mainwindow::initializeGame(int players)
     _widget = new QWidget();
     _widget->setLayout(hLayout);
     _widget->show();
-
+    emit updateHexes();
 }
 
 void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
@@ -210,13 +211,15 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
             {
                 _board->setSelected(selectedHex->getCoordinates());
             }
-            emit updateHexes();
         }
         else
         {
             //If we already have a hex selected
             if(chosenHex == selectedHex)
             {
+                _board->deSelect(selectedHex->getCoordinates());
+                selectedHex = nullptr;
+                selectedPawn = nullptr;
                 return;
             }
             try
@@ -257,28 +260,78 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
     }
     else
     {
-        try
+        if (selectedHex == nullptr && wheelClicked)
         {
-            _gameEngine->flipTile(chosenHex->getCoordinates());
-            _board->flipTile(chosenHex->getCoordinates());
-            //Change player turn
+            selectedHex = chosenHex;
+            //Find a pawn belonging to the current player
+            selectedActor = _board->getActor(selectedHex->getCoordinates(),_pair.first);
+            if (selectedActor == nullptr)
+            {
 
-            changePlayers(_gameState->currentGamePhase());
+                selectedHex = nullptr;
+            }
+            else
+            {
+                _board->setSelected(selectedHex->getCoordinates());
+            }
+        }
+        else if(wheelClicked)
+        {
+            //If we already have a hex selected
+            if(chosenHex == selectedHex)
+            {
+                _board->deSelect(selectedHex->getCoordinates());
+                selectedHex = nullptr;
+                selectedActor= nullptr;
+                return;
+            }
+            try
+            {
+                _gameEngine->moveActor(selectedHex->getCoordinates(),
+                                       chosenHex->getCoordinates(),
+                                       selectedActor->getId(),
+                                       _pair.second);
+                _board->deSelect(selectedHex->getCoordinates());
+                selectedHex = nullptr;
+                selectedActor = nullptr;
+                wheelClicked = false;
+                changePlayers(_gameState->currentGamePhase());
+
+            }
+            catch (Common::IllegalMoveException &i)
+            {
+                std::cout<<i.msg()<<std::endl;
+            }
 
         }
-        catch (Common::IllegalMoveException &i)
+        else
         {
-            std::cout<<i.msg()<<std::endl;
+            std::cout<<"Please spin the wheel before trying to move actors"<<std::endl;
         }
+
     }
     emit updateHexes();
 }
 
 void Mainwindow::wheelClick()
 {
-    if(_gameState->currentGamePhase() == Common::SPINNING)
+    if(_gameState->currentGamePhase() == Common::SPINNING && !wheelClicked)
     {
-        _wheel->updateGraphicWheel(_gameEngine->spinWheel());
+        _pair = _gameEngine->spinWheel();
+        _wheel->updateGraphicWheel(_pair);
+
+        if(_pair.first == "seamunster")
+        {
+            _pair.first = "sea munster";
+        }
+        //Check if there is even an actor of the given type
+
+        if(!_board->checkActor(_pair.first))
+        {
+            changePlayers(_gameState->currentGamePhase());
+            return;
+        }
+        wheelClicked = true;
     }
 
 }

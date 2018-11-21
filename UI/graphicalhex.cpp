@@ -248,6 +248,7 @@ void graphicalHex::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void graphicalHex::updateGraphicHex()
 {
+    setBackground();
     update();
 }
 }
