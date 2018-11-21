@@ -210,8 +210,21 @@ void GameBoard::flipTile(Common::CubeCoordinate coord)
 {
     if(graphic_tiles.find(coord) != graphic_tiles.end())
     {
+       // Jos ruudussa on actor, suoritetaan sen toiminto
+       if (_tiles.at(coord)->getActors().size() != 0) {
+           _tiles.at(coord)->getActors().at(0)->doAction();
+
+       }
+
+       // Jos ruudussa on transport
+
+
        graphic_tiles.at(coord)->setBackground();
     }
+
+
+
+
 
 }
 

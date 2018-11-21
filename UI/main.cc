@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 
     Student::Mainwindow* w = new Student::Mainwindow;
 
-    QObject::connect(startingInfo,&Student::startWindow::sendValue,w,&Student::Mainwindow::initializePlayers);
+    QObject::connect(startingInfo,&Student::startWindow::sendValue,w,&Student::Mainwindow::initializeGame);
 
     startingInfo->exec();
 

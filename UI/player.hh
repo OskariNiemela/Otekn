@@ -9,7 +9,7 @@ class Player : public Common::IPlayer
 {
 public:
     Player(int playerID);
-    ~Player() = default;
+    virtual ~Player() = default;
     int getPlayerId() const;
     void setActionsLeft(unsigned int actionsLeft);
     unsigned int getActionsLeft() const;
