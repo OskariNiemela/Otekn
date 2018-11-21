@@ -13,11 +13,14 @@ void GraphicalWheel::initializeSegments(Common::SpinnerLayout layout)
 
     // Calculate how many segments needs to be drawn
     _segments = 0;
-    for (Common::SpinnerLayout::iterator it = _layout.begin(); it != _layout.end(); it++) {
-        for (auto steps : _layout.at(it->first)) {
+    for (auto animal : _layout) {
+        for (auto steps : animal.second) {
             _segments++;
         }
     }
+
+    // Default position for the wheel is the first item in _layout
+    _toMove = std::pair<std::string, std::string>{_layout.begin()->first, _layout.begin()->second.begin()->first};
 }
 
 void GraphicalWheel::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -88,13 +91,60 @@ void GraphicalWheel::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
         }
     }
 
-    // Draw the arrow
+    // Find the position of toMove variable in spinner layout
+    Common::SpinnerLayout::iterator animalIt;
+    std::map<std::string, unsigned>::iterator stepIt;
+    int position = 0;
+    bool found = false;
+    for (auto animal : _layout) {
+        for (auto steps : animal.second) {
+            if (animal.first == std::get<0>(_toMove) &&
+                    steps.first == std::get<1>(_toMove)) {
+                found = true;
+                break;
+            }
+            position++;
+        }
+        if (found) {
+            break;
+        }
+    }
 
+    // Now we can calculate the angle for the arrow
+    double arrowAngle = (360.0 * position + 180) / _segments;
+
+    // Tip of the arrow
+    double arrowX1 = (2.5/5) * RADIUS * cos(arrowAngle * M_PI / 180);
+    double arrowY1 = -(2.5/5) * RADIUS * sin(arrowAngle * M_PI / 180);
+
+    // Bottom points (will be covered by the spin button)
+    double arrowX2 = 10 * cos((arrowAngle + 90) * M_PI / 180);
+    double arrowY2 = 10 * sin((arrowAngle + 90) * M_PI / 180);
+    double arrowX3 = 10 * cos((arrowAngle - 90) * M_PI / 180);
+    double arrowY3 = 10 * sin((arrowAngle - 90) * M_PI / 180);
+
+    QPolygon arrow;
+    arrow << QPoint(arrowX1, arrowY1);
+    arrow << QPoint(arrowX2, arrowY2);
+    arrow << QPoint(arrowX3, arrowY3);
+
+    // Draw the arrow
+    brush.setColor(Qt::black);
+    painter->setBrush(brush);
+    painter->drawPolygon(arrow);
 
     // Draw the spin button
-    brush.setColor(Qt::red);
+    backgroundColor.setRgb(255, 127, 39);
+    brush.setColor(backgroundColor);
     painter->setBrush(brush);
     painter->drawEllipse(QPoint(0, 0), 30, 30);
+
+    QImage spinButtonImage;
+    spinButtonImage.load(":/Images/arrows.png");
+    QRectF imageArea;
+    imageArea.setRect(-20, -20, 40, 40);
+    painter->drawImage(imageArea, spinButtonImage);
+
 }
 
 QRectF GraphicalWheel::boundingRect() const
