@@ -27,6 +27,9 @@ Mainwindow::Mainwindow(QWidget *parent)
 
     connect(_board.get(),&Student::GameBoard::hexScore,
             this,&Mainwindow::hexScore);
+
+    connect(_wheel.get(),&Student::GraphicalWheel::wheelClicked,
+            this, &Mainwindow::wheelClick);
 }
 
 Mainwindow::~Mainwindow()
@@ -77,6 +80,22 @@ void Mainwindow::changePlayers(Common::GamePhase phase)
             }
             else
             {
+                _gameState->changeGamePhase(Common::SPINNING);
+                _trackingScore->changeGamePhase(_gameState->currentGamePhase());
+                _gameState->changePlayerTurn(0);
+                _trackingScore->changePlayer(_gameState->currentPlayer());
+
+            }
+        break;
+
+        default:
+            if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
+            {
+                _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
+                _trackingScore->changePlayer(_gameState->currentPlayer());
+            }
+            else
+            {
                 _gameState->changePlayerTurn(0);
                 _players.at(_gameState->currentPlayer())->setActionsLeft(3);
                 _gameState->changeGamePhase(Common::MOVEMENT);
@@ -85,10 +104,6 @@ void Mainwindow::changePlayers(Common::GamePhase phase)
 
                 checkPlayersPawns();
             }
-        break;
-
-        default:
-
         break;
 
 
@@ -116,6 +131,11 @@ void Mainwindow::checkPlayersPawns()
             break;
         }
     }
+}
+
+void Mainwindow::checkPawnValidity()
+{
+
 }
 
 
@@ -237,9 +257,30 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
     }
     else
     {
+        try
+        {
+            _gameEngine->flipTile(chosenHex->getCoordinates());
+            _board->flipTile(chosenHex->getCoordinates());
+            //Change player turn
 
+            changePlayers(_gameState->currentGamePhase());
+
+        }
+        catch (Common::IllegalMoveException &i)
+        {
+            std::cout<<i.msg()<<std::endl;
+        }
     }
     emit updateHexes();
+}
+
+void Mainwindow::wheelClick()
+{
+    if(_gameState->currentGamePhase() == Common::SPINNING)
+    {
+        _wheel->updateGraphicWheel(_gameEngine->spinWheel());
+    }
+
 }
 
 

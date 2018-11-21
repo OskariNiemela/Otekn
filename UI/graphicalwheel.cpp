@@ -23,6 +23,12 @@ void GraphicalWheel::initializeSegments(Common::SpinnerLayout layout)
     _toMove = std::pair<std::string, std::string>{_layout.begin()->first, _layout.begin()->second.begin()->first};
 }
 
+void GraphicalWheel::updateGraphicWheel(std::pair<std::string, std::string> pair)
+{
+    _toMove = pair;
+    update();
+}
+
 void GraphicalWheel::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     QColor backgroundColor;
@@ -157,6 +163,11 @@ QPainterPath GraphicalWheel::shape() const
     QPainterPath path;
     path.addEllipse(QPointF(0, 0), RADIUS*2, RADIUS*2);
     return path;
+}
+
+void GraphicalWheel::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    emit wheelClicked();
 }
 
 }

@@ -61,6 +61,7 @@ private:
 
     void changePlayers(Common::GamePhase phase);
     void checkPlayersPawns();
+    void checkPawnValidity();
 
     //Variables for showing the gameBoard
     QGraphicsScene* _scene;
@@ -72,6 +73,8 @@ private:
 public slots:
     void initializeGame(int players);
     void hexClick(std::shared_ptr<Common::Hex> chosenHex);
+
+    void wheelClick();
 
     void hexScore();
 signals:

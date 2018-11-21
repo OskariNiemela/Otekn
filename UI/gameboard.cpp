@@ -307,6 +307,16 @@ bool GameBoard::anyPawnsIngame()
     return false;
 }
 
+void GameBoard::checkPawnValidity()
+{
+    std::map<int, std::shared_ptr<Common::Pawn>>::iterator
+            all_pawns = _game_pawns.begin();
+    while(all_pawns!=_game_pawns.end())
+    {
+
+    }
+}
+
 
 }
 

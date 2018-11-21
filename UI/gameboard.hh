@@ -170,6 +170,8 @@ public:
      * @post Exception guarantee: nothrow
      */
     bool anyPawnsIngame();
+
+    void checkPawnValidity();
 public slots:
     /**
      * @brief Code run when a hex emits the hexClicked signal
