@@ -65,8 +65,8 @@ private:
     QGraphicsScene* _scene;
     QWidget* _widget;
     QGraphicsView* _gameView;
-    QGraphicsView* _wheelView;
-    QGraphicsScene* _wheelScene;
+    QGraphicsView* _wheelView = new QGraphicsView();
+    QGraphicsScene _wheelScene;
 
 public slots:
     void initializeGame(int players);

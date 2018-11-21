@@ -15,12 +15,9 @@ Mainwindow::Mainwindow(QWidget *parent)
       _scene(new QGraphicsScene),
       _widget(nullptr),
       _gameView(nullptr),
-      _wheel(std::make_shared<Student::GraphicalWheel>()),
-      _wheelScene(new QGraphicsScene),
-      _wheelView(nullptr)
+      _wheel(std::make_shared<Student::GraphicalWheel>())
 {
     _board->setScene(_scene);
-    _wheel->setScene(_wheelScene);
 
     connect(this,&Mainwindow::updateHexes,
             _board.get(),&Student::GameBoard::updateHexes);
@@ -150,7 +147,8 @@ void Mainwindow::initializeGame(int players)
 
     // Initialize the wheel
     _wheel->initializeSegments(_gameEngine->getSpinnerLayout());
-    _wheelView = _wheel->showScene();
+    _wheelScene.addItem(_wheel.get());
+    _wheelView->setScene(&_wheelScene);
 
     _gameView = _board->showScene();
     QHBoxLayout* hLayout = new QHBoxLayout(this);
@@ -163,6 +161,9 @@ void Mainwindow::initializeGame(int players)
     _trackingScore->changeGamePhase(_gameState->currentGamePhase());
     _trackingScore->initializeScores(_gameEngine->playerAmount());
     vLayout->addWidget(_trackingScore.get());
+
+    // Lisää kiekko käyttöliittymään
+    vLayout->addWidget(_wheelView);
 
 
     hLayout->addLayout(vLayout);

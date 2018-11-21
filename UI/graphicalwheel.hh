@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <vector>
+#include <utility>
 #include <QWidget>
 #include <QGraphicsItem>
 #include <QPen>
@@ -22,10 +23,12 @@
 #include <QTransform>
 #include <QGraphicsEllipseItem>
 #include <QGraphicsView>
+#include <QFont>
+#include <QString>
 
 namespace Student {
 
-const int RADIUS = 100;
+const int RADIUS = 200;
 const int BUTTON_RADIUS = 30;
 
 class GraphicalWheel : public QObject, public QGraphicsItem
@@ -39,13 +42,12 @@ public:
               QWidget *widget);
     QRectF boundingRect() const final;
     QPainterPath shape() const;
-    void setScene(QGraphicsScene *scene);
-    QGraphicsView *showScene();
 
 private:
     Common::SpinnerLayout _layout;
     int _segments = 0;
     QGraphicsScene* _scene;
+    std::pair<std::string,std::string> _toMove;
 };
 
 }

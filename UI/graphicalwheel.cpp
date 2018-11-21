@@ -22,43 +22,79 @@ void GraphicalWheel::initializeSegments(Common::SpinnerLayout layout)
 
 void GraphicalWheel::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    QColor segmentColor{255, 255, 255};
+    QColor backgroundColor;
+    backgroundColor.setRgb(153, 217, 234);
+
+    QBrush brush;
+    brush.setStyle(Qt::SolidPattern);
+    brush.setColor(backgroundColor);
+
     QPen pen;
     pen.setColor(Qt::black);
     pen.setWidth(1);
-    QBrush brush;
+
+    QFont font = painter->font();
+    font.setPixelSize(20);
+
+    painter->setPen(pen);
+    painter->setBrush(brush);
+    painter->setRenderHint(QPainter::Antialiasing);
+    painter->setFont(font);
+
+    QImage animalImage;
 
     // Segments
     Common::SpinnerLayout::iterator animal;
     int currentSegment = 0;
     for (animal = _layout.begin(); animal != _layout.end(); animal++) {
 
-        // Different background color for each animal
+        // Different image for each animal
         if (animal->first == "dolphin") {
-            segmentColor.setRgb(138, 243, 255);
+            animalImage.load(":/Images/dolphin.png");
         }
         else if (animal->first == "kraken") {
-            segmentColor.setRgb(248, 182, 197);
+            animalImage.load(":/Images/kraken.png");
         }
         else if (animal->first == "seamunster") {
-            segmentColor.setRgb(107, 233, 209);
+            animalImage.load(":/Images/seamonster.png");
         }
         else if (animal->first == "shark") {
-            segmentColor.setRgb(192, 192, 192);
+            animalImage.load(":/Images/shark.png");
         }
 
-        brush.setColor(segmentColor);
+        for (std::pair<std::string, unsigned> steps : animal->second) {
 
-        for (auto steps : animal->second) {
-            QRectF segmentRect{RADIUS, RADIUS, 2*RADIUS, 2*RADIUS};
-            int startAngle = 5760 / _segments * currentSegment;
-            int spanAngle = 5760 / _segments;
-            painter->drawPie(segmentRect, startAngle, spanAngle);
+            // Calculate segment size and draw it
+            double startAngle = 360.0 / _segments * currentSegment;
+            double spanAngle = 360.0 / _segments;
+            painter->drawPie(-RADIUS, -RADIUS, 2*RADIUS, 2*RADIUS, 16*startAngle, 16*spanAngle);
+
+            // Calculate image coordinates and draw it
+            QRectF imageArea;
+            double imageX = (4.0/5) * RADIUS * cos((startAngle + (1.0/2) * spanAngle) * M_PI / 180) - 20;
+            double imageY = -(4.0/5) * RADIUS * sin((startAngle + (1.0/2) * spanAngle) * M_PI / 180) - 20;
+            imageArea.setRect(imageX, imageY, 40, 40);
+            painter->drawImage(imageArea, animalImage);
+
+            // Draw the amount of steps
+            QString stepString = QString::fromStdString(std::get<0>(steps));
+            QRectF textArea;
+            double textX = (3.0/5) * RADIUS * cos((startAngle + (1.0/2) * spanAngle) * M_PI / 180) - 10;
+            double textY = -(3.0/5) * RADIUS * sin((startAngle + (1.0/2) * spanAngle) * M_PI / 180) - 10;
+            textArea.setRect(textX, textY, 30, 30);
+            painter->drawText(textArea, stepString);
+
+            currentSegment++;
         }
     }
 
-    // Paint the spin button
-    // Paint the arrow
+    // Draw the arrow
+
+
+    // Draw the spin button
+    brush.setColor(Qt::red);
+    painter->setBrush(brush);
+    painter->drawEllipse(QPoint(0, 0), 30, 30);
 }
 
 QRectF GraphicalWheel::boundingRect() const
@@ -71,17 +107,6 @@ QPainterPath GraphicalWheel::shape() const
     QPainterPath path;
     path.addEllipse(QPointF(0, 0), RADIUS*2, RADIUS*2);
     return path;
-}
-
-void GraphicalWheel::setScene(QGraphicsScene *scene)
-{
-    _scene = scene;
-}
-
-QGraphicsView *GraphicalWheel::showScene()
-{
-    QGraphicsView* view = new QGraphicsView(_scene);
-    return view;
 }
 
 }
