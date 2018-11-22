@@ -173,6 +173,8 @@ public:
 
     void checkPawnValidity();
 
+    void checkActorValidity();
+
     bool checkActor(std::string type);
     std::shared_ptr<Common::Actor> getActor(Common::CubeCoordinate coord,
                                             std::string type);

@@ -153,7 +153,7 @@ void graphicalHex::setBackground()
         if (realHex_->getActorTypes().at(0) == "shark") {
             _backgroundImage.load(":Images/shark.png");
         }
-        else if (realHex_->getActorTypes().at(0) == "sea munster") {
+        else if (realHex_->getActorTypes().at(0) == "seamunster") {
             _backgroundImage.load(":Images/seamonster.png");
         }
         else if (realHex_->getActorTypes().at(0) == "kraken") {

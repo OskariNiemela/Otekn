@@ -18,6 +18,7 @@ class ScoreTracker : public QFrame
      Q_OBJECT
 public:
     ScoreTracker();
+    ~ScoreTracker();
     void scorePlayer(int playerId);
     std::vector<int> getScores();
     void displayWinner();
@@ -25,6 +26,8 @@ public slots:
     void changePlayer(int currentPlayer);
     void initializeScores(int playerAmount);
     void changeGamePhase(Common::GamePhase phase);
+signals:
+    void skipPlayerTurn();
 
 private:
     int currPlayer;
@@ -32,7 +35,9 @@ private:
     QLabel* gamePhase;
     std::vector<int> playerScores;
     QVBoxLayout* layout;
+    QPushButton* skipTurn;
     std::vector<QLabel*> playerLabels;
+
 
 };
 

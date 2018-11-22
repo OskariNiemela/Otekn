@@ -227,22 +227,21 @@ void GameBoard::removeTransport(int id)
 
 void GameBoard::flipTile(Common::CubeCoordinate coord)
 {
+    // Jos ruudussa on actor, suoritetaan sen toiminto
+
     if(graphic_tiles.find(coord) != graphic_tiles.end())
     {
-       // Jos ruudussa on actor, suoritetaan sen toiminto
-       if (_tiles.at(coord)->getActors().size() != 0) {
-           _tiles.at(coord)->getActors().at(0)->doAction();
-
-       }
-
        // Jos ruudussa on transport
-
-
        graphic_tiles.at(coord)->setBackground();
     }
 
 
+    if (_tiles.at(coord)->getActors().size() != 0)
+    {
+        std::shared_ptr<Common::Actor> actor = _tiles.at(coord)->getActors().at(0);
+        _tiles.at(coord)->getActors().at(_tiles.at(coord)->getActors().size()-1)->doAction();
 
+    }
 
 
 }
@@ -332,7 +331,35 @@ void GameBoard::checkPawnValidity()
             all_pawns = _game_pawns.begin();
     while(all_pawns!=_game_pawns.end())
     {
+        //Check if pawn is in the pawn map of the hex it is supposed to
+        Common::CubeCoordinate coordinate = all_pawns->second->getCoordinates();
+        if(_tiles.at(coordinate)->givePawn(all_pawns->second->getId()) == nullptr)
+        {
+            all_pawns = _game_pawns.erase(all_pawns);
+        }
+        else
+        {
+            ++all_pawns;
+        }
 
+    }
+}
+
+void GameBoard::checkActorValidity()
+{
+    std::map<int, std::shared_ptr<Common::Actor>>::iterator
+            actor = _actors.begin();
+    while(actor != _actors.end())
+    {
+        std::shared_ptr<Common::Hex> hex = actor->second->getHex();
+        if(hex->giveActor(actor->second->getId()) == nullptr)
+        {
+            actor = _actors.erase(actor);
+        }
+        else
+        {
+            ++actor;
+        }
     }
 }
 

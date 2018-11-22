@@ -6,16 +6,30 @@ namespace Student
 ScoreTracker::ScoreTracker():
     currPlayer(0),
     playerTurn(new QLabel(this)),
+    gamePhase(new QLabel(this)),
     layout(new QVBoxLayout(this)),
-    gamePhase(new QLabel(this))
+    skipTurn(new QPushButton(this))
 {
     changePlayer(0);
+    skipTurn->setText("Skip Turn");
     setFrameStyle(QFrame::Box | QFrame::Sunken);
     //Size(QSize(100,100));
     //frameShadow(Sunken);
     layout->addWidget(playerTurn);
     layout->addWidget(gamePhase);
+    layout->addWidget(skipTurn);
+    connect(skipTurn,&QPushButton::clicked,this,&ScoreTracker::skipPlayerTurn);
+}
 
+ScoreTracker::~ScoreTracker()
+{
+    delete playerTurn;
+    delete gamePhase;
+    for(QLabel* label:playerLabels)
+    {
+        delete label;
+    }
+    delete layout;
 }
 
 void ScoreTracker::scorePlayer(int playerId)
@@ -91,6 +105,7 @@ void ScoreTracker::changeGamePhase(Common::GamePhase phase)
             std::string phaseText = "Phase: Movement";
             QString phaseTextQ = QString::fromStdString(phaseText);
             gamePhase->setText(phaseTextQ);
+            skipTurn->setEnabled(true);
             break;
         }
 
@@ -101,7 +116,7 @@ void ScoreTracker::changeGamePhase(Common::GamePhase phase)
             std::string phaseText = "Phase: Sinking";
             QString phaseTextQ = QString::fromStdString(phaseText);
             gamePhase->setText(phaseTextQ);
-
+            skipTurn->setEnabled(false);
             break;
         }
 
@@ -111,6 +126,7 @@ void ScoreTracker::changeGamePhase(Common::GamePhase phase)
             std::string phaseText = "Phase: Spinning";
             QString phaseTextQ = QString::fromStdString(phaseText);
             gamePhase->setText(phaseTextQ);
+            skipTurn->setEnabled(false);
             break;
         }
 

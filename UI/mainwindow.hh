@@ -79,6 +79,8 @@ public slots:
     void wheelClick();
 
     void hexScore();
+
+    void skipPlayerTurn();
 signals:
     void updateHexes();
 };

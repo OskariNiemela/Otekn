@@ -31,6 +31,8 @@ Mainwindow::Mainwindow(QWidget *parent)
 
     connect(_wheel.get(),&Student::GraphicalWheel::wheelClicked,
             this, &Mainwindow::wheelClick);
+    connect(_trackingScore.get(),&Student::ScoreTracker::skipPlayerTurn,
+            this, &Mainwindow::skipPlayerTurn);
 }
 
 Mainwindow::~Mainwindow()
@@ -249,8 +251,9 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
             _gameEngine->flipTile(chosenHex->getCoordinates());
             _board->flipTile(chosenHex->getCoordinates());
             //Change player turn
-
+            _board->checkPawnValidity();
             changePlayers(_gameState->currentGamePhase());
+            _board->checkActorValidity();
 
         }
         catch (Common::IllegalMoveException &i)
@@ -295,6 +298,7 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
                 selectedHex = nullptr;
                 selectedActor = nullptr;
                 wheelClicked = false;
+                _board->checkPawnValidity();
                 changePlayers(_gameState->currentGamePhase());
 
             }
@@ -319,11 +323,6 @@ void Mainwindow::wheelClick()
     {
         _pair = _gameEngine->spinWheel();
         _wheel->updateGraphicWheel(_pair);
-
-        if(_pair.first == "seamunster")
-        {
-            _pair.first = "sea munster";
-        }
         //Check if there is even an actor of the given type
 
         if(!_board->checkActor(_pair.first))
@@ -341,6 +340,11 @@ void Mainwindow::wheelClick()
 void Mainwindow::hexScore()
 {
     _trackingScore->scorePlayer(_gameEngine->currentPlayer());
+}
+
+void Mainwindow::skipPlayerTurn()
+{
+    changePlayers(_gameState->currentGamePhase());
 }
 
 
