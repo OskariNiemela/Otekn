@@ -188,29 +188,41 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
 
 void GameBoard::addTransport(std::shared_ptr<Common::Transport> transport, Common::CubeCoordinate coord)
 {
-    _tiles.at(coord)->addTransport(transport);
-    _transports.insert(std::pair<int, std::shared_ptr<Common::Transport>>(transport->getId(), transport));
+    if(_tiles.find(coord) != _tiles.end())
+    {
+        transport->addHex(_tiles.at(coord));
+        _transports[transport->getId()] = transport;
+    }
+
 }
 
 void GameBoard::moveTransport(int id, Common::CubeCoordinate coord)
 {
-    /*
-    if (_tiles.find(coord) != _tiles.end()) {
-        // Remove transport from its previous location
-        _transports.at(id)->getHex()->removeTransport(_transports.at(id));
 
-        // Add transport to new coordinates
-        _tiles.at(coord)->addTransport(_transports.at(id));
-    }*/
+    if (_tiles.find(coord) != _tiles.end()) {
+
+        if(_transports.find(id)!=_transports.end())
+        {
+            std::shared_ptr<Common::Transport> transport =_transports.at(id);
+            transport->move(_tiles.at(coord));
+        }
+    }
 }
 
 void GameBoard::removeTransport(int id)
 {
-    /*
-    // Remove transport from hex and _transports map
-    _transports.at(id)->getHex()->removeTransport(_transports.at(id));
-    _transports.erase(id);
-    */
+
+    if(_transports.find(id)!=_transports.end())
+    {
+        // Remove transport from hex and _transports map
+        std::shared_ptr<Common::Transport> transport = _transports.at(id);
+        std::shared_ptr<Common::Hex> hex = transport->getHex();
+
+        hex->removeTransport(transport);
+        _transports.erase(id);
+    }
+
+
 }
 
 void GameBoard::flipTile(Common::CubeCoordinate coord)
