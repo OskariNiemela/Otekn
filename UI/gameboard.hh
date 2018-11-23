@@ -37,84 +37,84 @@ public:
     /**
      * @copydoc Common::IGameBoard::checkTileOccupation
      */
-    virtual int checkTileOccupation(Common::CubeCoordinate tileCoord) const final;
+    int checkTileOccupation(Common::CubeCoordinate tileCoord) const override;
 
     /**
      * @copydoc Common::IGameBoard::isWaterTile
      */
-    virtual bool isWaterTile(Common::CubeCoordinate tileCoord) const final;
+    bool isWaterTile(Common::CubeCoordinate tileCoord) const override;
 
     /**
      * @copydoc Common::IGameBoard::getHex
      */
-    virtual std::shared_ptr<Common::Hex> getHex(Common::CubeCoordinate hexCoord) const final;
+    std::shared_ptr<Common::Hex> getHex(Common::CubeCoordinate hexCoord) const override;
 
     /**
      * @copydoc Common::IGameBoard::addPawn
      */
-    virtual void addPawn(int playerId,
-                         int pawnId) final;
+    void addPawn(int playerId,
+                         int pawnId) override;
 
     /**
      * @copydoc Common::IGameBoard::addPawn
      */
-    virtual void addPawn(int playerId,
+    void addPawn(int playerId,
                          int pawnId,
-                         Common::CubeCoordinate coord) final;
+                         Common::CubeCoordinate coord) override;
 
     /**
      * @copydoc Common::IGameBoard::movePawn
      */
-    virtual void movePawn(int pawnId, Common::CubeCoordinate pawnCoord) final;
+    void movePawn(int pawnId, Common::CubeCoordinate pawnCoord) override;
 
     /**
      * @copydoc Common::IGameBoard::removePawn
      */
-    virtual void removePawn(int pawnId) final;
+    void removePawn(int pawnId) override;
 
     /**
      * @copydoc Common::IGameBoard::addActor
      */
-    virtual void addActor(std::shared_ptr<Common::Actor> actor,
-                          Common::CubeCoordinate actorCoord) final;
+    void addActor(std::shared_ptr<Common::Actor> actor,
+                          Common::CubeCoordinate actorCoord) override;
 
     /**
      * @copydoc Common::IGameBoard::moveActor
      */
-    virtual void moveActor(int actorId,
-                           Common::CubeCoordinate actorCoord) final;
+    void moveActor(int actorId,
+                           Common::CubeCoordinate actorCoord) override;
 
     /**
      * @copydoc Common::IGameBoard::removeActor
      */
-    virtual void removeActor(int actorId) final;
+    void removeActor(int actorId) override;
 
     /**
      * @copydoc Common::IGameBoard::addHex
      */
-    virtual void addHex(std::shared_ptr<Common::Hex> newHex) final;
+    void addHex(std::shared_ptr<Common::Hex> newHex) override;
 
     /**
      * @copydoc Common::IGameBoard::addTransport
      */
-    virtual void addTransport(std::shared_ptr<Common::Transport> transport,
-                              Common::CubeCoordinate coord) final;
+    void addTransport(std::shared_ptr<Common::Transport> transport,
+                              Common::CubeCoordinate coord) override;
 
     /**
      * @copydoc Common::IGameBoard::moveTransport
      */
-    virtual void moveTransport(int id, Common::CubeCoordinate coord) final;
+    void moveTransport(int id, Common::CubeCoordinate coord) override;
 
     /**
      * @copydoc Common::IGameBoard::removeTransport
      */
-    virtual void removeTransport(int id) final;
+    void removeTransport(int id) override;
 
     /**
      * @brief changes the background of a flipped tile, so
      * @param coordinate of the hex to be flipped
      */
-    virtual void flipTile(Common::CubeCoordinate coord) final;
+    void flipTile(Common::CubeCoordinate coord);
 
     /**
      * @brief showScene, once the scene is done we show it to the player and return the view
@@ -122,7 +122,7 @@ public:
      * @pre scene_ must exist
      * @post scene_ is added to QGraphicsView. Exception guarantee: basic
      */
-    virtual QGraphicsView *showScene() final;
+    QGraphicsView *showScene();
 
     /**
      * @brief gets a pawn belonging to player with playerId
@@ -132,15 +132,15 @@ public:
      * if no pawn of the player is present returns nullptr
      * @post exception guarantee: nothrow
      */
-    virtual std::shared_ptr<Common::Pawn> getPlayerPawn(Common::CubeCoordinate coord,
-                                                        int playerId) final;
+    std::shared_ptr<Common::Pawn> getPlayerPawn(Common::CubeCoordinate coord,
+                                                        int playerId);
     /**
      * @brief sets the hex at coord to selected
      * (meaning its outline will be drawn in red)
      * @param coordinate to set selected at
      * @post Exception guarantee: noThrow
      */
-    virtual void setSelected(Common::CubeCoordinate coord) final;
+    void setSelected(Common::CubeCoordinate coord);
 
     /**
      * @brief sets the hex at coord to not selected
@@ -148,13 +148,13 @@ public:
      * @param coordinate to change the hex at
      * @post Exception guarantee: nothrow
      */
-    virtual void deSelect(Common::CubeCoordinate coord) final;
+    void deSelect(Common::CubeCoordinate coord);
 
     /**
      * @brief Sets the scene to be shown
      * @param scene to add
      */
-    virtual void setScene(QGraphicsScene *scene) final;
+    void setScene(QGraphicsScene *scene);
 
     /**
      * @brief returns whether player has any pawns ingame
@@ -162,14 +162,51 @@ public:
      * @return true if there is pawns, otherwise false
      * @post Exception guarantee: nothrow
      */
-    virtual bool playerHasPawns(int playerId) final;
+    bool playerHasPawns(int playerId);
 
     /**
      * @brief Tells whether there are any pawns in the game
      * @return true if there are pawns, otherwise false
      * @post Exception guarantee: nothrow
      */
-    virtual bool anyPawnsIngame() final;
+    bool anyPawnsIngame();
+
+    /**
+     * @brief checks that the pawns in _gamePawns are in the hexes
+     * where their coordinates say they are, if not then delete
+     * the pawn from the _gamePawns map
+     * @pre all pawns must be valid
+     * @post exception guarantee: no throw
+     */
+    void checkPawnValidity();
+
+    /**
+     * @brief checks that the actors in _actors are in the hexes
+     * where their hex_ pointer say they are, if not then delete
+     * the actor from the _actors map
+     * @pre all actors in _actors must be valid
+     * @post exception guarantee: no throw
+     */
+    void checkActorValidity();
+
+    /**
+     * @brief checks if there is an actor with the given type in
+     * the game
+     * @param type of the actor we're looking for
+     * @return boolean based on whether the actor is present or not
+     */
+    bool checkActor(std::string type);
+    /**
+     * @brief gets an actor of the specified type from the
+     * specified coordinates
+     * @param coordinate to look for the actor from
+     * @param type of the actor we're looking for
+     * @return returns a pointer to the actor, or nullptr
+     * if there is no such actor
+     */
+    std::shared_ptr<Common::Actor> getActor(Common::CubeCoordinate coord,
+                                            std::string type);
+
 public slots:
     /**
      * @brief Code run when a hex emits the hexClicked signal

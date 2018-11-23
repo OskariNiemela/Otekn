@@ -8,9 +8,21 @@ namespace Student
 class Player : public Common::IPlayer
 {
 public:
+    /**
+     * @brief constructs the player
+     * @param Id of the player
+     */
     Player(int playerID);
-    virtual ~Player() {}
+    /**
+    * @brief default destructor
+    */
+    virtual ~Player() = default;
+    /**
+     * @brief gives the id of the player
+     * @return id of the player
+     */
     int getPlayerId() const;
+
     void setActionsLeft(unsigned int actionsLeft);
     unsigned int getActionsLeft() const;
 

@@ -37,11 +37,19 @@ class GraphicalWheel : public QObject, public QGraphicsItem
 public:
     GraphicalWheel();
     void initializeSegments(Common::SpinnerLayout layout);
+    void updateGraphicWheel(std::pair<std::string,std::string> pair);
     void paint(QPainter *painter,
               const QStyleOptionGraphicsItem *option,
               QWidget *widget);
     QRectF boundingRect() const final;
     QPainterPath shape() const;
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+
+signals:
+    void wheelClicked();
+
+
 
 private:
     Common::SpinnerLayout _layout;

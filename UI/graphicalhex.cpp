@@ -26,7 +26,7 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     for(int i = 1; i <= 6; i++)
     {
         angle_deg = 60 * i - 30;
-        angle_rad = M_PI / 180 * angle_deg;
+        angle_rad = pi / 180 * angle_deg;
         hexShape << QPoint(SIZE * cos(angle_rad), SIZE * sin(angle_rad));
 
     }
@@ -63,7 +63,7 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
             break;
         }
         angle_deg = 140*c-120;
-        angle_rad = M_PI/180*angle_deg;
+        angle_rad = pi/180*angle_deg;
 
 
         switch(vecIterator->get()->getPlayerId())
@@ -119,7 +119,7 @@ QPainterPath graphicalHex::shape() const
     for(int i = 1; i <= 6; i++)
     {
         angle_deg = 60 * i - 30;
-        angle_rad = M_PI / 180 * angle_deg;
+        angle_rad = pi / 180 * angle_deg;
         polygon << QPoint(SIZE * cos(angle_rad), SIZE * sin(angle_rad));
 
     }
@@ -153,13 +153,13 @@ void graphicalHex::setBackground()
         if (realHex_->getActorTypes().at(0) == "shark") {
             _backgroundImage.load(":Images/shark.png");
         }
-        else if (realHex_->getActorTypes().at(0) == "sea munster") {
+        else if (realHex_->getActorTypes().at(0) == "seamunster") {
             _backgroundImage.load(":Images/seamonster.png");
         }
         else if (realHex_->getActorTypes().at(0) == "kraken") {
             _backgroundImage.load(":Images/kraken.png");
         }
-        else if (realHex_->getActorTypes().at(0) == "vortex") {
+        else{
             _backgroundImage.load(":Images/vortex.png");
         }
     }
@@ -168,7 +168,7 @@ void graphicalHex::setBackground()
         if (realHex_->getTransports().at(0)->getTransportType() == "dolphin") {
             _backgroundImage.load(":Images/dolphin.png");
         }
-        else if (realHex_->getTransports().at(0)->getTransportType() == "boat") {
+        else{
             _backgroundImage.load(":Images/boat.png");
         }
     }
@@ -189,7 +189,7 @@ void graphicalHex::setBackground()
         else if (realHex_->getPieceType() == "Water") {
             _backgroundImage.load(":Images/water.png");
         }
-        else if (realHex_->getPieceType() == "Coral") {
+        else{
             _backgroundImage.load(":Images/coral.png");
         }
     }
@@ -239,15 +239,9 @@ void graphicalHex::mousePressEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsItem::mousePressEvent(event);
 }
 
-void graphicalHex::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{
-    pressed_ = false;
-    update();
-    QGraphicsItem::mouseReleaseEvent(event);
-}
-
 void graphicalHex::updateGraphicHex()
 {
+    setBackground();
     update();
 }
 }

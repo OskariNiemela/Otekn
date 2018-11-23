@@ -15,7 +15,8 @@ Mainwindow::Mainwindow(QWidget *parent)
       _scene(new QGraphicsScene),
       _widget(nullptr),
       _gameView(nullptr),
-      _wheel(std::make_shared<Student::GraphicalWheel>())
+      _wheel(std::make_shared<Student::GraphicalWheel>()),
+      wheelClicked(false)
 {
     _board->setScene(_scene);
 
@@ -27,12 +28,21 @@ Mainwindow::Mainwindow(QWidget *parent)
 
     connect(_board.get(),&Student::GameBoard::hexScore,
             this,&Mainwindow::hexScore);
+
+    connect(_wheel.get(),&Student::GraphicalWheel::wheelClicked,
+            this, &Mainwindow::wheelClick);
+    connect(_trackingScore.get(),&Student::ScoreTracker::skipPlayerTurn,
+            this, &Mainwindow::skipPlayerTurn);
 }
 
 Mainwindow::~Mainwindow()
 {
-
+    delete _scene;
+    delete _widget;
+    delete _gameView;
 }
+
+
 
 void Mainwindow::changePlayers(Common::GamePhase phase)
 {
@@ -61,27 +71,27 @@ void Mainwindow::changePlayers(Common::GamePhase phase)
                 break;
             }
 
-            while(!_board->playerHasPawns(_gameState->currentPlayer()))
-            {
-                if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
-                {
-                    _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
-                    _trackingScore->changePlayer(_gameState->currentPlayer());
-                    _players.at(_gameState->currentPlayer())->setActionsLeft(3);
-                }
-                else
-                {
-                    _gameState->changeGamePhase(Common::SINKING);
-                    _trackingScore->changeGamePhase(_gameState->currentGamePhase());
-                    _gameState->changePlayerTurn(0);
-                    _trackingScore->changePlayer(_gameState->currentPlayer());
-                    break;
-                }
-            }
+            checkPlayersPawns();
 
         break;
 
         case Common::SINKING:
+            if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
+            {
+                _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
+                _trackingScore->changePlayer(_gameState->currentPlayer());
+            }
+            else
+            {
+                _gameState->changeGamePhase(Common::SPINNING);
+                _trackingScore->changeGamePhase(_gameState->currentGamePhase());
+                _gameState->changePlayerTurn(0);
+                _trackingScore->changePlayer(_gameState->currentPlayer());
+
+            }
+        break;
+
+        default:
             if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
             {
                 _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
@@ -94,34 +104,43 @@ void Mainwindow::changePlayers(Common::GamePhase phase)
                 _gameState->changeGamePhase(Common::MOVEMENT);
                 _trackingScore->changePlayer(_gameState->currentPlayer());
                 _trackingScore->changeGamePhase(_gameState->currentGamePhase());
-                while(!_board->playerHasPawns(_gameState->currentPlayer()))
-                {
-                    if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
-                    {
-                        _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
-                        _trackingScore->changePlayer(_gameState->currentPlayer());
-                        _players.at(_gameState->currentPlayer())->setActionsLeft(3);
-                    }
-                    else
-                    {
-                        _gameState->changeGamePhase(Common::SINKING);
-                        _trackingScore->changeGamePhase(_gameState->currentGamePhase());
-                        _gameState->changePlayerTurn(0);
-                        _trackingScore->changePlayer(_gameState->currentPlayer());
-                        break;
-                    }
-                }
+
+                checkPlayersPawns();
             }
-        break;
-
-        default:
-
         break;
 
 
     }
 
 }
+
+
+void Mainwindow::checkPlayersPawns()
+{
+    while(!_board->playerHasPawns(_gameState->currentPlayer()))
+    {
+        if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
+        {
+            _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
+            _trackingScore->changePlayer(_gameState->currentPlayer());
+            _players.at(_gameState->currentPlayer())->setActionsLeft(3);
+        }
+        else
+        {
+            _gameState->changeGamePhase(Common::SINKING);
+            _trackingScore->changeGamePhase(_gameState->currentGamePhase());
+            _gameState->changePlayerTurn(0);
+            _trackingScore->changePlayer(_gameState->currentPlayer());
+            break;
+        }
+    }
+}
+
+void Mainwindow::checkPawnValidity()
+{
+
+}
+
 
 void Mainwindow::initializeGame(int players)
 {
@@ -171,7 +190,7 @@ void Mainwindow::initializeGame(int players)
     _widget = new QWidget();
     _widget->setLayout(hLayout);
     _widget->show();
-
+    emit updateHexes();
 }
 
 void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
@@ -194,13 +213,15 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
             {
                 _board->setSelected(selectedHex->getCoordinates());
             }
-            emit updateHexes();
         }
         else
         {
             //If we already have a hex selected
             if(chosenHex == selectedHex)
             {
+                _board->deSelect(selectedHex->getCoordinates());
+                selectedHex = nullptr;
+                selectedPawn = nullptr;
                 return;
             }
             try
@@ -215,7 +236,7 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
 
                 }
             }
-            catch(Common::IllegalMoveException i)
+            catch(Common::IllegalMoveException &i)
             {
                 std::cout<<i.msg()<<std::endl;
             }
@@ -230,20 +251,88 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
             _gameEngine->flipTile(chosenHex->getCoordinates());
             _board->flipTile(chosenHex->getCoordinates());
             //Change player turn
-
+            _board->checkPawnValidity();
             changePlayers(_gameState->currentGamePhase());
+            _board->checkActorValidity();
 
         }
-        catch (Common::IllegalMoveException i)
+        catch (Common::IllegalMoveException &i)
         {
             std::cout<<i.msg()<<std::endl;
         }
     }
     else
     {
+        if (selectedHex == nullptr && wheelClicked)
+        {
+            selectedHex = chosenHex;
+            //Find a pawn belonging to the current player
+            selectedActor = _board->getActor(selectedHex->getCoordinates(),_pair.first);
+            if (selectedActor == nullptr)
+            {
+
+                selectedHex = nullptr;
+            }
+            else
+            {
+                _board->setSelected(selectedHex->getCoordinates());
+            }
+        }
+        else if(wheelClicked)
+        {
+            //If we already have a hex selected
+            if(chosenHex == selectedHex)
+            {
+                _board->deSelect(selectedHex->getCoordinates());
+                selectedHex = nullptr;
+                selectedActor= nullptr;
+                return;
+            }
+            try
+            {
+                _gameEngine->moveActor(selectedHex->getCoordinates(),
+                                       chosenHex->getCoordinates(),
+                                       selectedActor->getId(),
+                                       _pair.second);
+                _board->deSelect(selectedHex->getCoordinates());
+                selectedHex = nullptr;
+                selectedActor = nullptr;
+                wheelClicked = false;
+                _board->checkPawnValidity();
+                changePlayers(_gameState->currentGamePhase());
+
+            }
+            catch (Common::IllegalMoveException &i)
+            {
+                std::cout<<i.msg()<<std::endl;
+            }
+
+        }
+        else
+        {
+            std::cout<<"Please spin the wheel before trying to move actors"<<std::endl;
+        }
 
     }
     emit updateHexes();
+}
+
+void Mainwindow::wheelClick()
+{
+    if(_gameState->currentGamePhase() == Common::SPINNING && !wheelClicked)
+    {
+        _pair = _gameEngine->spinWheel();
+        _wheel->updateGraphicWheel(_pair);
+        //Check if there is even an actor of the given type
+
+        if(!_board->checkActor(_pair.first))
+        {
+            changePlayers(_gameState->currentGamePhase());
+            return;
+        }
+        wheelClicked = true;
+    }
+
 }
 
 
@@ -251,6 +340,11 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
 void Mainwindow::hexScore()
 {
     _trackingScore->scorePlayer(_gameEngine->currentPlayer());
+}
+
+void Mainwindow::skipPlayerTurn()
+{
+    changePlayers(_gameState->currentGamePhase());
 }
 
 
