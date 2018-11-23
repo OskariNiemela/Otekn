@@ -42,6 +42,7 @@ public:
      * @brief Sets the clickable area of the item
      * @return returns a QRectF object containing
      * the wanted drawing area
+     * @post exception guarantee: no throw
      */
     QRectF boundingRect() const;
 
@@ -50,6 +51,7 @@ public:
      * @param painter, the object doing the painting
      * @param option
      * @param widget
+     * @post hex is painted, exception guarantee: basic
      */
     void paint(QPainter *painter,
               const QStyleOptionGraphicsItem *option,
@@ -59,6 +61,8 @@ public:
      * @brief Draws the shape of the clickable area
      * @return QPainterPath object containing the
      * area constituting the shape of the object
+     * @post the shape of the clickable area is set
+     * exception guarantee: no throw
      */
     QPainterPath shape() const;
 
@@ -68,15 +72,20 @@ public:
      * given to it
      * @param Coordinate of the hex, in cube
      * coordinates
+     * @post the position of the hex is set
+     * exception guarantee: nothrow
      */
     void setPosition(Common::CubeCoordinate coord);
     /**
      * @brief Sets a pointer to the "real" hex
      * @param hex that we want to point to
+     * @post the "real" hex is set
+     * exception guarantee: nothrow
      */
     void setHex(std::shared_ptr<Common::Hex> newHex);
     /**
      * @brief Sets the background image of the hex
+     * @post sets the background exception guarantee: nothrow
      */
     void setBackground();
 
@@ -84,17 +93,20 @@ public:
      * @brief Returns the cube coordinates of the
      * graphical hex
      * @return Coordinates of the hex
+     * @post exception guarantee: nothrow
      */
-    Common::CubeCoordinate getCoordinates();
+    Common::CubeCoordinate getCoordinates() const;
 
     /**
      * @brief Sets the pressed_ boolean to true,
      * making the outline of the hex red
+     * @post exception guarantee: nothrow
      */
     void select();
     /**
      * @brief Sets the pressed_ boolean to false,
      * making the outline black once more
+     * @post exception guarantee: nothrow
      */
     void deSelect();
     /**
@@ -102,6 +114,7 @@ public:
      * if there is one
      * @param Id of the player whose pawn we want
      * @return pointer to pawn, or nullptr
+     * @post exception guarantee: strong
      */
     std::shared_ptr<Common::Pawn> getPlayerPawn(int playerId);
 

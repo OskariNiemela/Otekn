@@ -3,6 +3,8 @@
 
 #include "wheellayoutparser.hh"
 #include "igamerunner.hh"
+//Included for pi
+#include "graphicalhex.hh"
 
 #include <iostream>
 #include <vector>
@@ -12,7 +14,6 @@
 #include <QPen>
 #include <QPainter>
 #include <QPainterPath>
-#include <math.h>
 #include <cmath>
 #include <QPolygon>
 #include <QPoint>
@@ -26,6 +27,7 @@
 #include <QFont>
 #include <QString>
 
+
 namespace Student {
 
 const int RADIUS = 200;
@@ -35,7 +37,7 @@ class GraphicalWheel : public QObject, public QGraphicsItem
 {
     Q_OBJECT
 public:
-    GraphicalWheel();
+    GraphicalWheel() = default;
     void initializeSegments(Common::SpinnerLayout layout);
     void updateGraphicWheel(std::pair<std::string,std::string> pair);
     void paint(QPainter *painter,

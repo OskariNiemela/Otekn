@@ -44,27 +44,33 @@ Mainwindow::~Mainwindow()
 
 
 
-void Mainwindow::changePlayers(Common::GamePhase phase)
+void Mainwindow::changePlayers()
 {
     if(!_board->anyPawnsIngame())
     {
         _trackingScore->displayWinner();
         return;
     }
+    Common::GamePhase phase = _gameState->currentGamePhase();
     switch(phase)
     {
         case Common::MOVEMENT:
             //Change player turn
-
+            //Check that the next player exists
             if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
             {
                 _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
+
+                //Update the player display
                 _trackingScore->changePlayer(_gameState->currentPlayer());
                 _players.at(_gameState->currentPlayer())->setActionsLeft(3);
             }
+            //If they dont exist, that means we need to change the gamephase
             else
             {
+                //If were on the last players turn, change the phase
                 _gameState->changeGamePhase(Common::SINKING);
+                //Change the displayed game phase
                 _trackingScore->changeGamePhase(_gameState->currentGamePhase());
                 _gameState->changePlayerTurn(0);
                 _trackingScore->changePlayer(_gameState->currentPlayer());
@@ -78,6 +84,7 @@ void Mainwindow::changePlayers(Common::GamePhase phase)
         case Common::SINKING:
             if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
             {
+
                 _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
                 _trackingScore->changePlayer(_gameState->currentPlayer());
             }
@@ -117,14 +124,17 @@ void Mainwindow::changePlayers(Common::GamePhase phase)
 
 void Mainwindow::checkPlayersPawns()
 {
+    //While the current player has no pawns
     while(!_board->playerHasPawns(_gameState->currentPlayer()))
     {
+        //Change the player until we either find a player with pawns
         if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
         {
             _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
             _trackingScore->changePlayer(_gameState->currentPlayer());
             _players.at(_gameState->currentPlayer())->setActionsLeft(3);
         }
+        //Or we change the gamephase
         else
         {
             _gameState->changeGamePhase(Common::SINKING);
@@ -136,11 +146,132 @@ void Mainwindow::checkPlayersPawns()
     }
 }
 
-void Mainwindow::checkPawnValidity()
+void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
 {
+    if (selectedHex == nullptr)
+    {
+        selectedHex = hex;
+        int currentPlayer = _gameState->currentPlayer();
+        //Find a pawn belonging to the current player
+        selectedPawn = _board->getPlayerPawn(selectedHex->getCoordinates(),currentPlayer);
+        if (selectedPawn == nullptr)
+        {
 
+            selectedHex = nullptr;
+        }
+        else
+        {
+            _board->setSelected(selectedHex->getCoordinates());
+        }
+    }
+    //If we already have a hex selected
+    else
+    {
+        //If we clicked the same hex as we have selected, unselect it
+        if(hex == selectedHex)
+        {
+            _board->deSelect(selectedHex->getCoordinates());
+            selectedHex = nullptr;
+            selectedPawn = nullptr;
+            return;
+        }
+        try
+        {
+            //Move the pawn
+            _gameEngine->movePawn(selectedHex->getCoordinates(),hex->getCoordinates(),selectedPawn->getId());
+            //Reset the selectedhex and selected pawn pointers
+            selectedHex = nullptr;
+            selectedPawn = nullptr;
+            //If the player has no actions left
+            if(_players.at(_gameState->currentPlayer())->getActionsLeft() <= 0)
+            {
+                changePlayers();
+
+            }
+        }
+        catch(Common::IllegalMoveException &exception)
+        {
+            std::cout<<exception.msg()<<std::endl;
+        }
+    }
 }
 
+void Mainwindow::playerTurnSinking(std::shared_ptr<Common::Hex> hex)
+{
+    try
+    {
+        //Try to flip the chosen tile
+        _gameEngine->flipTile(hex->getCoordinates());
+
+        _board->flipTile(hex->getCoordinates());
+        //Change player turn
+        _board->checkPawnValidity();
+        changePlayers();
+        _board->checkActorValidity();
+
+    }
+    catch (Common::IllegalMoveException &exception)
+    {
+        std::cout<<exception.msg()<<std::endl;
+    }
+}
+
+void Mainwindow::playerTurnSpinning(std::shared_ptr<Common::Hex> hex)
+{
+    //If we have clicked the wheel already
+    if (selectedHex == nullptr && wheelClicked)
+    {
+        selectedHex = hex;
+        //Find a pawn belonging to the current player
+        selectedActor = _board->getActor(selectedHex->getCoordinates(),_pair.first);
+        if (selectedActor == nullptr)
+        {
+
+            selectedHex = nullptr;
+        }
+        else
+        {
+            _board->setSelected(selectedHex->getCoordinates());
+        }
+    }
+    else if(wheelClicked)
+    {
+        //If we already have a hex selected
+        if(hex == selectedHex)
+        {
+            _board->deSelect(selectedHex->getCoordinates());
+            selectedHex = nullptr;
+            selectedActor= nullptr;
+            return;
+        }
+        try
+        {
+            _gameEngine->moveActor(selectedHex->getCoordinates(),
+                                   hex->getCoordinates(),
+                                   selectedActor->getId(),
+                                   _pair.second);
+            _board->deSelect(selectedHex->getCoordinates());
+            selectedHex = nullptr;
+            selectedActor = nullptr;
+            wheelClicked = false;
+            //We need to check the pawn validity of the pawns in the gameboards
+            //game pawns, because they could be eaten by the actors
+            _board->checkPawnValidity();
+            changePlayers();
+
+        }
+        catch (Common::IllegalMoveException &exception)
+        {
+            std::cout<<exception.msg()<<std::endl;
+        }
+
+    }
+    //If we've not clicked the wheel yet to determine which actor to move
+    else
+    {
+        std::cout<<"Please spin the wheel before trying to move actors"<<std::endl;
+    }
+}
 
 void Mainwindow::initializeGame(int players)
 {
@@ -181,7 +312,7 @@ void Mainwindow::initializeGame(int players)
     _trackingScore->initializeScores(_gameEngine->playerAmount());
     vLayout->addWidget(_trackingScore.get());
 
-    // Lisää kiekko käyttöliittymään
+    // add the wheel to the UI
     vLayout->addWidget(_wheelView);
 
 
@@ -198,121 +329,15 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
 
     if(_gameState->currentGamePhase() == Common::MOVEMENT)
     {
-        if (selectedHex == nullptr)
-        {
-            selectedHex = chosenHex;
-            int currentPlayer = _gameState->currentPlayer();
-            //Find a pawn belonging to the current player
-            selectedPawn = _board->getPlayerPawn(selectedHex->getCoordinates(),currentPlayer);
-            if (selectedPawn == nullptr)
-            {
-
-                selectedHex = nullptr;
-            }
-            else
-            {
-                _board->setSelected(selectedHex->getCoordinates());
-            }
-        }
-        else
-        {
-            //If we already have a hex selected
-            if(chosenHex == selectedHex)
-            {
-                _board->deSelect(selectedHex->getCoordinates());
-                selectedHex = nullptr;
-                selectedPawn = nullptr;
-                return;
-            }
-            try
-            {
-                //Move the pawn while setting the actions left of the player
-                _players.at(_gameState->currentPlayer())->setActionsLeft(static_cast<unsigned int>(_gameEngine->movePawn(selectedHex->getCoordinates(),chosenHex->getCoordinates(),selectedPawn->getId())));
-                selectedHex = nullptr;
-                selectedPawn = nullptr;
-                if(_players.at(_gameState->currentPlayer())->getActionsLeft() <= 0)
-                {
-                    changePlayers(_gameState->currentGamePhase());
-
-                }
-            }
-            catch(Common::IllegalMoveException &i)
-            {
-                std::cout<<i.msg()<<std::endl;
-            }
-
-
-        }
+        playerTurnMovement(chosenHex);
     }
     else if (_gameState->currentGamePhase()==Common::SINKING)
     {
-        try
-        {
-            _gameEngine->flipTile(chosenHex->getCoordinates());
-            _board->flipTile(chosenHex->getCoordinates());
-            //Change player turn
-            _board->checkPawnValidity();
-            changePlayers(_gameState->currentGamePhase());
-            _board->checkActorValidity();
-
-        }
-        catch (Common::IllegalMoveException &i)
-        {
-            std::cout<<i.msg()<<std::endl;
-        }
+        playerTurnSinking(chosenHex);
     }
     else
     {
-        if (selectedHex == nullptr && wheelClicked)
-        {
-            selectedHex = chosenHex;
-            //Find a pawn belonging to the current player
-            selectedActor = _board->getActor(selectedHex->getCoordinates(),_pair.first);
-            if (selectedActor == nullptr)
-            {
-
-                selectedHex = nullptr;
-            }
-            else
-            {
-                _board->setSelected(selectedHex->getCoordinates());
-            }
-        }
-        else if(wheelClicked)
-        {
-            //If we already have a hex selected
-            if(chosenHex == selectedHex)
-            {
-                _board->deSelect(selectedHex->getCoordinates());
-                selectedHex = nullptr;
-                selectedActor= nullptr;
-                return;
-            }
-            try
-            {
-                _gameEngine->moveActor(selectedHex->getCoordinates(),
-                                       chosenHex->getCoordinates(),
-                                       selectedActor->getId(),
-                                       _pair.second);
-                _board->deSelect(selectedHex->getCoordinates());
-                selectedHex = nullptr;
-                selectedActor = nullptr;
-                wheelClicked = false;
-                _board->checkPawnValidity();
-                changePlayers(_gameState->currentGamePhase());
-
-            }
-            catch (Common::IllegalMoveException &i)
-            {
-                std::cout<<i.msg()<<std::endl;
-            }
-
-        }
-        else
-        {
-            std::cout<<"Please spin the wheel before trying to move actors"<<std::endl;
-        }
-
+        playerTurnSpinning(chosenHex);
     }
     emit updateHexes();
 }
@@ -327,9 +352,11 @@ void Mainwindow::wheelClick()
 
         if(!_board->checkActor(_pair.first))
         {
-            changePlayers(_gameState->currentGamePhase());
+            changePlayers();
             return;
         }
+        //we have clicked the wheel, this ensures a player cant click the wheel twice
+        //in one turn.
         wheelClicked = true;
     }
 
@@ -344,7 +371,7 @@ void Mainwindow::hexScore()
 
 void Mainwindow::skipPlayerTurn()
 {
-    changePlayers(_gameState->currentGamePhase());
+    changePlayers();
 }
 
 

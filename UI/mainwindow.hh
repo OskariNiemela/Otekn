@@ -66,9 +66,36 @@ private:
     std::shared_ptr<Common::Actor> selectedActor;
     std::pair<std::string,std::string> _pair;
 
-    void changePlayers(Common::GamePhase phase);
+    /**
+     * @brief changes the player to the next one in line
+     * @post exception guarantee: nothrow
+     */
+    void changePlayers();
+    /**
+     * @brief checks if the player has any pawns, if not
+     * skip their turn
+     * @post exception guarantee: nothrow
+     */
     void checkPlayersPawns();
-    void checkPawnValidity();
+
+    /**
+     * @brief Does the player turn when moving
+     * @param hex we clicked
+     * @post exception guarantee: nothrow
+     */
+    void playerTurnMovement(std::shared_ptr<Common::Hex> hex);
+    /**
+     * @brief Does the player turn when sinking tiles
+     * @param Hex we want to sink
+     * @post exception guarantee: nothrow
+     */
+    void playerTurnSinking(std::shared_ptr<Common::Hex> hex);
+    /**
+     * @brief Does the player turn when spinning the wheel
+     * @param hex we've clicked
+     * @post exception guarantee: nothrow
+     */
+    void playerTurnSpinning(std::shared_ptr<Common::Hex> hex);
 
     //Variables for showing the gameBoard
     QGraphicsScene* _scene;
@@ -82,26 +109,31 @@ public slots:
     /**
      * @brief Initializes the game with the given amount of players
      * @param number of players
+     * @post exception guarantee: basic
      */
     void initializeGame(int players);
     /**
      * @brief Run when a hex is clicked
      * @param pointer to hex that has been clicked
+     * @post exception guarantee: nothrow
      */
     void hexClick(std::shared_ptr<Common::Hex> chosenHex);
 
     /**
      * @brief Run when we click the wheel to spin it
+     * @post exception guarantee: nothrow
      */
     void wheelClick();
 
     /**
      * @brief Run when a player scores a point
+     * @post exception guarantee: nothrow
      */
     void hexScore();
 
     /**
      * @brief skips the current players turn
+     * @post exception guarantee: nothrow
      */
     void skipPlayerTurn();
 signals:
