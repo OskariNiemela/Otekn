@@ -296,7 +296,8 @@ void Mainwindow::initializeGame(int players)
     }
 
     // Initialize the wheel
-    _wheel->initializeSegments(_gameEngine->getSpinnerLayout());
+    _wheelLayout = _gameEngine->getSpinnerLayout();
+    _wheel->initializeSegments(_wheelLayout);
     _wheelScene.addItem(_wheel.get());
     _wheelView->setScene(&_wheelScene);
 
@@ -347,9 +348,11 @@ void Mainwindow::wheelClick()
     if(_gameState->currentGamePhase() == Common::SPINNING && !wheelClicked)
     {
         _pair = _gameEngine->spinWheel();
-        _wheel->updateGraphicWheel(_pair);
-        //Check if there is even an actor of the given type
+        _wheel->setValue(_pair);
+        _wheel->update();
 
+
+        //Check if there is even an actor of the given type
         if(!_board->checkActor(_pair.first))
         {
             changePlayers();

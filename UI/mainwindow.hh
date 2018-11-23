@@ -56,7 +56,7 @@ private:
     std::shared_ptr<Common::IGameRunner> _gameEngine;
     std::shared_ptr<Student::ScoreTracker> _trackingScore;
     std::shared_ptr<Student::GraphicalWheel> _wheel;
-
+    Common::SpinnerLayout _wheelLayout;
 
     int pawnCount;
 

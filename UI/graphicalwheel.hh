@@ -39,7 +39,7 @@ class GraphicalWheel : public QObject, public QGraphicsItem
 public:
     GraphicalWheel() = default;
     void initializeSegments(Common::SpinnerLayout layout);
-    void updateGraphicWheel(std::pair<std::string,std::string> pair);
+    void setValue(std::pair<std::string,std::string> pair);
     void paint(QPainter *painter,
               const QStyleOptionGraphicsItem *option,
               QWidget *widget);
@@ -58,6 +58,11 @@ private:
     int _segments = 0;
     QGraphicsScene* _scene;
     std::pair<std::string,std::string> _toMove;
+    double _arrowAngle = 0.0;
+
+    void drawSegments(QPainter *painter);
+    void drawArrow(QPainter *painter, double angle);
+    void drawSpinButton(QPainter *painter);
 };
 
 }
