@@ -12,18 +12,23 @@ public:
      * @brief constructs the player
      * @param Id of the player
      */
-    Player(int playerID);
+    explicit Player(int playerID);
     /**
     * @brief default destructor
     */
     virtual ~Player() = default;
     /**
-     * @brief gives the id of the player
-     * @return id of the player
+     * @copydoc Common::IPlayer::getPlayerId
      */
     int getPlayerId() const;
 
+    /**
+     * @copydoc Common::IPlayer::setActionsLeft
+     */
     void setActionsLeft(unsigned int actionsLeft);
+    /**
+     * @copydoc Common::IPlayer::getActionsLeft
+     */
     unsigned int getActionsLeft() const;
 
 private:

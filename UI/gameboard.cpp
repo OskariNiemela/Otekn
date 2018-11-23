@@ -78,8 +78,8 @@ void GameBoard::addPawn(int playerId, int pawnId, Common::CubeCoordinate coord)
 
 void GameBoard::movePawn(int pawnId, Common::CubeCoordinate pawnCoord)
 {
-    if (_tiles.find(pawnCoord) == _tiles.end()
-            || _game_pawns.find(pawnId)==_game_pawns.end())
+    if ((_tiles.find(pawnCoord) == _tiles.end())
+            || (_game_pawns.find(pawnId)==_game_pawns.end()))
     {
         return;
     }
@@ -127,15 +127,16 @@ void GameBoard::removePawn(int pawnId)
     }
 }
 
-void GameBoard::addActor(std::shared_ptr<Common::Actor> actor, Common::CubeCoordinate actorCoord)
+void GameBoard::addActor(std::shared_ptr<Common::Actor> actor,
+                         Common::CubeCoordinate actorCoord)
 {
-    // Tarkistaa onko ruutu ja actor olemassa
+    //Checks that the hex and the actor exist
     if (_tiles.find(actorCoord) != _tiles.end() && actor != nullptr) {
 
-        // Lisää hex-oliolle actorin
+        // Add an actor to the hex
         actor->addHex(_tiles.at(actorCoord));
 
-        // Lisää actorin erilliseen mappiin
+        // Adds the actor to a map
         _actors.insert(std::pair<int, std::shared_ptr<Common::Actor>>(actor->getId(), actor));
     }
 }

@@ -35,6 +35,7 @@ ScoreTracker::~ScoreTracker()
 void ScoreTracker::scorePlayer(int playerId)
 {
     playerScores.at(playerId)++;
+    //Make the text we want to display
     std::string scoreText = "Player " + std::to_string(playerId) +" score: " + std::to_string(playerScores.at(playerId));
     QString scoreTextQ = QString::fromStdString(scoreText);
     playerLabels.at(playerId)->setText(scoreTextQ);
@@ -55,9 +56,11 @@ void ScoreTracker::displayWinner()
     QString phaseTextQ = QString::fromStdString(phaseText);
     gamePhase->setText(phaseTextQ);
 
+
     int player = -1;
     int maxScore = -1;
     int nowPlayer = 0;
+    //Iterate through the player scores to compare which is the highest
     for(int a:playerScores)
     {
         if(a>maxScore)
@@ -84,9 +87,12 @@ void ScoreTracker::changePlayer(int currentPlayer)
 
 void ScoreTracker::initializeScores(int playerAmount)
 {
+    //Initializing the number of QLabels we need to display all the scores
     for(int i=0;i<playerAmount;i++)
     {
+        //The initial score is 0 for all players
         playerScores.push_back(0);
+        //build the string that displays the player score
         std::string playerText = "Player " + std::to_string(i) +" score: " + std::to_string(0);
         QString playerTextQ = QString::fromStdString(playerText);
         QLabel* playerLabel = new QLabel(this);

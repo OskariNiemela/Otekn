@@ -153,6 +153,7 @@ public:
     /**
      * @brief Sets the scene to be shown
      * @param scene to add
+     * @post Exception Guarantee: nothrow
      */
     void setScene(QGraphicsScene *scene);
 
@@ -194,6 +195,7 @@ public:
      * the game
      * @param type of the actor we're looking for
      * @return boolean based on whether the actor is present or not
+     * @post exception guarantee: no throw
      */
     bool checkActor(std::string type);
     /**
@@ -203,6 +205,7 @@ public:
      * @param type of the actor we're looking for
      * @return returns a pointer to the actor, or nullptr
      * if there is no such actor
+     * @post exception guarantee: strong
      */
     std::shared_ptr<Common::Actor> getActor(Common::CubeCoordinate coord,
                                             std::string type);

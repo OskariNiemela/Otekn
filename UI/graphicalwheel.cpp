@@ -1,10 +1,7 @@
 #include "graphicalwheel.hh"
 
 namespace Student {
-GraphicalWheel::GraphicalWheel()
-{
 
-}
 
 void GraphicalWheel::initializeSegments(Common::SpinnerLayout layout)
 {
@@ -67,7 +64,7 @@ void GraphicalWheel::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
         else if (animal->first == "seamunster") {
             animalImage.load(":/Images/seamonster.png");
         }
-        else if (animal->first == "shark") {
+        else{
             animalImage.load(":/Images/shark.png");
         }
 
@@ -80,16 +77,16 @@ void GraphicalWheel::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
 
             // Calculate image coordinates and draw it
             QRectF imageArea;
-            double imageX = (4.0/5) * RADIUS * cos((startAngle + (1.0/2) * spanAngle) * M_PI / 180) - 20;
-            double imageY = -(4.0/5) * RADIUS * sin((startAngle + (1.0/2) * spanAngle) * M_PI / 180) - 20;
+            double imageX = (4.0/5) * RADIUS * cos((startAngle + (1.0/2) * spanAngle) * pi / 180) - 20;
+            double imageY = -(4.0/5) * RADIUS * sin((startAngle + (1.0/2) * spanAngle) * pi / 180) - 20;
             imageArea.setRect(imageX, imageY, 40, 40);
             painter->drawImage(imageArea, animalImage);
 
             // Draw the amount of steps
             QString stepString = QString::fromStdString(std::get<0>(steps));
             QRectF textArea;
-            double textX = (3.0/5) * RADIUS * cos((startAngle + (1.0/2) * spanAngle) * M_PI / 180) - 10;
-            double textY = -(3.0/5) * RADIUS * sin((startAngle + (1.0/2) * spanAngle) * M_PI / 180) - 10;
+            double textX = (3.0/5) * RADIUS * cos((startAngle + (1.0/2) * spanAngle) * pi / 180) - 10;
+            double textY = -(3.0/5) * RADIUS * sin((startAngle + (1.0/2) * spanAngle) * pi / 180) - 10;
             textArea.setRect(textX, textY, 30, 30);
             painter->drawText(textArea, stepString);
 
@@ -120,14 +117,14 @@ void GraphicalWheel::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     double arrowAngle = (360.0 * position + 180) / _segments;
 
     // Tip of the arrow
-    double arrowX1 = (2.5/5) * RADIUS * cos(arrowAngle * M_PI / 180);
-    double arrowY1 = -(2.5/5) * RADIUS * sin(arrowAngle * M_PI / 180);
+    double arrowX1 = (2.5/5) * RADIUS * cos(arrowAngle * pi / 180);
+    double arrowY1 = -(2.5/5) * RADIUS * sin(arrowAngle * pi / 180);
 
     // Bottom points (will be covered by the spin button)
-    double arrowX2 = 10 * cos((arrowAngle + 90) * M_PI / 180);
-    double arrowY2 = 10 * sin((arrowAngle + 90) * M_PI / 180);
-    double arrowX3 = 10 * cos((arrowAngle - 90) * M_PI / 180);
-    double arrowY3 = 10 * sin((arrowAngle - 90) * M_PI / 180);
+    double arrowX2 = 10 * cos((arrowAngle + 90) * pi / 180);
+    double arrowY2 = 10 * sin((arrowAngle + 90) * pi / 180);
+    double arrowX3 = 10 * cos((arrowAngle - 90) * pi / 180);
+    double arrowY3 = 10 * sin((arrowAngle - 90) * pi / 180);
 
     QPolygon arrow;
     arrow << QPoint(arrowX1, arrowY1);

@@ -7,19 +7,18 @@ graphicalHex::graphicalHex():
     pressed_(false)
 {
 }
-//Asettaa hexan maksimi piirto alueen
+
 QRectF graphicalHex::boundingRect() const
 {
     return QRectF(-SIZE,-SIZE,2*SIZE,2*SIZE);
 }
 
-//Piirtää hexan
 void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    // Polygon-olio hexShape painteria varten
+    // QPolygon object for the painter to paint
     QPolygon hexShape;
 
-    // Lasketaan kuusikulmion kulmapisteet
+    // Calculate the hexes points
     double angle_deg;
     double angle_rad;
 
@@ -30,7 +29,7 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         hexShape << QPoint(SIZE * cos(angle_rad), SIZE * sin(angle_rad));
 
     }
-
+    //sets the background image
     QBrush brush(_backgroundImage);
     QTransform transform;
     transform.scale(0.35, 0.4);
@@ -38,6 +37,8 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     brush.setTransform(transform);
 
     QPen pen(Qt::black, 1);
+
+    //If the hex is selected
     if (pressed_) {
         pen.setColor(Qt::red);
         pen.setWidth(1);
@@ -55,7 +56,7 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     std::vector<std::shared_ptr<Common::Pawn>>::const_iterator vecIterator
             = pawnsHere.begin();
 
-    //Piirretään hexan sisällä olevat pawnit
+    //Draw the pawns inside the hex
     for(int c=0;c<=3;c++)
     {
         if (vecIterator == pawnsHere.end())
@@ -108,7 +109,6 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
 }
 
-//Asettaa graafisen hexan muodon johon sitä voi painaa
 QPainterPath graphicalHex::shape() const
 {
     QPolygon polygon;
@@ -116,6 +116,7 @@ QPainterPath graphicalHex::shape() const
 
     double angle_deg;
     double angle_rad;
+    //Make the shape the same as the drawn polygon
     for(int i = 1; i <= 6; i++)
     {
         angle_deg = 60 * i - 30;
@@ -127,20 +128,17 @@ QPainterPath graphicalHex::shape() const
     return path;
 
 }
-/*
- * Asettaa hexan graafiseen sceneen oikeisiin coordinaatteihin
- * Param: hexan koordinaatit CubeCoordinaattina
- *
- */
+
 void graphicalHex::setPosition(Common::CubeCoordinate coord)
 {
     coordinate_ = coord;
+    //Calculate the x and y position of the hex from
+    //the cube coordinates
     double y_pos = (-3 * SIZE * coord.z) / 2 + 250;
     double x_pos = SIZE * (sqrt(3) * coord.y  +  sqrt(3)/2 * coord.z);
     setPos(x_pos, y_pos);
 }
 
-//Asettaa graafisen hexan koodihexa parin
 void graphicalHex::setHex(std::shared_ptr<Common::Hex> newHex)
 {
     realHex_ = newHex;
@@ -172,7 +170,7 @@ void graphicalHex::setBackground()
             _backgroundImage.load(":Images/boat.png");
         }
     }
-    // No actors or transports (at least yet)
+    // Background color based on piece type
     else {
         if (realHex_->getPieceType() == "Peak") {
             _backgroundImage.load(":Images/peak.png");
@@ -197,7 +195,7 @@ void graphicalHex::setBackground()
 }
 
 
-Common::CubeCoordinate graphicalHex::getCoordinates()
+Common::CubeCoordinate graphicalHex::getCoordinates() const
 {
     return coordinate_;
 }
@@ -218,6 +216,7 @@ void graphicalHex::deSelect()
 std::shared_ptr<Common::Pawn> graphicalHex::getPlayerPawn(int playerId)
 {
     std::vector<std::shared_ptr<Common::Pawn>> pawns = realHex_->getPawns();
+    //Search the pawns in the hex and finds the one matching the player id
     for(std::shared_ptr<Common::Pawn> pawn:pawns)
     {
         if(pawn->getPlayerId() == playerId)
@@ -230,7 +229,6 @@ std::shared_ptr<Common::Pawn> graphicalHex::getPlayerPawn(int playerId)
 }
 
 
-//Kun hiirellä painetaan hexaa
 void graphicalHex::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
 

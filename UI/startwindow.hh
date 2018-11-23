@@ -20,8 +20,16 @@ class startWindow : public QDialog
 {
     Q_OBJECT
 public:
+    /**
+     * @brief Constructor
+     * @param parent of the start window, by default 0
+     */
     explicit startWindow(QWidget *parent = 0);
 signals:
+    /**
+     * @brief Sends the amount of players as a signal
+     * @param player cout
+     */
     void sendValue(int count);
 
 public slots:
