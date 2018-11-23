@@ -171,11 +171,39 @@ public:
      */
     bool anyPawnsIngame();
 
+    /**
+     * @brief checks that the pawns in _gamePawns are in the hexes
+     * where their coordinates say they are, if not then delete
+     * the pawn from the _gamePawns map
+     * @pre all pawns must be valid
+     * @post exception guarantee: no throw
+     */
     void checkPawnValidity();
 
+    /**
+     * @brief checks that the actors in _actors are in the hexes
+     * where their hex_ pointer say they are, if not then delete
+     * the actor from the _actors map
+     * @pre all actors in _actors must be valid
+     * @post exception guarantee: no throw
+     */
     void checkActorValidity();
 
+    /**
+     * @brief checks if there is an actor with the given type in
+     * the game
+     * @param type of the actor we're looking for
+     * @return boolean based on whether the actor is present or not
+     */
     bool checkActor(std::string type);
+    /**
+     * @brief gets an actor of the specified type from the
+     * specified coordinates
+     * @param coordinate to look for the actor from
+     * @param type of the actor we're looking for
+     * @return returns a pointer to the actor, or nullptr
+     * if there is no such actor
+     */
     std::shared_ptr<Common::Actor> getActor(Common::CubeCoordinate coord,
                                             std::string type);
 

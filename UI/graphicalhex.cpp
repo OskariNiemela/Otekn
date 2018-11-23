@@ -239,13 +239,6 @@ void graphicalHex::mousePressEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsItem::mousePressEvent(event);
 }
 
-void graphicalHex::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{
-    pressed_ = false;
-    update();
-    QGraphicsItem::mouseReleaseEvent(event);
-}
-
 void graphicalHex::updateGraphicHex()
 {
     setBackground();
