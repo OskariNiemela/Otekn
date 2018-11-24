@@ -295,15 +295,12 @@ void Mainwindow::initializeGame(int players)
         std::cout<<IoException.msg()<<std::endl;
         Student::exceptionWindow exception(IoException.msg());
         exception.exec();
-        exit(EXIT_FAILURE);
     }
     catch(Common::FormatException &FormatException)
     {
         std::cout<<FormatException.msg()<<std::endl;
         Student::exceptionWindow exception(FormatException.msg());
         exception.exec();
-        exit(EXIT_FAILURE);
-
     }
 
 
