@@ -177,8 +177,41 @@ void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
         }
         try
         {
-            //Move the pawn
-            _gameEngine->movePawn(selectedHex->getCoordinates(),hex->getCoordinates(),selectedPawn->getId());
+            bool moved = false;
+
+            // Check if there is a boat in the hex
+            std::vector<std::shared_ptr<Common::Transport>> transports = selectedHex->getTransports();
+            for (auto transport : transports) {
+                if (transport->getTransportType() == "boat") {
+                    try {
+                        _gameEngine->moveTransport(selectedHex->getCoordinates(),
+                                                   hex->getCoordinates(),
+                                                   transport->getId());
+                    } catch (Common::IllegalMoveException &exception) {
+                        std::cout << exception.msg() << std::endl;
+                    }
+                    moved = true;
+                    break;
+                }
+            }
+
+            if (!moved) {
+                //Move the pawn normally
+                _gameEngine->movePawn(selectedHex->getCoordinates(),hex->getCoordinates(),selectedPawn->getId());
+
+                // Check if the pawn moved into a boat
+                std::vector<std::shared_ptr<Common::Transport>> targetTransports = hex->getTransports();
+                for (auto transport : targetTransports) {
+                    if (transport->getTransportType() == "boat") {
+
+                        // Add pawn into the boat
+                        transport->addPawn(hex->givePawn(selectedPawn->getId()));
+                        break;
+                    }
+                }
+            }
+
+
             //Reset the selectedhex and selected pawn pointers
             selectedHex = nullptr;
             selectedPawn = nullptr;
@@ -186,7 +219,6 @@ void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
             if(_players.at(_gameState->currentPlayer())->getActionsLeft() <= 0)
             {
                 changePlayers();
-
             }
         }
         catch(Common::IllegalMoveException &exception)

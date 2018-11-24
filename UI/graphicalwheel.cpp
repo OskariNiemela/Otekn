@@ -140,8 +140,6 @@ void GraphicalWheel::drawSegments(QPainter *painter)
 
 void GraphicalWheel::drawArrow(QPainter *painter, double newAngle)
 {
-    std::cout << newAngle << std::endl;
-
     // Tip of the arrow
     double arrowX1 = (2.5/5) * RADIUS * cos(newAngle * M_PI / 180);
     double arrowY1 = -(2.5/5) * RADIUS * sin(newAngle * M_PI / 180);
