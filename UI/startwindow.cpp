@@ -5,6 +5,24 @@ namespace Student
 startWindow::startWindow(QWidget *parent):
     QDialog(parent),_playerNumber(new QSpinBox())
 {
+    initializeWindow();
+}
+
+void startWindow::accept()
+{
+    QDialog::accept();
+    emit sendValue(_playerNumber->value());
+}
+
+void startWindow::reject()
+{
+    QDialog::reject();
+
+    emit rejected();
+}
+
+void startWindow::initializeWindow()
+{
     QGridLayout* layout = new QGridLayout(this);
 
     _playerNumber->setMinimum(1);
@@ -25,19 +43,6 @@ startWindow::startWindow(QWidget *parent):
     _widget->show();
 
     connect(confirm, &QPushButton::clicked, this, &startWindow::accept);
-}
-
-void startWindow::accept()
-{
-    QDialog::accept();
-    emit sendValue(_playerNumber->value());
-}
-
-void startWindow::reject()
-{
-    QDialog::reject();
-
-    emit rejected();
 }
 
 }

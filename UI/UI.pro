@@ -21,7 +21,8 @@ SOURCES += main.cc \
     graphicalhex.cpp \
     startwindow.cpp \
     scoretracker.cpp \
-    graphicalwheel.cpp
+    graphicalwheel.cpp \
+    exceptionwindow.cpp
 
 HEADERS  += \
     gameboard.hh \
@@ -31,7 +32,8 @@ HEADERS  += \
     graphicalhex.hh \
     startwindow.hh \
     scoretracker.hh \
-    graphicalwheel.hh
+    graphicalwheel.hh \
+    exceptionwindow.hh
 
 RESOURCES += \
     Images

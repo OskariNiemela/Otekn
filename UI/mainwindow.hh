@@ -7,12 +7,14 @@
 #include "gameengine.hh"
 #include "graphicalhex.hh"
 #include "ioexception.hh"
+#include "formatexception.hh"
 #include "gameexception.hh"
 #include "initialize.hh"
 #include "illegalmoveexception.hh"
 #include "scoretracker.hh"
 #include "wheellayoutparser.hh"
 #include "graphicalwheel.hh"
+#include "exceptionwindow.hh"
 
 #include <iostream>
 #include <QMainWindow>
