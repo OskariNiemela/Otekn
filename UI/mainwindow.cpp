@@ -46,6 +46,7 @@ Mainwindow::~Mainwindow()
 
 void Mainwindow::changePlayers()
 {
+    //If there are no pawns in the game anymore, end the game
     if(!_board->anyPawnsIngame())
     {
         _trackingScore->displayWinner();
@@ -76,7 +77,7 @@ void Mainwindow::changePlayers()
                 _trackingScore->changePlayer(_gameState->currentPlayer());
                 break;
             }
-
+            //We need to check that the player has pawns to move, so we do so
             checkPlayersPawns();
 
         break;
@@ -148,6 +149,7 @@ void Mainwindow::checkPlayersPawns()
 
 void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
 {
+    //If selectedHex is null, that means we havent chosen a pawn/transport yet
     if (selectedHex == nullptr)
     {
         selectedHex = hex;
@@ -315,51 +317,70 @@ void Mainwindow::initializeGame(int players)
 
         _players.push_back(newPlayer);
     }
-
     // Now the game engine can be initialized
-    _gameEngine = Common::Initialization::getGameRunner(_board,_gameState,_players);
-
-
-    for(auto player:_players)
+    try
     {
-        int ID = player->getPlayerId();
-        _board->addPawn(ID,pawnCount);
-        pawnCount++;
+        _gameEngine = Common::Initialization::getGameRunner(_board,_gameState,_players);
+    }
+    catch(Common::IoException &IoException)
+    {
+        std::cout<<IoException.msg()<<std::endl;
+        Student::exceptionWindow exception(IoException.msg());
+        exception.exec();
+    }
+    catch(Common::FormatException &FormatException)
+    {
+        std::cout<<FormatException.msg()<<std::endl;
+        Student::exceptionWindow exception(FormatException.msg());
+        exception.exec();
     }
 
-    // Initialize the wheel
-    _wheelLayout = _gameEngine->getSpinnerLayout();
-    _wheel->initializeSegments(_wheelLayout);
-    _wheelScene.addItem(_wheel.get());
-    _wheelView->setScene(&_wheelScene);
 
-    _gameView = _board->showScene();
-    QHBoxLayout* hLayout = new QHBoxLayout(this);
+    if(_gameEngine != nullptr)
+    {
+        for(auto player:_players)
+        {
+            int ID = player->getPlayerId();
+            _board->addPawn(ID,pawnCount);
+            pawnCount++;
+        }
 
-    hLayout->addWidget(_gameView);
+        // Initialize the wheel
+        _wheelLayout = _gameEngine->getSpinnerLayout();
+        _wheel->initializeSegments(_wheelLayout);
+        _wheelScene.addItem(_wheel.get());
+        _wheelView->setScene(&_wheelScene);
 
-    QVBoxLayout* vLayout = new QVBoxLayout(this);
+        _gameView = _board->showScene();
+        QHBoxLayout* hLayout = new QHBoxLayout(this);
+
+        hLayout->addWidget(_gameView);
+
+        QVBoxLayout* vLayout = new QVBoxLayout(this);
 
 
-    _trackingScore->changeGamePhase(_gameState->currentGamePhase());
-    _trackingScore->initializeScores(_gameEngine->playerAmount());
-    vLayout->addWidget(_trackingScore.get());
+        _trackingScore->changeGamePhase(_gameState->currentGamePhase());
+        _trackingScore->initializeScores(_gameEngine->playerAmount());
+        vLayout->addWidget(_trackingScore.get());
 
-    // add the wheel to the UI
-    vLayout->addWidget(_wheelView);
+        // add the wheel to the UI
+        vLayout->addWidget(_wheelView);
 
 
-    hLayout->addLayout(vLayout);
+        hLayout->addLayout(vLayout);
 
-    _widget = new QWidget();
-    _widget->setLayout(hLayout);
-    _widget->show();
-    emit updateHexes();
+        _widget = new QWidget();
+        _widget->setLayout(hLayout);
+        _widget->show();
+        emit updateHexes();
+    }
+
+
 }
 
 void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
 {
-
+    //Do different stuff based on the current gamephase
     if(_gameState->currentGamePhase() == Common::MOVEMENT)
     {
         playerTurnMovement(chosenHex);

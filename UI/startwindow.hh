@@ -28,7 +28,7 @@ public:
 signals:
     /**
      * @brief Sends the amount of players as a signal
-     * @param player cout
+     * @param player count
      */
     void sendValue(int count);
 
@@ -40,6 +40,12 @@ private:
     Ui::startWindow *ui;
     QSpinBox* _playerNumber;
     QWidget* _widget;
+
+    /**
+     * @brief Initializes all the different things the window displays
+     * @post exception guarantee: basic
+     */
+    void initializeWindow();
 };
 }
 #endif // STARTWINDOW_HH

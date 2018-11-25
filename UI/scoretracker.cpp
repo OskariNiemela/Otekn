@@ -95,6 +95,7 @@ void ScoreTracker::initializeScores(int playerAmount)
         //build the string that displays the player score
         std::string playerText = "Player " + std::to_string(i) +" score: " + std::to_string(0);
         QString playerTextQ = QString::fromStdString(playerText);
+        //Make the necessary label and push it into a vector
         QLabel* playerLabel = new QLabel(this);
         playerLabel->setText(playerTextQ);
         playerLabels.push_back(playerLabel);
@@ -104,6 +105,7 @@ void ScoreTracker::initializeScores(int playerAmount)
 
 void ScoreTracker::changeGamePhase(Common::GamePhase phase)
 {
+    //Switch the phase text based on the current gamephase
     switch (phase)
     {
         case Common::MOVEMENT:
