@@ -181,7 +181,7 @@ void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
         {
             bool moved = false;
 
-            // Check if there is a boat in the hex
+            // Check if there is a boat in the hex and move it
             std::vector<std::shared_ptr<Common::Transport>> transports = selectedHex->getTransports();
             for (auto transport : transports) {
                 if (transport->getTransportType() == "boat") {
@@ -197,19 +197,17 @@ void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
                 }
             }
 
+            // No boat, so move a pawn normally
             if (!moved) {
-                //Move the pawn normally
                 _gameEngine->movePawn(selectedHex->getCoordinates(),hex->getCoordinates(),selectedPawn->getId());
 
-                // Check if the pawn moved into a boat
+                // Check if the pawn moved into a transport
                 std::vector<std::shared_ptr<Common::Transport>> targetTransports = hex->getTransports();
                 for (auto transport : targetTransports) {
-                    if (transport->getTransportType() == "boat") {
 
-                        // Add pawn into the boat
-                        transport->addPawn(hex->givePawn(selectedPawn->getId()));
-                        break;
-                    }
+                    // Add pawn into the first transport
+                    transport->addPawn(hex->givePawn(selectedPawn->getId()));
+                    break;
                 }
             }
 
@@ -217,6 +215,7 @@ void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
             //Reset the selectedhex and selected pawn pointers
             selectedHex = nullptr;
             selectedPawn = nullptr;
+
             //If the player has no actions left
             if(_players.at(_gameState->currentPlayer())->getActionsLeft() <= 0)
             {
@@ -225,7 +224,7 @@ void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
         }
         catch(Common::IllegalMoveException &exception)
         {
-            std::cout<<exception.msg()<<std::endl;
+            std::cout << exception.msg() << std::endl;
         }
     }
 }
@@ -246,7 +245,7 @@ void Mainwindow::playerTurnSinking(std::shared_ptr<Common::Hex> hex)
     }
     catch (Common::IllegalMoveException &exception)
     {
-        std::cout<<exception.msg()<<std::endl;
+        std::cout << exception.msg() << std::endl;
     }
 }
 
@@ -256,11 +255,13 @@ void Mainwindow::playerTurnSpinning(std::shared_ptr<Common::Hex> hex)
     if (selectedHex == nullptr && wheelClicked)
     {
         selectedHex = hex;
-        //Find a pawn belonging to the current player
-        selectedActor = _board->getActor(selectedHex->getCoordinates(),_pair.first);
-        if (selectedActor == nullptr)
-        {
 
+        // Find actor or transport in selected hex
+        selectedActor = _board->getActor(selectedHex->getCoordinates(), _pair.first);
+        selectedTransport = _board->getTransport(selectedHex->getCoordinates(), _pair.first);
+
+        if (selectedActor == nullptr && selectedTransport == nullptr)
+        {
             selectedHex = nullptr;
         }
         else
@@ -275,19 +276,31 @@ void Mainwindow::playerTurnSpinning(std::shared_ptr<Common::Hex> hex)
         {
             _board->deSelect(selectedHex->getCoordinates());
             selectedHex = nullptr;
-            selectedActor= nullptr;
+            selectedActor = nullptr;
+            selectedTransport = nullptr;
             return;
         }
         try
         {
-            _gameEngine->moveActor(selectedHex->getCoordinates(),
-                                   hex->getCoordinates(),
-                                   selectedActor->getId(),
-                                   _pair.second);
+            if (selectedActor != nullptr) {
+                _gameEngine->moveActor(selectedHex->getCoordinates(),
+                                       hex->getCoordinates(),
+                                       selectedActor->getId(),
+                                       _pair.second);
+            }
+            else if (selectedTransport != nullptr) {
+                _gameEngine->moveTransportWithSpinner(selectedHex->getCoordinates(),
+                                                      hex->getCoordinates(),
+                                                      selectedTransport->getId(),
+                                                      _pair.second);
+            }
+
             _board->deSelect(selectedHex->getCoordinates());
             selectedHex = nullptr;
             selectedActor = nullptr;
+            selectedTransport = nullptr;
             wheelClicked = false;
+
             //We need to check the pawn validity of the pawns in the gameboards
             //game pawns, because they could be eaten by the actors
             _board->checkPawnValidity();
@@ -296,7 +309,7 @@ void Mainwindow::playerTurnSpinning(std::shared_ptr<Common::Hex> hex)
         }
         catch (Common::IllegalMoveException &exception)
         {
-            std::cout<<exception.msg()<<std::endl;
+            std::cout << exception.msg() << std::endl;
         }
 
     }
@@ -404,9 +417,11 @@ void Mainwindow::wheelClick()
         _wheel->setValue(_pair);
         _wheel->update();
 
-
         //Check if there is even an actor of the given type
-        if(!_board->checkActor(_pair.first))
+        bool actorOrTransportFound = _board->checkActor(_pair.first) ||
+                _board->checkTransport(_pair.first);
+
+        if(!actorOrTransportFound)
         {
             changePlayers();
             return;

@@ -198,6 +198,16 @@ public:
      * @post exception guarantee: no throw
      */
     bool checkActor(std::string type);
+
+    /**
+     * @brief checks if there is a transport with the given type in
+     * the game
+     * @param type of the transport we're looking for
+     * @return boolean based on whether the transport is present or not
+     * @post exception guarantee: no throw
+     */
+    bool checkTransport(std::string type);
+
     /**
      * @brief gets an actor of the specified type from the
      * specified coordinates
@@ -209,6 +219,8 @@ public:
      */
     std::shared_ptr<Common::Actor> getActor(Common::CubeCoordinate coord,
                                             std::string type);
+    std::shared_ptr<Common::Transport> getTransport(Common::CubeCoordinate coord,
+                                                    std::string type);
 
 public slots:
     /**

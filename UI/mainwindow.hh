@@ -66,6 +66,7 @@ private:
     std::shared_ptr<Common::Hex> selectedHex;
     std::shared_ptr<Common::Pawn> selectedPawn;
     std::shared_ptr<Common::Actor> selectedActor;
+    std::shared_ptr<Common::Transport> selectedTransport;
     std::pair<std::string,std::string> _pair;
 
     /**

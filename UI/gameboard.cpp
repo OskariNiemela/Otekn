@@ -384,6 +384,21 @@ bool GameBoard::checkActor(std::string type)
 
 }
 
+bool GameBoard::checkTransport(std::string type)
+{
+    std::map<int,std::shared_ptr<Common::Transport>>::const_iterator it = _transports.begin();
+    //Checks that there is an actor of the specified type in our actors map
+    while(it != _transports.end())
+    {
+        if(it->second->getTransportType() == type)
+        {
+            return true;
+        }
+        ++it;
+    }
+    return false;
+}
+
 std::shared_ptr<Common::Actor> GameBoard::getActor(Common::CubeCoordinate coord, std::string type)
 {
     if(_tiles.find(coord)!=_tiles.end())
@@ -397,6 +412,25 @@ std::shared_ptr<Common::Actor> GameBoard::getActor(Common::CubeCoordinate coord,
             if(actor->getActorType()==type)
             {
                 return actor;
+            }
+        }
+    }
+    return nullptr;
+}
+
+std::shared_ptr<Common::Transport> GameBoard::getTransport(Common::CubeCoordinate coord, std::string type)
+{
+    if(_tiles.find(coord)!=_tiles.end())
+    {
+        // Get the transports and put them into a vector
+        std::vector<std::shared_ptr<Common::Transport>> transports =_tiles.at(coord)->getTransports();
+        for(std::shared_ptr<Common::Transport> transport : transports)
+        {
+            // If the transport's type matches the specific type we're looking for
+            // return a pointer to it
+            if(transport->getTransportType() == type)
+            {
+                return transport;
             }
         }
     }
