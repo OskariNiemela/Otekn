@@ -181,23 +181,21 @@ void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
         {
             bool moved = false;
 
-            // Check if there is a boat in the hex and move it
+            // Check if there is a transport in the hex and move it
             std::vector<std::shared_ptr<Common::Transport>> transports = selectedHex->getTransports();
             for (auto transport : transports) {
-                if (transport->getTransportType() == "boat") {
-                    try {
-                        _gameEngine->moveTransport(selectedHex->getCoordinates(),
+                try {
+                    _gameEngine->moveTransport(selectedHex->getCoordinates(),
                                                    hex->getCoordinates(),
                                                    transport->getId());
-                    } catch (Common::IllegalMoveException &exception) {
-                        std::cout << exception.msg() << std::endl;
-                    }
-                    moved = true;
-                    break;
+                } catch (Common::IllegalMoveException &exception) {
+                    std::cout << exception.msg() << std::endl;
                 }
+                moved = true;
+                break;
             }
 
-            // No boat, so move a pawn normally
+            // No transport, so move a pawn normally
             if (!moved) {
                 _gameEngine->movePawn(selectedHex->getCoordinates(),hex->getCoordinates(),selectedPawn->getId());
 
