@@ -64,9 +64,7 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         double pawnX = cos(pi / 180 * (pawn * 90)) * (SIZE / 2) - (SIZE / 4);
         double pawnY = sin(pi / 180 * (pawn * 90)) * (SIZE / 2) - (SIZE / 4);
         pawnArea.setRect(pawnX, pawnY, SIZE, SIZE);
-        pen.setColor(QColor{pawnsHere.at(pawn)->getPlayerId() * 85,
-                            pawnsHere.at(pawn)->getPlayerId() * 85,
-                            pawnsHere.at(pawn)->getPlayerId() * 85});
+        pen.setColor(QColor{pawnsHere.at(pawn)->getPlayerId() * 85, 0, 0});
         painter->setPen(pen);
         painter->drawText(pawnArea, pawnMarker);
     }

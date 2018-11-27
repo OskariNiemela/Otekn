@@ -170,12 +170,13 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
     if(scene_ != nullptr)
     {
         scene_->addItem(hex.get());
+        //Sets the position of the graphical hex in the scene
+        hex->setPosition(newHex->getCoordinates());
+        //Links the "real" hex and the graphical representation
+        hex->setHex(newHex);
+        hex->setBackground();
     }
-    //Sets the position of the graphical hex in the scene
-    hex->setPosition(newHex->getCoordinates());
-    //Links the "real" hex and the graphical representation
-    hex->setHex(newHex);
-    hex->setBackground();
+
 
     //Add graphical hex to its own map
     graphic_tiles[hex->getCoordinates()] = hex;

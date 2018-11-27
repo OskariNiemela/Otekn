@@ -31,7 +31,6 @@
 namespace Student {
 
 const int RADIUS = 200;
-const int BUTTON_RADIUS = 30;
 
 class GraphicalWheel : public QObject, public QGraphicsItem
 {

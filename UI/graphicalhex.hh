@@ -159,13 +159,13 @@ private:
                                                {"Mountain", QColor{165, 165, 165}},
                                                {"Peak", QColor{209, 209, 209}}};
 
-    // Images for actors and transports
+    // Image paths for actors and transports
     std::map<std::string, QString> _imageMap = {{"boat", ":Images/boat.png"},
-                                                    {"dolphin", ":Images/dolphin.png"},
-                                                    {"shark", ":Images/shark.png"},
-                                                    {"kraken", ":Images/kraken.png"},
-                                                    {"seamunster", ":Images/seamonster.png"},
-                                                    {"vortex", ":Images/vortex.png"}};
+                                                {"dolphin", ":Images/dolphin.png"},
+                                                {"shark", ":Images/shark.png"},
+                                                {"kraken", ":Images/kraken.png"},
+                                                {"seamunster", ":Images/seamonster.png"},
+                                                {"vortex", ":Images/vortex.png"}};
 };
 }
 #endif // GRAPHICALHEX_HH
