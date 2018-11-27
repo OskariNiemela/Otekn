@@ -3,15 +3,20 @@ namespace Student
 {
 
 exceptionWindow::exceptionWindow(std::string errorMsg) :
-    _errorMsg(new QLabel()), _ok(new QPushButton())
+    _errorMsg(new QLabel()), _ok(new QPushButton()),_widget(new QWidget(this))
 {
     initializeWindow(errorMsg);
 
 }
 
-void exceptionWindow::accept()
+exceptionWindow::~exceptionWindow()
 {
-    QDialog::accept();
+    delete _widget;
+}
+
+void exceptionWindow::reject()
+{
+    QDialog::reject();
 }
 
 void exceptionWindow::initializeWindow(std::string errorMsg)
@@ -23,10 +28,9 @@ void exceptionWindow::initializeWindow(std::string errorMsg)
     QVBoxLayout* layout = new QVBoxLayout;
     layout->addWidget(_errorMsg);
     layout->addWidget(_ok);
-    connect(_ok,&QPushButton::clicked,this,&exceptionWindow::accept);
-    QWidget* widget = new QWidget(this);
-    widget->setLayout(layout);
-    widget->show();
+    connect(_ok,&QPushButton::clicked,this,&exceptionWindow::reject);
+    _widget->setLayout(layout);
+    _widget->show();
 }
 
 }
