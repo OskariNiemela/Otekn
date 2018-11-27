@@ -26,7 +26,7 @@ void startWindow::initializeWindow()
     QGridLayout* layout = new QGridLayout(this);
 
     _playerNumber->setMinimum(1);
-    _playerNumber->setMaximum(3);
+    _playerNumber->setMaximum(4);
 
     QLabel* playerLabel = new QLabel();
     playerLabel->setText("Number of players: ");

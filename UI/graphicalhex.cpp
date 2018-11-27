@@ -18,7 +18,7 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     // QPolygon object for the painter to paint
     QPolygon hexShape;
 
-    // Calculate the hexes points
+    // Calculate the corners of the hexagon
     double angle_deg;
     double angle_rad;
 
@@ -29,13 +29,8 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         hexShape << QPoint(SIZE * cos(angle_rad), SIZE * sin(angle_rad));
 
     }
-    //sets the background image
-    QBrush brush(_backgroundImage);
-    QTransform transform;
-    transform.scale(0.35, 0.4);
-    transform.translate(-60, -60);
-    brush.setTransform(transform);
 
+    QBrush brush(_backgroundColor);
     QPen pen(Qt::black, 1);
 
     //If the hex is selected
@@ -44,69 +39,37 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         pen.setWidth(1);
     }
 
+    // Draw the background
     painter->setPen(pen);
     painter->setRenderHint(QPainter::Antialiasing);
     painter->setBrush(brush);
     painter->drawPolygon(hexShape);
 
-    QString pawnMarker = "X";
+    // Draw the actor or transport image if the hex has one on it
+    if (!_backgroundImage.isNull()) {
+        QRectF imageArea;
+        double imageX = -SIZE * (3.0 / 5.0);
+        double imageY = -SIZE * (3.0 / 5.0);
+        imageArea.setRect(imageX, imageY, (6.0 / 5.0) * SIZE, (6.0 / 5.0) * SIZE);
+        painter->drawImage(imageArea, _backgroundImage);
+    }
+
+    // Draw the pawns
+    QString pawnMarker = "♟";
     std::vector<std::shared_ptr<Common::Pawn>> pawnsHere
             = realHex_->getPawns();
 
-    std::vector<std::shared_ptr<Common::Pawn>>::const_iterator vecIterator
-            = pawnsHere.begin();
-
-    //Draw the pawns inside the hex
-    for(int c=0;c<=3;c++)
-    {
-        if (vecIterator == pawnsHere.end())
-        {
-            break;
-        }
-        angle_deg = 140*c-120;
-        angle_rad = pi/180*angle_deg;
-
-
-        switch(vecIterator->get()->getPlayerId())
-        {
-            case 0:
-                pen.setColor(Qt::blue);
-                painter->setPen(pen);
-                painter->drawText(QPoint( (SIZE/2) * cos(angle_rad),
-                                          (SIZE/2) * sin(angle_rad)),
-                                          pawnMarker);
-            break;
-
-            case 1:
-                pen.setColor(Qt::red);
-                painter->setPen(pen);
-                painter->drawText(QPoint( (SIZE/2) * cos(angle_rad),
-                                          (SIZE/2) * sin(angle_rad)),
-                                           pawnMarker);
-            break;
-
-            case 2:
-                pen.setColor(Qt::green);
-                painter->setPen(pen);
-                painter->drawText(QPoint( (SIZE/2) * cos(angle_rad),
-                                          (SIZE/2) * sin(angle_rad)),
-                                          pawnMarker);
-            break;
-
-            default:
-                pen.setColor(Qt::black);
-                painter->setPen(pen);
-                painter->drawText(QPoint( (SIZE/2) * cos(angle_rad),
-                                          (SIZE/2) * sin(angle_rad)),
-                                          pawnMarker);
-            break;
-
-        }
-
-
-        ++vecIterator;
+    for (std::size_t pawn = 0; pawn < pawnsHere.size(); pawn++) {
+        QRectF pawnArea;
+        double pawnX = cos(pi / 180 * (pawn * 90)) * (SIZE / 2) - (SIZE / 4);
+        double pawnY = sin(pi / 180 * (pawn * 90)) * (SIZE / 2) - (SIZE / 4);
+        pawnArea.setRect(pawnX, pawnY, SIZE, SIZE);
+        pen.setColor(QColor{pawnsHere.at(pawn)->getPlayerId() * 85,
+                            pawnsHere.at(pawn)->getPlayerId() * 85,
+                            pawnsHere.at(pawn)->getPlayerId() * 85});
+        painter->setPen(pen);
+        painter->drawText(pawnArea, pawnMarker);
     }
-
 }
 
 QPainterPath graphicalHex::shape() const
@@ -146,52 +109,21 @@ void graphicalHex::setHex(std::shared_ptr<Common::Hex> newHex)
 
 void graphicalHex::setBackground()
 {
-    // Actors on tile
-    if (!realHex_->getActorTypes().empty()) {
-        if (realHex_->getActorTypes().at(0) == "shark") {
-            _backgroundImage.load(":Images/shark.png");
-        }
-        else if (realHex_->getActorTypes().at(0) == "seamunster") {
-            _backgroundImage.load(":Images/seamonster.png");
-        }
-        else if (realHex_->getActorTypes().at(0) == "kraken") {
-            _backgroundImage.load(":Images/kraken.png");
-        }
-        else{
-            _backgroundImage.load(":Images/vortex.png");
-        }
+    _backgroundColor = _colorMap.at(realHex_->getPieceType());
+
+}
+
+void graphicalHex::setActorOrTransportImage()
+{
+    if (!realHex_->getTransports().empty()) {
+        _backgroundImage.load(_imageMap.at(realHex_->getTransports().at(0)->getTransportType()));
     }
-    // Transports on tile
-    else if (!realHex_->getTransports().empty()) {
-        if (realHex_->getTransports().at(0)->getTransportType() == "dolphin") {
-            _backgroundImage.load(":Images/dolphin.png");
-        }
-        else{
-            _backgroundImage.load(":Images/boat.png");
-        }
+    else if (!realHex_->getActorTypes().empty()) {
+        _backgroundImage.load(_imageMap.at(realHex_->getActorTypes().at(0)));
     }
-    // Background color based on piece type
     else {
-        if (realHex_->getPieceType() == "Peak") {
-            _backgroundImage.load(":Images/peak.png");
-        }
-        else if (realHex_->getPieceType() == "Mountain") {
-            _backgroundImage.load(":Images/mountain.png");
-        }
-        else if (realHex_->getPieceType() == "Forest") {
-            _backgroundImage.load(":Images/forest.png");
-        }
-        else if (realHex_->getPieceType() == "Beach") {
-            _backgroundImage.load(":Images/beach.png");
-        }
-        else if (realHex_->getPieceType() == "Water") {
-            _backgroundImage.load(":Images/water.png");
-        }
-        else{
-            _backgroundImage.load(":Images/coral.png");
-        }
+        _backgroundImage = QImage();
     }
-    update();
 }
 
 
@@ -240,6 +172,7 @@ void graphicalHex::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void graphicalHex::updateGraphicHex()
 {
     setBackground();
+    setActorOrTransportImage();
     update();
 }
 }

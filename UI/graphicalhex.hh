@@ -22,7 +22,7 @@
 #include <QImage>
 #include <QTransform>
 
-const int SIZE = 28;
+const double SIZE = 28.0;
 const double pi = 3.14159265359;
 
 namespace Student
@@ -84,10 +84,16 @@ public:
      */
     void setHex(std::shared_ptr<Common::Hex> newHex);
     /**
-     * @brief Sets the background image of the hex
-     * @post sets the background exception guarantee: nothrow
+     * @brief Sets the background color of the hex
+     * @post sets the background color exception guarantee: nothrow
      */
     void setBackground();
+
+    /**
+     * @brief Sets the background image of the hex
+     * @post sets the background image exception guarantee: nothrow
+     */
+    void setActorOrTransportImage();
 
     /**
      * @brief Returns the cube coordinates of the
@@ -142,8 +148,24 @@ private:
     bool pressed_;
     Common::CubeCoordinate coordinate_;
     std::shared_ptr<Common::Hex> realHex_;
-    QColor backgroundColor;
     QImage _backgroundImage;
+    QColor _backgroundColor;
+
+    // Background colors for different tile types
+    std::map<std::string, QColor> _colorMap = {{"Water", QColor{153, 217, 234}},
+                                               {"Coral", QColor{255, 186, 253}},
+                                               {"Beach", QColor{255, 240, 193}},
+                                               {"Forest", QColor{139, 232, 139}},
+                                               {"Mountain", QColor{165, 165, 165}},
+                                               {"Peak", QColor{209, 209, 209}}};
+
+    // Images for actors and transports
+    std::map<std::string, QString> _imageMap = {{"boat", ":Images/boat.png"},
+                                                    {"dolphin", ":Images/dolphin.png"},
+                                                    {"shark", ":Images/shark.png"},
+                                                    {"kraken", ":Images/kraken.png"},
+                                                    {"seamunster", ":Images/seamonster.png"},
+                                                    {"vortex", ":Images/vortex.png"}};
 };
 }
 #endif // GRAPHICALHEX_HH
