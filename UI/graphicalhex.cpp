@@ -10,7 +10,7 @@ graphicalHex::graphicalHex():
 
 QRectF graphicalHex::boundingRect() const
 {
-    return QRectF(-SIZE,-SIZE,2*SIZE,2*SIZE);
+    return QRectF(-_size,-_size,2*_size,2*_size);
 }
 
 void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -26,7 +26,7 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     {
         angle_deg = 60 * i - 30;
         angle_rad = pi / 180 * angle_deg;
-        hexShape << QPoint(SIZE * cos(angle_rad), SIZE * sin(angle_rad));
+        hexShape << QPoint(_size * cos(angle_rad), _size * sin(angle_rad));
 
     }
 
@@ -48,9 +48,9 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     // Draw the actor or transport image if the hex has one on it
     if (!_backgroundImage.isNull()) {
         QRectF imageArea;
-        double imageX = -SIZE * (3.0 / 5.0);
-        double imageY = -SIZE * (3.0 / 5.0);
-        imageArea.setRect(imageX, imageY, (6.0 / 5.0) * SIZE, (6.0 / 5.0) * SIZE);
+        double imageX = -_size * (3.0 / 5.0);
+        double imageY = -_size * (3.0 / 5.0);
+        imageArea.setRect(imageX, imageY, (6.0 / 5.0) * _size, (6.0 / 5.0) * _size);
         painter->drawImage(imageArea, _backgroundImage);
     }
 
@@ -61,9 +61,9 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 
     for (std::size_t pawn = 0; pawn < pawnsHere.size(); pawn++) {
         QRectF pawnArea;
-        double pawnX = cos(pi / 180 * (pawn * 90)) * (SIZE / 2) - (SIZE / 4);
-        double pawnY = sin(pi / 180 * (pawn * 90)) * (SIZE / 2) - (SIZE / 4);
-        pawnArea.setRect(pawnX, pawnY, SIZE, SIZE);
+        double pawnX = cos(pi / 180 * (pawn * 90)) * (_size / 2) - (_size / 4);
+        double pawnY = sin(pi / 180 * (pawn * 90)) * (_size / 2) - (_size / 4);
+        pawnArea.setRect(pawnX, pawnY, _size, _size);
         pen.setColor(QColor{pawnsHere.at(pawn)->getPlayerId() * 85, 0, 0});
         painter->setPen(pen);
         painter->drawText(pawnArea, pawnMarker);
@@ -82,7 +82,7 @@ QPainterPath graphicalHex::shape() const
     {
         angle_deg = 60 * i - 30;
         angle_rad = pi / 180 * angle_deg;
-        polygon << QPoint(SIZE * cos(angle_rad), SIZE * sin(angle_rad));
+        polygon << QPoint(_size * cos(angle_rad), _size * sin(angle_rad));
 
     }
     path.addPolygon(polygon);
@@ -93,10 +93,11 @@ QPainterPath graphicalHex::shape() const
 void graphicalHex::setPosition(Common::CubeCoordinate coord)
 {
     coordinate_ = coord;
+
     //Calculate the x and y position of the hex from
     //the cube coordinates
-    double y_pos = (-3 * SIZE * coord.z) / 2 + 250;
-    double x_pos = SIZE * (sqrt(3) * coord.y  +  sqrt(3)/2 * coord.z);
+    double y_pos = _size * (3.0 / 2.0 * coord.z);
+    double x_pos = _size * (sqrt(3) * coord.x  +  sqrt(3) / 2.0 * coord.z);
     setPos(x_pos, y_pos);
 }
 
@@ -156,6 +157,22 @@ std::shared_ptr<Common::Pawn> graphicalHex::getPlayerPawn(int playerId)
     }
 
     return nullptr;
+}
+
+void graphicalHex::increaseSize()
+{
+    if (_size < MAX_SIZE) {
+        _size += 1.0;
+    }
+    setPosition(coordinate_);
+}
+
+void graphicalHex::decreaseSize()
+{
+    if (_size > MIN_SIZE) {
+        _size -= 1.0;
+    }
+    setPosition(coordinate_);
 }
 
 

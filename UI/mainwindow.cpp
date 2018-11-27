@@ -31,8 +31,13 @@ Mainwindow::Mainwindow(QWidget *parent)
 
     connect(_wheel.get(),&Student::GraphicalWheel::wheelClicked,
             this, &Mainwindow::wheelClick);
+
     connect(_trackingScore.get(),&Student::ScoreTracker::skipPlayerTurn,
             this, &Mainwindow::skipPlayerTurn);
+
+    connect(_increaseButton, &QPushButton::clicked, _board.get(), &Student::GameBoard::zoomIn);
+
+    connect(_decreaseButton, &QPushButton::clicked, _board.get(), &Student::GameBoard::zoomOut);
 }
 
 Mainwindow::~Mainwindow()
@@ -356,32 +361,48 @@ void Mainwindow::initializeGame(int players)
             pawnCount++;
         }
 
-        // Initialize the wheel
+        // Initialize and add the wheel
         _wheelLayout = _gameEngine->getSpinnerLayout();
         _wheel->initializeSegments(_wheelLayout);
         _wheelScene.addItem(_wheel.get());
         _wheelView->setScene(&_wheelScene);
 
         _gameView = _board->showScene();
-        QHBoxLayout* hLayout = new QHBoxLayout(this);
-
-        hLayout->addWidget(_gameView);
-
-        QVBoxLayout* vLayout = new QVBoxLayout(this);
 
 
+        QHBoxLayout* mainLayout = new QHBoxLayout(this);
+        QVBoxLayout* leftLayout = new QVBoxLayout(this);
+        QVBoxLayout* rightLayout = new QVBoxLayout(this);
+
+        // View of the gameboard
+        leftLayout->addWidget(_gameView);
+
+        // Zoom controls for the board
+        QHBoxLayout* zoomControls = new QHBoxLayout();
+        QLabel* zoomLabel = new QLabel();
+        zoomLabel->setText("Change the size of the board:");
+
+        _decreaseButton->setText("-");
+        _increaseButton->setText("+");
+
+        zoomControls->addWidget(zoomLabel);
+        zoomControls->addWidget(_decreaseButton);
+        zoomControls->addWidget(_increaseButton);
+        leftLayout->addLayout(zoomControls);
+
+        // Information about the state of game
         _trackingScore->changeGamePhase(_gameState->currentGamePhase());
         _trackingScore->initializeScores(_gameEngine->playerAmount());
-        vLayout->addWidget(_trackingScore.get());
+        rightLayout->addWidget(_trackingScore.get());
 
-        // add the wheel to the UI
-        vLayout->addWidget(_wheelView);
+        // The wheel
+        rightLayout->addWidget(_wheelView);
 
-
-        hLayout->addLayout(vLayout);
+        mainLayout->addLayout(leftLayout);
+        mainLayout->addLayout(rightLayout);
 
         _widget = new QWidget();
-        _widget->setLayout(hLayout);
+        _widget->setLayout(mainLayout);
         _widget->show();
         emit updateHexes();
     }

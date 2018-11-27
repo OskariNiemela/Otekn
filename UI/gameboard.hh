@@ -222,6 +222,9 @@ public:
     std::shared_ptr<Common::Transport> getTransport(Common::CubeCoordinate coord,
                                                     std::string type);
 
+
+
+
 public slots:
     /**
      * @brief Code run when a hex emits the hexClicked signal
@@ -232,6 +235,17 @@ public slots:
      * @brief updates all the appearances of hexes
      */
     void updateHexes();
+
+    /**
+     * @brief Calls increaseSize-method for all GraphicalHex objects on the board
+     */
+    void zoomIn();
+
+    /**
+     * @brief Calls decreaseSize-method for all GraphicalHex objects on the board
+     */
+    void zoomOut();
+
 signals:
     /**
      * @brief Signal to send when a hex is clicked

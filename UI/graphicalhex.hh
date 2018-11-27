@@ -22,8 +22,9 @@
 #include <QImage>
 #include <QTransform>
 
-const double SIZE = 28.0;
 const double pi = 3.14159265359;
+const double MIN_SIZE = 20;
+const double MAX_SIZE = 40;
 
 namespace Student
 {
@@ -124,6 +125,20 @@ public:
      */
     std::shared_ptr<Common::Pawn> getPlayerPawn(int playerId);
 
+    /**
+     * @brief Increases the _size variable and calculates the new
+     * position
+     * @post exception guarantee: noThrow
+     */
+    void increaseSize();
+
+    /**
+     * @brief Decreases the _size variable and calculates the new
+     * position
+     * @post exception guarantee: noThrow
+     */
+    void decreaseSize();
+
 protected:
     /**
      * @brief ReImplemented mousepressevent
@@ -150,6 +165,7 @@ private:
     std::shared_ptr<Common::Hex> realHex_;
     QImage _backgroundImage;
     QColor _backgroundColor;
+    double _size = 36.0;
 
     // Background colors for different tile types
     std::map<std::string, QColor> _colorMap = {{"Water", QColor{153, 217, 234}},

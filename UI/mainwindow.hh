@@ -108,6 +108,9 @@ private:
     QGraphicsScene _wheelScene;
     bool wheelClicked;
 
+    QPushButton* _increaseButton = new QPushButton();
+    QPushButton* _decreaseButton = new QPushButton();
+
 public slots:
     /**
      * @brief Initializes the game with the given amount of players
