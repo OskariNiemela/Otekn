@@ -186,13 +186,21 @@ void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
         {
             bool moved = false;
 
-            // Check if there is a transport in the hex and move it
+            // Check if there is a transport in the source hex
             std::vector<std::shared_ptr<Common::Transport>> transports = selectedHex->getTransports();
             for (auto transport : transports) {
                 try {
-                    _gameEngine->moveTransport(selectedHex->getCoordinates(),
+                    // Player exits the transport
+                    if (hex->getPieceType() != "Water") {
+                        transport->removePawn(selectedPawn);
+                        _gameEngine->movePawn(selectedHex->getCoordinates(),hex->getCoordinates(),selectedPawn->getId());
+                    }
+                    // Player moves the transport
+                    else {
+                        _gameEngine->moveTransport(selectedHex->getCoordinates(),
                                                    hex->getCoordinates(),
                                                    transport->getId());
+                    }
                 } catch (Common::IllegalMoveException &exception) {
                     std::cout << exception.msg() << std::endl;
                 }
@@ -216,6 +224,7 @@ void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
 
 
             //Reset the selectedhex and selected pawn pointers
+            _board->deSelect(selectedHex->getCoordinates());
             selectedHex = nullptr;
             selectedPawn = nullptr;
 
