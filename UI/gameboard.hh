@@ -33,7 +33,7 @@ public:
      * @brief Constructor.
      */
     GameBoard();
-    ~GameBoard();
+    virtual ~GameBoard();
     /**
      * @copydoc Common::IGameBoard::checkTileOccupation
      */
@@ -177,7 +177,7 @@ public:
      * where their coordinates say they are, if not then delete
      * the pawn from the _gamePawns map
      * @pre all pawns must be valid
-     * @post exception guarantee: no throw
+     * @post exception guarantee: basic
      */
     void checkPawnValidity();
 
@@ -186,7 +186,7 @@ public:
      * where their hex_ pointer say they are, if not then delete
      * the actor from the _actors map
      * @pre all actors in _actors must be valid
-     * @post exception guarantee: no throw
+     * @post exception guarantee: basic
      */
     void checkActorValidity();
 
@@ -262,12 +262,12 @@ signals:
      */
     void hexUpdate();
 private:
-    std::map<Common::CubeCoordinate,std::shared_ptr<Common::Hex>> _tiles;
-    std::map<Common::CubeCoordinate,std::shared_ptr<Student::graphicalHex>> graphic_tiles;
+    std::map<Common::CubeCoordinate,std::shared_ptr<Common::Hex>> tiles_;
+    std::map<Common::CubeCoordinate,std::shared_ptr<Student::graphicalHex>> graphicTiles_;
 
-    std::map<int, std::shared_ptr<Common::Pawn>> _game_pawns;
-    std::map<int, std::shared_ptr<Common::Actor>> _actors;
-    std::map<int, std::shared_ptr<Common::Transport>> _transports;
+    std::map<int, std::shared_ptr<Common::Pawn>> gamePawns_;
+    std::map<int, std::shared_ptr<Common::Actor>> actors_;
+    std::map<int, std::shared_ptr<Common::Transport>> transports_;
     QGraphicsScene* scene_;
 
 };

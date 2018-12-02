@@ -52,22 +52,22 @@ protected:
 
 
 private:
-    std::shared_ptr<Student::GameBoard> _board;
-    std::shared_ptr<Student::GameState> _gameState;
-    std::vector<std::shared_ptr<Common::IPlayer>> _players;
-    std::shared_ptr<Common::IGameRunner> _gameEngine;
-    std::shared_ptr<Student::ScoreTracker> _trackingScore;
-    std::shared_ptr<Student::GraphicalWheel> _wheel;
-    Common::SpinnerLayout _wheelLayout;
+    std::shared_ptr<Student::GameBoard> board_;
+    std::shared_ptr<Student::GameState> gameState_;
+    std::vector<std::shared_ptr<Common::IPlayer>> players_;
+    std::shared_ptr<Common::IGameRunner> gameEngine_;
+    std::shared_ptr<Student::ScoreTracker> trackingScore_;
+    std::shared_ptr<Student::GraphicalWheel> wheel_;
+    Common::SpinnerLayout wheelLayout_;
 
-    int pawnCount;
+    int pawnCount_;
 
     //Muuttujat joita käytetään nappien liikuttelussa
-    std::shared_ptr<Common::Hex> selectedHex;
-    std::shared_ptr<Common::Pawn> selectedPawn;
-    std::shared_ptr<Common::Actor> selectedActor;
-    std::shared_ptr<Common::Transport> selectedTransport;
-    std::pair<std::string,std::string> _pair;
+    std::shared_ptr<Common::Hex> selectedHex_;
+    std::shared_ptr<Common::Pawn> selectedPawn_;
+    std::shared_ptr<Common::Actor> selectedActor_;
+    std::shared_ptr<Common::Transport> selectedTransport_;
+    std::pair<std::string,std::string> pair_;
 
     /**
      * @brief changes the player to the next one in line
@@ -101,15 +101,15 @@ private:
     void playerTurnSpinning(std::shared_ptr<Common::Hex> hex);
 
     //Variables for showing the gameBoard
-    QGraphicsScene* _scene;
-    QWidget* _widget;
-    QGraphicsView* _gameView;
-    QGraphicsView* _wheelView = new QGraphicsView();
-    QGraphicsScene _wheelScene;
-    bool wheelClicked;
+    QGraphicsScene* scene_;
+    QWidget* widget_;
+    QGraphicsView* gameView_;
+    QGraphicsView* wheelView_;
+    QGraphicsScene wheelScene_;
+    bool wheelClicked_;
 
-    QPushButton* _increaseButton = new QPushButton();
-    QPushButton* _decreaseButton = new QPushButton();
+    QPushButton* increaseButton_ = new QPushButton();
+    QPushButton* decreaseButton_ = new QPushButton();
 
 public slots:
     /**

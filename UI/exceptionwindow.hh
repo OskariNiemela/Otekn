@@ -9,19 +9,17 @@
 namespace Student
 {
 
-class exceptionWindow : public QDialog
+class ExceptionWindow : public QDialog
 {
     Q_OBJECT
 public:
-    explicit exceptionWindow(std::string errorMsg);
-    ~exceptionWindow();
-public slots:
-    void reject();
+    explicit ExceptionWindow(std::string errorMsg);
+    virtual ~ExceptionWindow();
 private:
     void initializeWindow(std::string errorMsg);
-    QLabel* _errorMsg;
-    QPushButton* _ok;
-    QWidget* _widget;
+    QLabel* errorMsg_;
+    QPushButton* ok_;
+    QWidget* widget_;
 };
 
 }

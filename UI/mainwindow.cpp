@@ -5,46 +5,49 @@ namespace Student
 
 Mainwindow::Mainwindow(QWidget *parent)
     : QMainWindow(parent),
-      _board(std::make_shared<Student::GameBoard>()),
-      _gameState(std::make_shared<Student::GameState>()),
-      _gameEngine(nullptr),
-      _trackingScore(std::make_shared<Student::ScoreTracker>()),
-      pawnCount(1),
-      selectedHex(nullptr),
-      selectedPawn(nullptr),
-      _scene(new QGraphicsScene),
-      _widget(nullptr),
-      _gameView(nullptr),
-      _wheel(std::make_shared<Student::GraphicalWheel>()),
-      wheelClicked(false)
+      board_(std::make_shared<Student::GameBoard>()),
+      gameState_(std::make_shared<Student::GameState>()),
+      gameEngine_(nullptr),
+      trackingScore_(std::make_shared<Student::ScoreTracker>()),
+      pawnCount_(1),
+      selectedHex_(nullptr),
+      selectedPawn_(nullptr),
+      scene_(new QGraphicsScene),
+      widget_(nullptr),
+      gameView_(nullptr),
+      wheelView_(new QGraphicsView),
+      wheel_(std::make_shared<Student::GraphicalWheel>()),
+      wheelClicked_(false),
+      increaseButton_(new QPushButton),
+      decreaseButton_(new QPushButton)
 {
-    _board->setScene(_scene);
+    board_->setScene(scene_);
 
     connect(this,&Mainwindow::updateHexes,
-            _board.get(),&Student::GameBoard::updateHexes);
+            board_.get(),&Student::GameBoard::updateHexes);
 
-    connect(_board.get(),&Student::GameBoard::hexClicked,
+    connect(board_.get(),&Student::GameBoard::hexClicked,
             this,&Mainwindow::hexClick);
 
-    connect(_board.get(),&Student::GameBoard::hexScore,
+    connect(board_.get(),&Student::GameBoard::hexScore,
             this,&Mainwindow::hexScore);
 
-    connect(_wheel.get(),&Student::GraphicalWheel::wheelClicked,
+    connect(wheel_.get(),&Student::GraphicalWheel::wheelClicked,
             this, &Mainwindow::wheelClick);
 
-    connect(_trackingScore.get(),&Student::ScoreTracker::skipPlayerTurn,
+    connect(trackingScore_.get(),&Student::ScoreTracker::skipPlayerTurn,
             this, &Mainwindow::skipPlayerTurn);
 
-    connect(_increaseButton, &QPushButton::clicked, _board.get(), &Student::GameBoard::zoomIn);
+    connect(increaseButton_, &QPushButton::clicked, board_.get(), &Student::GameBoard::zoomIn);
 
-    connect(_decreaseButton, &QPushButton::clicked, _board.get(), &Student::GameBoard::zoomOut);
+    connect(decreaseButton_, &QPushButton::clicked, board_.get(), &Student::GameBoard::zoomOut);
 }
 
 Mainwindow::~Mainwindow()
 {
-    delete _scene;
-    delete _widget;
-    delete _gameView;
+    delete scene_;
+    delete widget_;
+    delete gameView_;
 }
 
 
@@ -52,34 +55,34 @@ Mainwindow::~Mainwindow()
 void Mainwindow::changePlayers()
 {
     //If there are no pawns in the game anymore, end the game
-    if(!_board->anyPawnsIngame())
+    if(!board_->anyPawnsIngame())
     {
-        _trackingScore->displayWinner();
+        trackingScore_->displayWinner();
         return;
     }
-    Common::GamePhase phase = _gameState->currentGamePhase();
+    Common::GamePhase phase = gameState_->currentGamePhase();
     switch(phase)
     {
         case Common::MOVEMENT:
             //Change player turn
             //Check that the next player exists
-            if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
+            if (gameEngine_->playerAmount()-1 > gameState_->currentPlayer())
             {
-                _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
+                gameState_->changePlayerTurn(gameState_->currentPlayer()+1);
 
                 //Update the player display
-                _trackingScore->changePlayer(_gameState->currentPlayer());
-                _players.at(_gameState->currentPlayer())->setActionsLeft(3);
+                trackingScore_->changePlayer(gameState_->currentPlayer());
+                players_.at(gameState_->currentPlayer())->setActionsLeft(3);
             }
             //If they dont exist, that means we need to change the gamephase
             else
             {
                 //If were on the last players turn, change the phase
-                _gameState->changeGamePhase(Common::SINKING);
+                gameState_->changeGamePhase(Common::SINKING);
                 //Change the displayed game phase
-                _trackingScore->changeGamePhase(_gameState->currentGamePhase());
-                _gameState->changePlayerTurn(0);
-                _trackingScore->changePlayer(_gameState->currentPlayer());
+                trackingScore_->changeGamePhase(gameState_->currentGamePhase());
+                gameState_->changePlayerTurn(0);
+                trackingScore_->changePlayer(gameState_->currentPlayer());
                 break;
             }
             //We need to check that the player has pawns to move, so we do so
@@ -88,35 +91,35 @@ void Mainwindow::changePlayers()
         break;
 
         case Common::SINKING:
-            if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
+            if (gameEngine_->playerAmount()-1 > gameState_->currentPlayer())
             {
 
-                _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
-                _trackingScore->changePlayer(_gameState->currentPlayer());
+                gameState_->changePlayerTurn(gameState_->currentPlayer()+1);
+                trackingScore_->changePlayer(gameState_->currentPlayer());
             }
             else
             {
-                _gameState->changeGamePhase(Common::SPINNING);
-                _trackingScore->changeGamePhase(_gameState->currentGamePhase());
-                _gameState->changePlayerTurn(0);
-                _trackingScore->changePlayer(_gameState->currentPlayer());
+                gameState_->changeGamePhase(Common::SPINNING);
+                trackingScore_->changeGamePhase(gameState_->currentGamePhase());
+                gameState_->changePlayerTurn(0);
+                trackingScore_->changePlayer(gameState_->currentPlayer());
 
             }
         break;
 
         default:
-            if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
+            if (gameEngine_->playerAmount()-1 > gameState_->currentPlayer())
             {
-                _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
-                _trackingScore->changePlayer(_gameState->currentPlayer());
+                gameState_->changePlayerTurn(gameState_->currentPlayer()+1);
+                trackingScore_->changePlayer(gameState_->currentPlayer());
             }
             else
             {
-                _gameState->changePlayerTurn(0);
-                _players.at(_gameState->currentPlayer())->setActionsLeft(3);
-                _gameState->changeGamePhase(Common::MOVEMENT);
-                _trackingScore->changePlayer(_gameState->currentPlayer());
-                _trackingScore->changeGamePhase(_gameState->currentGamePhase());
+                gameState_->changePlayerTurn(0);
+                players_.at(gameState_->currentPlayer())->setActionsLeft(3);
+                gameState_->changeGamePhase(Common::MOVEMENT);
+                trackingScore_->changePlayer(gameState_->currentPlayer());
+                trackingScore_->changeGamePhase(gameState_->currentGamePhase());
 
                 checkPlayersPawns();
             }
@@ -131,22 +134,22 @@ void Mainwindow::changePlayers()
 void Mainwindow::checkPlayersPawns()
 {
     //While the current player has no pawns
-    while(!_board->playerHasPawns(_gameState->currentPlayer()))
+    while(!board_->playerHasPawns(gameState_->currentPlayer()))
     {
         //Change the player until we either find a player with pawns
-        if (_gameEngine->playerAmount()-1 > _gameState->currentPlayer())
+        if (gameEngine_->playerAmount()-1 > gameState_->currentPlayer())
         {
-            _gameState->changePlayerTurn(_gameState->currentPlayer()+1);
-            _trackingScore->changePlayer(_gameState->currentPlayer());
-            _players.at(_gameState->currentPlayer())->setActionsLeft(3);
+            gameState_->changePlayerTurn(gameState_->currentPlayer()+1);
+            trackingScore_->changePlayer(gameState_->currentPlayer());
+            players_.at(gameState_->currentPlayer())->setActionsLeft(3);
         }
         //Or we change the gamephase
         else
         {
-            _gameState->changeGamePhase(Common::SINKING);
-            _trackingScore->changeGamePhase(_gameState->currentGamePhase());
-            _gameState->changePlayerTurn(0);
-            _trackingScore->changePlayer(_gameState->currentPlayer());
+            gameState_->changeGamePhase(Common::SINKING);
+            trackingScore_->changeGamePhase(gameState_->currentGamePhase());
+            gameState_->changePlayerTurn(0);
+            trackingScore_->changePlayer(gameState_->currentPlayer());
             break;
         }
     }
@@ -154,32 +157,32 @@ void Mainwindow::checkPlayersPawns()
 
 void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
 {
-    //If selectedHex is null, that means we havent chosen a pawn/transport yet
-    if (selectedHex == nullptr)
+    //If selectedHex_ is null, that means we havent chosen a pawn/transport yet
+    if (selectedHex_ == nullptr)
     {
-        selectedHex = hex;
-        int currentPlayer = _gameState->currentPlayer();
+        selectedHex_ = hex;
+        int currentPlayer = gameState_->currentPlayer();
         //Find a pawn belonging to the current player
-        selectedPawn = _board->getPlayerPawn(selectedHex->getCoordinates(),currentPlayer);
-        if (selectedPawn == nullptr)
+        selectedPawn_ = board_->getPlayerPawn(selectedHex_->getCoordinates(),currentPlayer);
+        if (selectedPawn_ == nullptr)
         {
 
-            selectedHex = nullptr;
+            selectedHex_ = nullptr;
         }
         else
         {
-            _board->setSelected(selectedHex->getCoordinates());
+            board_->setSelected(selectedHex_->getCoordinates());
         }
     }
     //If we already have a hex selected
     else
     {
         //If we clicked the same hex as we have selected, unselect it
-        if(hex == selectedHex)
+        if(hex == selectedHex_)
         {
-            _board->deSelect(selectedHex->getCoordinates());
-            selectedHex = nullptr;
-            selectedPawn = nullptr;
+            board_->deSelect(selectedHex_->getCoordinates());
+            selectedHex_ = nullptr;
+            selectedPawn_ = nullptr;
             return;
         }
         try
@@ -187,17 +190,17 @@ void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
             bool moved = false;
 
             // Check if there is a transport in the source hex
-            std::vector<std::shared_ptr<Common::Transport>> transports = selectedHex->getTransports();
+            std::vector<std::shared_ptr<Common::Transport>> transports = selectedHex_->getTransports();
             for (auto transport : transports) {
                 try {
                     // Player exits the transport
                     if (hex->getPieceType() != "Water") {
-                        transport->removePawn(selectedPawn);
-                        _gameEngine->movePawn(selectedHex->getCoordinates(),hex->getCoordinates(),selectedPawn->getId());
+                        transport->removePawn(selectedPawn_);
+                        gameEngine_->movePawn(selectedHex_->getCoordinates(),hex->getCoordinates(),selectedPawn_->getId());
                     }
                     // Player moves the transport
                     else {
-                        _gameEngine->moveTransport(selectedHex->getCoordinates(),
+                        gameEngine_->moveTransport(selectedHex_->getCoordinates(),
                                                    hex->getCoordinates(),
                                                    transport->getId());
                     }
@@ -210,26 +213,26 @@ void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
 
             // No transport, so move a pawn normally
             if (!moved) {
-                _gameEngine->movePawn(selectedHex->getCoordinates(),hex->getCoordinates(),selectedPawn->getId());
+                gameEngine_->movePawn(selectedHex_->getCoordinates(),hex->getCoordinates(),selectedPawn_->getId());
 
                 // Check if the pawn moved into a transport
                 std::vector<std::shared_ptr<Common::Transport>> targetTransports = hex->getTransports();
                 for (auto transport : targetTransports) {
 
                     // Add pawn into the first transport
-                    transport->addPawn(hex->givePawn(selectedPawn->getId()));
+                    transport->addPawn(hex->givePawn(selectedPawn_->getId()));
                     break;
                 }
             }
 
 
-            //Reset the selectedhex and selected pawn pointers
-            _board->deSelect(selectedHex->getCoordinates());
-            selectedHex = nullptr;
-            selectedPawn = nullptr;
+            //Reset the selectedHex_ and selected pawn pointers
+            board_->deSelect(selectedHex_->getCoordinates());
+            selectedHex_ = nullptr;
+            selectedPawn_ = nullptr;
 
             //If the player has no actions left
-            if(_players.at(_gameState->currentPlayer())->getActionsLeft() <= 0)
+            if(players_.at(gameState_->currentPlayer())->getActionsLeft() <= 0)
             {
                 changePlayers();
             }
@@ -246,13 +249,13 @@ void Mainwindow::playerTurnSinking(std::shared_ptr<Common::Hex> hex)
     try
     {
         //Try to flip the chosen tile
-        _gameEngine->flipTile(hex->getCoordinates());
+        gameEngine_->flipTile(hex->getCoordinates());
 
-        _board->flipTile(hex->getCoordinates());
+        board_->flipTile(hex->getCoordinates());
         //Change player turn
-        _board->checkPawnValidity();
+        board_->checkPawnValidity();
         changePlayers();
-        _board->checkActorValidity();
+        board_->checkActorValidity();
 
     }
     catch (Common::IllegalMoveException &exception)
@@ -264,58 +267,58 @@ void Mainwindow::playerTurnSinking(std::shared_ptr<Common::Hex> hex)
 void Mainwindow::playerTurnSpinning(std::shared_ptr<Common::Hex> hex)
 {
     //If we have clicked the wheel already
-    if (selectedHex == nullptr && wheelClicked)
+    if (selectedHex_ == nullptr && wheelClicked_)
     {
-        selectedHex = hex;
+        selectedHex_ = hex;
 
         // Find actor or transport in selected hex
-        selectedActor = _board->getActor(selectedHex->getCoordinates(), _pair.first);
-        selectedTransport = _board->getTransport(selectedHex->getCoordinates(), _pair.first);
+        selectedActor_ = board_->getActor(selectedHex_->getCoordinates(), pair_.first);
+        selectedTransport_ = board_->getTransport(selectedHex_->getCoordinates(), pair_.first);
 
-        if (selectedActor == nullptr && selectedTransport == nullptr)
+        if (selectedActor_ == nullptr && selectedTransport_ == nullptr)
         {
-            selectedHex = nullptr;
+            selectedHex_ = nullptr;
         }
         else
         {
-            _board->setSelected(selectedHex->getCoordinates());
+            board_->setSelected(selectedHex_->getCoordinates());
         }
     }
-    else if(wheelClicked)
+    else if(wheelClicked_)
     {
         //If we already have a hex selected
-        if(hex == selectedHex)
+        if(hex == selectedHex_)
         {
-            _board->deSelect(selectedHex->getCoordinates());
-            selectedHex = nullptr;
-            selectedActor = nullptr;
-            selectedTransport = nullptr;
+            board_->deSelect(selectedHex_->getCoordinates());
+            selectedHex_ = nullptr;
+            selectedActor_ = nullptr;
+            selectedTransport_ = nullptr;
             return;
         }
         try
         {
-            if (selectedActor != nullptr) {
-                _gameEngine->moveActor(selectedHex->getCoordinates(),
+            if (selectedActor_ != nullptr) {
+                gameEngine_->moveActor(selectedHex_->getCoordinates(),
                                        hex->getCoordinates(),
-                                       selectedActor->getId(),
-                                       _pair.second);
+                                       selectedActor_->getId(),
+                                       pair_.second);
             }
-            else if (selectedTransport != nullptr) {
-                _gameEngine->moveTransportWithSpinner(selectedHex->getCoordinates(),
+            else if (selectedTransport_ != nullptr) {
+                gameEngine_->moveTransportWithSpinner(selectedHex_->getCoordinates(),
                                                       hex->getCoordinates(),
-                                                      selectedTransport->getId(),
-                                                      _pair.second);
+                                                      selectedTransport_->getId(),
+                                                      pair_.second);
             }
 
-            _board->deSelect(selectedHex->getCoordinates());
-            selectedHex = nullptr;
-            selectedActor = nullptr;
-            selectedTransport = nullptr;
-            wheelClicked = false;
+            board_->deSelect(selectedHex_->getCoordinates());
+            selectedHex_ = nullptr;
+            selectedActor_ = nullptr;
+            selectedTransport_ = nullptr;
+            wheelClicked_ = false;
 
             //We need to check the pawn validity of the pawns in the gameboards
             //game pawns, because they could be eaten by the actors
-            _board->checkPawnValidity();
+            board_->checkPawnValidity();
             changePlayers();
 
         }
@@ -340,43 +343,43 @@ void Mainwindow::initializeGame(int players)
         std::shared_ptr<Common::IPlayer> newPlayer =
                 std::make_shared<Student::Player>(a);
 
-        _players.push_back(newPlayer);
+        players_.push_back(newPlayer);
     }
     // Now the game engine can be initialized
     try
     {
-        _gameEngine = Common::Initialization::getGameRunner(_board,_gameState,_players);
+        gameEngine_ = Common::Initialization::getGameRunner(board_,gameState_,players_);
     }
     catch(Common::IoException &IoException)
     {
         std::cout<<IoException.msg()<<std::endl;
-        Student::exceptionWindow exception(IoException.msg());
+        Student::ExceptionWindow exception(IoException.msg());
         exception.exec();
     }
     catch(Common::FormatException &FormatException)
     {
         std::cout<<FormatException.msg()<<std::endl;
-        Student::exceptionWindow exception(FormatException.msg());
+        Student::ExceptionWindow exception(FormatException.msg());
         exception.exec();
     }
 
 
-    if(_gameEngine != nullptr)
+    if(gameEngine_ != nullptr)
     {
-        for(auto player:_players)
+        for(auto player:players_)
         {
             int ID = player->getPlayerId();
-            _board->addPawn(ID,pawnCount);
-            pawnCount++;
+            board_->addPawn(ID,pawnCount_);
+            pawnCount_++;
         }
 
         // Initialize and add the wheel
-        _wheelLayout = _gameEngine->getSpinnerLayout();
-        _wheel->initializeSegments(_wheelLayout);
-        _wheelScene.addItem(_wheel.get());
-        _wheelView->setScene(&_wheelScene);
+        wheelLayout_ = gameEngine_->getSpinnerLayout();
+        wheel_->initializeSegments(wheelLayout_);
+        wheelScene_.addItem(wheel_.get());
+        wheelView_->setScene(&wheelScene_);
 
-        _gameView = _board->showScene();
+        gameView_ = board_->showScene();
 
 
         QHBoxLayout* mainLayout = new QHBoxLayout(this);
@@ -384,35 +387,35 @@ void Mainwindow::initializeGame(int players)
         QVBoxLayout* rightLayout = new QVBoxLayout(this);
 
         // View of the gameboard
-        leftLayout->addWidget(_gameView);
+        leftLayout->addWidget(gameView_);
 
         // Zoom controls for the board
         QHBoxLayout* zoomControls = new QHBoxLayout();
         QLabel* zoomLabel = new QLabel();
         zoomLabel->setText("Change the size of the board:");
 
-        _decreaseButton->setText("-");
-        _increaseButton->setText("+");
+        decreaseButton_->setText("-");
+        increaseButton_->setText("+");
 
         zoomControls->addWidget(zoomLabel);
-        zoomControls->addWidget(_decreaseButton);
-        zoomControls->addWidget(_increaseButton);
+        zoomControls->addWidget(decreaseButton_);
+        zoomControls->addWidget(increaseButton_);
         leftLayout->addLayout(zoomControls);
 
         // Information about the state of game
-        _trackingScore->changeGamePhase(_gameState->currentGamePhase());
-        _trackingScore->initializeScores(_gameEngine->playerAmount());
-        rightLayout->addWidget(_trackingScore.get());
+        trackingScore_->changeGamePhase(gameState_->currentGamePhase());
+        trackingScore_->initializeScores(gameEngine_->playerAmount());
+        rightLayout->addWidget(trackingScore_.get());
 
         // The wheel
-        rightLayout->addWidget(_wheelView);
+        rightLayout->addWidget(wheelView_);
 
         mainLayout->addLayout(leftLayout);
         mainLayout->addLayout(rightLayout);
 
-        _widget = new QWidget();
-        _widget->setLayout(mainLayout);
-        _widget->show();
+        widget_ = new QWidget();
+        widget_->setLayout(mainLayout);
+        widget_->show();
         emit updateHexes();
     }
 
@@ -422,11 +425,11 @@ void Mainwindow::initializeGame(int players)
 void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
 {
     //Do different stuff based on the current gamephase
-    if(_gameState->currentGamePhase() == Common::MOVEMENT)
+    if(gameState_->currentGamePhase() == Common::MOVEMENT)
     {
         playerTurnMovement(chosenHex);
     }
-    else if (_gameState->currentGamePhase()==Common::SINKING)
+    else if (gameState_->currentGamePhase()==Common::SINKING)
     {
         playerTurnSinking(chosenHex);
     }
@@ -439,15 +442,15 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
 
 void Mainwindow::wheelClick()
 {
-    if(_gameState->currentGamePhase() == Common::SPINNING && !wheelClicked)
+    if(gameState_->currentGamePhase() == Common::SPINNING && !wheelClicked_)
     {
-        _pair = _gameEngine->spinWheel();
-        _wheel->setValue(_pair);
-        _wheel->update();
+        pair_ = gameEngine_->spinWheel();
+        wheel_->setValue(pair_);
+        wheel_->update();
 
         //Check if there is even an actor of the given type
-        bool actorOrTransportFound = _board->checkActor(_pair.first) ||
-                _board->checkTransport(_pair.first);
+        bool actorOrTransportFound = board_->checkActor(pair_.first) ||
+                board_->checkTransport(pair_.first);
 
         if(!actorOrTransportFound)
         {
@@ -456,7 +459,7 @@ void Mainwindow::wheelClick()
         }
         //we have clicked the wheel, this ensures a player cant click the wheel twice
         //in one turn.
-        wheelClicked = true;
+        wheelClicked_ = true;
     }
 
 }
@@ -465,7 +468,7 @@ void Mainwindow::wheelClick()
 
 void Mainwindow::hexScore()
 {
-    _trackingScore->scorePlayer(_gameEngine->currentPlayer());
+    trackingScore_->scorePlayer(gameEngine_->currentPlayer());
 }
 
 void Mainwindow::skipPlayerTurn()
