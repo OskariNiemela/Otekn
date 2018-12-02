@@ -3,37 +3,41 @@
 namespace Student
 {
 
-graphicalHex::graphicalHex():
+GraphicalHex::GraphicalHex():
     pressed_(false)
 {
 }
 
-QRectF graphicalHex::boundingRect() const
+QRectF GraphicalHex::boundingRect() const
 {
-    return QRectF(-_size,-_size,2*_size,2*_size);
+    // A square that is a bit larger than the hex
+    return QRectF(-size_, -size_, 2 * size_, 2 * size_);
 }
 
-void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void GraphicalHex::paint(QPainter *painter,
+                         const QStyleOptionGraphicsItem *option,
+                         QWidget *widget)
 {
     // QPolygon object for the painter to paint
     QPolygon hexShape;
 
-    // Calculate the corners of the hexagon
-    double angle_deg;
-    double angle_rad;
+    // Calculate the corner points of the hexagon in relation to the
+    // center (0,0)
+    double angleDeg;
+    double angleRad;
 
-    for(int i = 1; i <= 6; i++)
+    for(int i = 1; i <= 6; ++i)
     {
-        angle_deg = 60 * i - 30;
-        angle_rad = pi / 180 * angle_deg;
-        hexShape << QPoint(_size * cos(angle_rad), _size * sin(angle_rad));
+        angleDeg = (60.0 * i) - 30.0;
+        angleRad = (PI / 180.0) * angleDeg;
+        hexShape << QPoint(size_ * cos(angleRad), size_ * sin(angleRad));
 
     }
 
-    QBrush brush(_backgroundColor);
+    QBrush brush(backgroundColor_);
     QPen pen(Qt::black, 1);
 
-    //If the hex is selected
+    // Borders are painted to red if the user selects this hex
     if (pressed_) {
         pen.setColor(Qt::red);
         pen.setWidth(1);
@@ -46,43 +50,48 @@ void graphicalHex::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     painter->drawPolygon(hexShape);
 
     // Draw the actor or transport image if the hex has one on it
-    if (!_backgroundImage.isNull()) {
+    if (!actorOrTransportImage_.isNull()) {
         QRectF imageArea;
-        double imageX = -_size * (3.0 / 5.0);
-        double imageY = -_size * (3.0 / 5.0);
-        imageArea.setRect(imageX, imageY, (6.0 / 5.0) * _size, (6.0 / 5.0) * _size);
-        painter->drawImage(imageArea, _backgroundImage);
+        double imageX = -size_ * (3.0 / 5.0);
+        double imageY = -size_ * (3.0 / 5.0);
+        imageArea.setRect(imageX, imageY, (6.0 / 5.0) * size_,
+                                          (6.0 / 5.0) * size_);
+        painter->drawImage(imageArea, actorOrTransportImage_);
     }
 
     // Draw the pawns
     QString pawnMarker = "♟";
     std::vector<std::shared_ptr<Common::Pawn>> pawnsHere
             = realHex_->getPawns();
+    std::size_t numberOfPawns = pawnsHere.size();
 
-    for (std::size_t pawn = 0; pawn < pawnsHere.size(); pawn++) {
+    for (std::size_t pawn = 0; pawn < numberOfPawns; ++pawn) {
         QRectF pawnArea;
-        double pawnX = cos(pi / 180 * (pawn * 90)) * (_size / 2) - (_size / 4);
-        double pawnY = sin(pi / 180 * (pawn * 90)) * (_size / 2) - (_size / 4);
-        pawnArea.setRect(pawnX, pawnY, _size, _size);
-        pen.setColor(QColor{pawnsHere.at(pawn)->getPlayerId() * 85, 0, 0});
+        double pawnX = cos((PI / 180) * (pawn * 90)) * (size_ / 2)
+                - (size_ / 4);
+        double pawnY = sin((PI / 180) * (pawn * 90)) * (size_ / 2)
+                - (size_ / 4);
+        pawnArea.setRect(pawnX, pawnY, size_, size_);
+        pen.setColor(QColor{pawnsHere.at(pawn)->getPlayerId()
+                            * COLOR_MULTIPLIER, 0, 0});
         painter->setPen(pen);
         painter->drawText(pawnArea, pawnMarker);
     }
 }
 
-QPainterPath graphicalHex::shape() const
+QPainterPath GraphicalHex::shape() const
 {
     QPolygon polygon;
     QPainterPath path;
 
-    double angle_deg;
-    double angle_rad;
+    double angleDeg;
+    double angleRad;
     //Make the shape the same as the drawn polygon
-    for(int i = 1; i <= 6; i++)
+    for(int i = 1; i <= 6; ++i)
     {
-        angle_deg = 60 * i - 30;
-        angle_rad = pi / 180 * angle_deg;
-        polygon << QPoint(_size * cos(angle_rad), _size * sin(angle_rad));
+        angleDeg = (60.0 * i) - 30.0;
+        angleRad = (PI / 180.0) * angleDeg;
+        polygon << QPoint(size_ * cos(angleRad), size_ * sin(angleRad));
 
     }
     path.addPolygon(polygon);
@@ -90,64 +99,66 @@ QPainterPath graphicalHex::shape() const
 
 }
 
-void graphicalHex::setPosition(Common::CubeCoordinate coord)
+void GraphicalHex::setPosition(Common::CubeCoordinate coord)
 {
     coordinate_ = coord;
 
     //Calculate the x and y position of the hex from
     //the cube coordinates
-    double y_pos = _size * (3.0 / 2.0 * coord.z);
-    double x_pos = _size * (sqrt(3) * coord.x  +  sqrt(3) / 2.0 * coord.z);
-    setPos(x_pos, y_pos);
+    double yPos = size_ * ((3.0 / 2.0) * coord.z);
+    double xPos = size_ * ((sqrt(3.0) * coord.x) + (sqrt(3.0) / 2.0)
+                           * coord.z);
+    setPos(xPos, yPos);
 }
 
-void graphicalHex::setHex(std::shared_ptr<Common::Hex> newHex)
+void GraphicalHex::setHex(std::shared_ptr<Common::Hex> newHex)
 {
     realHex_ = newHex;
 }
 
-void graphicalHex::setBackground()
+void GraphicalHex::setBackground()
 {
-    _backgroundColor = _colorMap.at(realHex_->getPieceType());
+    backgroundColor_ = colorMap_.at(realHex_->getPieceType());
 
 }
 
-void graphicalHex::setActorOrTransportImage()
+void GraphicalHex::setActorOrTransportImage()
 {
+    // If the hex has transports on it, add image of the first one
     if (!realHex_->getTransports().empty()) {
-        _backgroundImage.load(_imageMap.at(realHex_->getTransports().at(0)->getTransportType()));
+        actorOrTransportImage_.load(imageMap_.at(realHex_->getTransports().
+                                                 at(0)->getTransportType()));
     }
+    // If the hex has actors on it, add image of the first one
     else if (!realHex_->getActorTypes().empty()) {
-        _backgroundImage.load(_imageMap.at(realHex_->getActorTypes().at(0)));
+        actorOrTransportImage_.load(imageMap_.at(realHex_->getActorTypes().
+                                                 at(0)));
     }
+    // The image will be empty by default
     else {
-        _backgroundImage = QImage();
+        actorOrTransportImage_ = QImage();
     }
 }
 
-
-Common::CubeCoordinate graphicalHex::getCoordinates() const
+Common::CubeCoordinate GraphicalHex::getCoordinates() const
 {
     return coordinate_;
 }
 
-void graphicalHex::select()
+void GraphicalHex::select()
 {
     pressed_ = true;
 }
 
-void graphicalHex::deSelect()
+void GraphicalHex::deSelect()
 {
     pressed_ = false;
 }
 
-
-
-
-std::shared_ptr<Common::Pawn> graphicalHex::getPlayerPawn(int playerId)
+std::shared_ptr<Common::Pawn> GraphicalHex::getPlayerPawn(int playerId)
 {
+    //Search the pawns in the hex and find the one matching the player's id
     std::vector<std::shared_ptr<Common::Pawn>> pawns = realHex_->getPawns();
-    //Search the pawns in the hex and finds the one matching the player id
     for(std::shared_ptr<Common::Pawn> pawn:pawns)
     {
         if(pawn->getPlayerId() == playerId)
@@ -155,36 +166,33 @@ std::shared_ptr<Common::Pawn> graphicalHex::getPlayerPawn(int playerId)
             return pawn;
         }
     }
-
     return nullptr;
 }
 
-void graphicalHex::increaseSize()
+void GraphicalHex::increaseSize()
 {
-    if (_size < MAX_SIZE) {
-        _size += 1.0;
+    if (size_ < MAX_SIZE) {
+        size_ += 1.0;
     }
     setPosition(coordinate_);
 }
 
-void graphicalHex::decreaseSize()
+void GraphicalHex::decreaseSize()
 {
-    if (_size > MIN_SIZE) {
-        _size -= 1.0;
+    if (size_ > MIN_SIZE) {
+        size_ -= 1.0;
     }
     setPosition(coordinate_);
 }
 
-
-void graphicalHex::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void GraphicalHex::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-
     emit hexClicked(realHex_);
     update();
     QGraphicsItem::mousePressEvent(event);
 }
 
-void graphicalHex::updateGraphicHex()
+void GraphicalHex::updateGraphicHex()
 {
     setBackground();
     setActorOrTransportImage();

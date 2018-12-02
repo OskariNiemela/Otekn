@@ -166,7 +166,7 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
 {
     //Add hex to hex map
     _tiles[newHex->getCoordinates()] = newHex;
-    std::shared_ptr<graphicalHex> hex = std::make_shared<graphicalHex>();
+    std::shared_ptr<GraphicalHex> hex = std::make_shared<GraphicalHex>();
     if(scene_ != nullptr)
     {
         scene_->addItem(hex.get());
@@ -183,11 +183,11 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
 
     //Connect the hexclicked signal to our hexClick slot
     //Needed to process hex clicks
-    connect(hex.get(),&graphicalHex::hexClicked,this,&GameBoard::hexClick);
+    connect(hex.get(),&GraphicalHex::hexClicked,this,&GameBoard::hexClick);
 
     //Connects our hexUpdate to graphical hexes updateGraphicHex,
     //needed to make the hexes update when moving pawns for example.
-    connect(this,&GameBoard::hexUpdate,hex.get(),&graphicalHex::updateGraphicHex);
+    connect(this,&GameBoard::hexUpdate,hex.get(),&GraphicalHex::updateGraphicHex);
 }
 
 void GameBoard::addTransport(std::shared_ptr<Common::Transport> transport, Common::CubeCoordinate coord)
@@ -441,7 +441,7 @@ std::shared_ptr<Common::Transport> GameBoard::getTransport(Common::CubeCoordinat
 
 void GameBoard::zoomIn()
 {
-    std::map<Common::CubeCoordinate, std::shared_ptr<Student::graphicalHex>>::iterator it;
+    std::map<Common::CubeCoordinate, std::shared_ptr<Student::GraphicalHex>>::iterator it;
     for (it = graphic_tiles.begin(); it != graphic_tiles.end(); it++) {
         it->second->increaseSize();
         it->second->update();
@@ -450,7 +450,7 @@ void GameBoard::zoomIn()
 
 void GameBoard::zoomOut()
 {
-    std::map<Common::CubeCoordinate, std::shared_ptr<Student::graphicalHex>>::iterator it;
+    std::map<Common::CubeCoordinate, std::shared_ptr<Student::GraphicalHex>>::iterator it;
     for (it = graphic_tiles.begin(); it != graphic_tiles.end(); it++) {
         it->second->decreaseSize();
         it->second->update();

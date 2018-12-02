@@ -62,12 +62,23 @@ private:
 
     int pawnCount;
 
-    //Muuttujat joita käytetään nappien liikuttelussa
+    // Variables used in moving pawns, actors and transports
     std::shared_ptr<Common::Hex> selectedHex;
     std::shared_ptr<Common::Pawn> selectedPawn;
     std::shared_ptr<Common::Actor> selectedActor;
     std::shared_ptr<Common::Transport> selectedTransport;
     std::pair<std::string,std::string> _pair;
+
+    // Variables for showing the gameBoard
+    QGraphicsScene* _scene;
+    QWidget* _widget;
+    QGraphicsView* _gameView;
+    QGraphicsView* _wheelView = new QGraphicsView();
+    QGraphicsScene _wheelScene;
+    bool wheelClicked;
+
+    QPushButton* _increaseButton = new QPushButton();
+    QPushButton* _decreaseButton = new QPushButton();
 
     /**
      * @brief changes the player to the next one in line
@@ -100,16 +111,7 @@ private:
      */
     void playerTurnSpinning(std::shared_ptr<Common::Hex> hex);
 
-    //Variables for showing the gameBoard
-    QGraphicsScene* _scene;
-    QWidget* _widget;
-    QGraphicsView* _gameView;
-    QGraphicsView* _wheelView = new QGraphicsView();
-    QGraphicsScene _wheelScene;
-    bool wheelClicked;
 
-    QPushButton* _increaseButton = new QPushButton();
-    QPushButton* _decreaseButton = new QPushButton();
 
 public slots:
     /**

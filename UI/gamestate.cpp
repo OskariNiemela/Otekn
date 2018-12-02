@@ -4,29 +4,30 @@ namespace Student
 {
 
 GameState::GameState():
-    _currentPlayer(0),
-    _gamePhase(Common::GamePhase::MOVEMENT)
+    currentPlayer_(0),
+    gamePhase_(Common::GamePhase::MOVEMENT)
 {
 
 }
 
 int GameState::currentPlayer() const
 {
-    return _currentPlayer;
+    return currentPlayer_;
 }
 
 Common::GamePhase GameState::currentGamePhase() const
 {
-    return _gamePhase;
+    return gamePhase_;
 }
 
 void GameState::changeGamePhase(Common::GamePhase nextPhase)
 {
-    _gamePhase = nextPhase;
+    gamePhase_ = nextPhase;
 }
 
 void GameState::changePlayerTurn(int nextPlayer)
 {
-    _currentPlayer = nextPlayer;
+    currentPlayer_ = nextPlayer;
 }
+
 }
