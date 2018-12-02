@@ -87,6 +87,7 @@ private:
      * @post exception guarantee: nothrow
      */
     void changePlayers();
+
     /**
      * @brief checks if the player has any pawns, if not
      * skip their turn
@@ -100,12 +101,14 @@ private:
      * @post exception guarantee: nothrow
      */
     void playerTurnMovement(std::shared_ptr<Common::Hex> hex);
+
     /**
      * @brief Does the player turn when sinking tiles
      * @param Hex we want to sink
      * @post exception guarantee: nothrow
      */
     void playerTurnSinking(std::shared_ptr<Common::Hex> hex);
+
     /**
      * @brief Does the player turn when spinning the wheel
      * @param hex we've clicked
@@ -113,22 +116,6 @@ private:
      */
     void playerTurnSpinning(std::shared_ptr<Common::Hex> hex);
 
-<<<<<<< HEAD
-
-    //Variables for showing the gameBoard
-    QGraphicsScene* scene_;
-    QWidget* widget_;
-    QGraphicsView* gameView_;
-    QGraphicsView* wheelView_;
-    QGraphicsScene wheelScene_;
-    bool wheelClicked_;
-
-    QPushButton* increaseButton_ = new QPushButton();
-    QPushButton* decreaseButton_ = new QPushButton();
-
-
-=======
->>>>>>> d05906810540f49e43a84a2cf829afdb8fdd0d71
 public slots:
     /**
      * @brief Initializes the game with the given amount of players
@@ -136,6 +123,7 @@ public slots:
      * @post exception guarantee: basic
      */
     void initializeGame(int players);
+
     /**
      * @brief Run when a hex is clicked
      * @param pointer to hex that has been clicked
