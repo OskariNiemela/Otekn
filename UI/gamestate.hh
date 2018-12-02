@@ -13,33 +13,37 @@ public:
      * @brief Constructor
      */
     GameState();
+
     /**
      * @brief default destructor
      */
-    ~GameState() = default;
-    /**
-     * @copydoc Common;;IGameState::currentGamePhase
-     */
-    Common::GamePhase currentGamePhase() const;
+    virtual ~GameState() = default;
 
     /**
-     * @copydoc Common;;IGameState::currentPlayer
+     * @copydoc Common::IGameState::currentGamePhase
      */
-    int currentPlayer() const;
+    virtual Common::GamePhase currentGamePhase() const;
 
     /**
-     * @copydoc Common;;IGameState::changeGamePhase
+     * @copydoc Common::IGameState::currentPlayer
      */
-    void changeGamePhase(Common::GamePhase nextPhase);
+    virtual int currentPlayer() const;
+
     /**
-     * @copydoc Common;;IGameState::changePlayerTurn
+     * @copydoc Common::IGameState::changeGamePhase
      */
-    void changePlayerTurn(int nextPlayer);
+    virtual void changeGamePhase(Common::GamePhase nextPhase);
+
+    /**
+     * @copydoc Common::IGameState::changePlayerTurn
+     */
+    virtual void changePlayerTurn(int nextPlayer);
 
 private:
-    int _currentPlayer;
-    Common::GamePhase _gamePhase;
+    int currentPlayer_;
+    Common::GamePhase gamePhase_;
 };
+
 }
 
 #endif // GAMESTATE_HH

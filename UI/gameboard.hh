@@ -263,7 +263,8 @@ signals:
     void hexUpdate();
 private:
     std::map<Common::CubeCoordinate,std::shared_ptr<Common::Hex>> tiles_;
-    std::map<Common::CubeCoordinate,std::shared_ptr<Student::graphicalHex>> graphicTiles_;
+    std::map<Common::CubeCoordinate,std::shared_ptr<Student::GraphicalHex>> graphicTiles_;
+
 
     std::map<int, std::shared_ptr<Common::Pawn>> gamePawns_;
     std::map<int, std::shared_ptr<Common::Actor>> actors_;

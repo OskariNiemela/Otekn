@@ -167,7 +167,8 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
 {
     //Add hex to hex map
     tiles_[newHex->getCoordinates()] = newHex;
-    std::shared_ptr<graphicalHex> hex = std::make_shared<graphicalHex>();
+    std::shared_ptr<GraphicalHex> hex = std::make_shared<GraphicalHex>();
+
     if(scene_ != nullptr)
     {
         scene_->addItem(hex.get());
@@ -184,12 +185,13 @@ void GameBoard::addHex(std::shared_ptr<Common::Hex> newHex)
 
     //Connect the hexclicked signal to our hexClick slot
     //Needed to process hex clicks
-    connect(hex.get(),&graphicalHex::hexClicked,this,&GameBoard::hexClick);
+    connect(hex.get(),&GraphicalHex::hexClicked,this,&GameBoard::hexClick);
 
     //Connects our hexUpdate to graphical hexes updateGraphicHex,
     //needed to make the hexes update when moving pawns for example.
     connect(this,&GameBoard::hexUpdate,hex.get(),
-            &graphicalHex::updateGraphicHex);
+            &GraphicalHex::updateGraphicHex);
+
 }
 
 void GameBoard::addTransport(std::shared_ptr<Common::Transport> transport,
@@ -454,10 +456,11 @@ std::shared_ptr<Common::Transport> GameBoard::getTransport(
 
 void GameBoard::zoomIn()
 {
+
     std::map<Common::CubeCoordinate,
-            std::shared_ptr<Student::graphicalHex>>::iterator it;
+            std::shared_ptr<Student::GraphicalHex>>::iterator it;
     std::map<Common::CubeCoordinate,
-            std::shared_ptr<Student::graphicalHex>>::iterator end
+            std::shared_ptr<Student::GraphicalHex>>::iterator end
                 = graphicTiles_.end();
     for (it = graphicTiles_.begin(); it != end; ++it) {
         it->second->increaseSize();
@@ -467,13 +470,13 @@ void GameBoard::zoomIn()
 
 void GameBoard::zoomOut()
 {
+
     std::map<Common::CubeCoordinate,
-            std::shared_ptr<Student::graphicalHex>>::iterator it;
+            std::shared_ptr<Student::GraphicalHex>>::iterator it;
     std::map<Common::CubeCoordinate,
-            std::shared_ptr<Student::graphicalHex>>::iterator end
+            std::shared_ptr<Student::GraphicalHex>>::iterator end
             = graphicTiles_.end();
     for (it = graphicTiles_.begin(); it != end; ++it) {
-        it->second->decreaseSize();
         it->second->update();
     }
 }
