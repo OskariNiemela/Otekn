@@ -219,10 +219,18 @@ public:
      */
     std::shared_ptr<Common::Actor> getActor(Common::CubeCoordinate coord,
                                             std::string type);
+
+    /**
+     * @brief gets a transport of the specified type from the
+     * specified coordinates
+     * @param coordinate to look for the transport from
+     * @param type of the transport we're looking for
+     * @return returns a pointer to the transport, or nullptr
+     * if there is no such transport
+     * @post exception guarantee: strong
+     */
     std::shared_ptr<Common::Transport> getTransport(Common::CubeCoordinate coord,
                                                     std::string type);
-
-
 
 
 public slots:
@@ -231,6 +239,7 @@ public slots:
      * @param pointer to the hex that has been clicked
      */
     void hexClick(std::shared_ptr<Common::Hex> clickedHex);
+
     /**
      * @brief updates all the appearances of hexes
      */
@@ -253,14 +262,17 @@ signals:
      * not the graphical hex
      */
     void hexClicked(std::shared_ptr<Common::Hex> clickHex);
+
     /**
      * @brief Run when a player scores a point
      */
     void hexScore();
+
     /**
      * @brief Update the appearances of hexes
      */
     void hexUpdate();
+
 private:
     std::map<Common::CubeCoordinate,std::shared_ptr<Common::Hex>> tiles_;
     std::map<Common::CubeCoordinate,std::shared_ptr<Student::GraphicalHex>> graphicTiles_;

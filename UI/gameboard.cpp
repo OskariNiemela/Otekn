@@ -23,18 +23,17 @@ GameBoard::~GameBoard()
 
 int GameBoard::checkTileOccupation(Common::CubeCoordinate tileCoord) const
 {
-    // Onko ruutu olemassa
+    // Check if the tile exists
     if (tiles_.find(tileCoord) == tiles_.end()) {
         return -1;
     }
 
-    // Pawnien lukumäärä
     return tiles_.at(tileCoord)->getPawnAmount();
 }
 
 bool GameBoard::isWaterTile(Common::CubeCoordinate tileCoord) const
 {
-    // Onko ruutu olemassa
+    // Check if the tile exists
     if (tiles_.find(tileCoord) == tiles_.end()) {
         return false;
     }
@@ -57,14 +56,13 @@ std::shared_ptr<Common::Hex> GameBoard::getHex(Common::CubeCoordinate hexCoord) 
 
 void GameBoard::addPawn(int playerId, int pawnId)
 {
-    //The coordinates that by default we add the pawns to is 0,0,0
+    // The coordinates that by default we add the pawns to is 0,0,0
     Common::CubeCoordinate coord(0,0,0);
     std::shared_ptr<Common::Pawn> newPawn = std::make_shared<Common::Pawn>();
     newPawn->setId(pawnId,playerId);
     newPawn->setCoordinates(coord);
     tiles_[coord]->addPawn(newPawn);
     gamePawns_[pawnId] = newPawn;
-
 }
 
 void GameBoard::addPawn(int playerId, int pawnId, Common::CubeCoordinate coord)
@@ -83,26 +81,27 @@ void GameBoard::movePawn(int pawnId, Common::CubeCoordinate pawnCoord)
     {
         return;
     }
+
     if(tiles_.at(pawnCoord)->getPieceType() != "Coral")
     {
         std::shared_ptr<Common::Pawn> movingPawn= gamePawns_.at(pawnId);
 
-        //Deselect the graphic tile that were moving from
+        // Deselect the graphic tile that were moving from
         graphicTiles_.at(movingPawn->getCoordinates())->deSelect();
 
-        //remove the pawn from the coordinate it is in before moving
+        // Remove the pawn from the coordinate it is in before moving
         tiles_.at(movingPawn->getCoordinates())->removePawn(movingPawn);
 
-        //Set the new coordinate for the pawn
+        // Set the new coordinate for the pawn
         gamePawns_.at(pawnId)->setCoordinates(pawnCoord);
-        //Add the pawn at the appropriate hex coordinate
+
+        // Add the pawn at the appropriate hex coordinate
         tiles_.at(pawnCoord)->addPawn(movingPawn);
 
     }
     //If were moving into a coral tile
     else
     {
-
         std::shared_ptr<Common::Pawn> movingPawn= gamePawns_.at(pawnId);
 
         graphicTiles_.at(movingPawn->getCoordinates())->deSelect();
@@ -114,7 +113,6 @@ void GameBoard::movePawn(int pawnId, Common::CubeCoordinate pawnCoord)
         //And give the player a point for a job well done
         emit hexScore();
     }
-
 }
 
 void GameBoard::removePawn(int pawnId)
@@ -130,7 +128,7 @@ void GameBoard::removePawn(int pawnId)
 void GameBoard::addActor(std::shared_ptr<Common::Actor> actor,
                          Common::CubeCoordinate actorCoord)
 {
-    //Checks that the hex and the actor exist
+    // Checks that the hex and the actor exist
     if ((tiles_.find(actorCoord) != tiles_.end()) && (actor != nullptr)) {
 
         // Add an actor to the hex
@@ -207,13 +205,12 @@ void GameBoard::addTransport(std::shared_ptr<Common::Transport> transport,
 
 void GameBoard::moveTransport(int id, Common::CubeCoordinate coord)
 {
-
     if (tiles_.find(coord) != tiles_.end())
     {
-    //If we find the transport in our transport map
+        // If we find the transport in our transport map
         if(transports_.find(id)!=transports_.end())
         {
-            //Move the found transport to the desired coordinates
+            // Move the found transport to the desired coordinates
             std::shared_ptr<Common::Transport> transport =transports_.at(id);
             transport->move(tiles_.at(coord));
         }
@@ -222,7 +219,6 @@ void GameBoard::moveTransport(int id, Common::CubeCoordinate coord)
 
 void GameBoard::removeTransport(int id)
 {
-
     if(transports_.find(id)!=transports_.end())
     {
         // Remove transport from hex and transports_ map
@@ -232,14 +228,10 @@ void GameBoard::removeTransport(int id)
         hex->removeTransport(transport);
         transports_.erase(id);
     }
-
-
 }
 
 void GameBoard::flipTile(Common::CubeCoordinate coord)
 {
-
-
     if(graphicTiles_.find(coord) != graphicTiles_.end())
     {
        // Jos ruudussa on transport
@@ -252,14 +244,12 @@ void GameBoard::flipTile(Common::CubeCoordinate coord)
         tiles_.at(coord)->getActors().at(0)->doAction();
 
     }
-
-
 }
 
 
 QGraphicsView* GameBoard::showScene()
 {
-    //Once the view has been built, return it to the mainwindow
+    // Once the view has been built, return it to the mainwindow
     QGraphicsView* view = new QGraphicsView(scene_);
     return view;
 }
@@ -281,7 +271,6 @@ void GameBoard::setSelected(Common::CubeCoordinate coord)
     {
         graphicTiles_.at(coord)->select();
     }
-
 }
 
 void GameBoard::deSelect(Common::CubeCoordinate coord)
@@ -299,22 +288,20 @@ void GameBoard::setScene(QGraphicsScene* scene)
 
 void GameBoard::hexClick(std::shared_ptr<Common::Hex> clickedHex)
 {
-    //When hex is clicked, emit it to the mainwindow which will actually
-    //process the click
+    // When hex is clicked, emit it to the mainwindow which will actually
+    // process the click
     emit hexClicked(clickedHex);
 }
 
 void GameBoard::updateHexes()
 {
-    //Updates all the appearances of the hexes
+    // Updates all the appearances of the hexes
     emit hexUpdate();
 }
 
-
-
 bool GameBoard::playerHasPawns(int playerId)
 {
-    //Make a for loop that goes through the pawns we have in a map
+    // Make a for loop that goes through the pawns we have in a map
     std::map<int,
             std::shared_ptr<Common::Pawn>>::const_iterator end = gamePawns_.end();
     for(std::map<int,std::shared_ptr<Common::Pawn>>::const_iterator
@@ -326,13 +313,12 @@ bool GameBoard::playerHasPawns(int playerId)
             return true;
         }
     }
-
     return false;
 }
 
 bool GameBoard::anyPawnsIngame()
 {
-    if(gamePawns_.size()>0)
+    if(gamePawns_.size() > 0)
     {
         return true;
     }
@@ -346,7 +332,8 @@ void GameBoard::checkPawnValidity()
     while(allPawns!=gamePawns_.end())
     {
         std::shared_ptr<Common::Pawn> pawn = allPawns->second;
-        //Check if pawn is in the pawn map of the hex it is supposed to be in
+
+        // Check if pawn is in the pawn map of the hex it is supposed to be in
         Common::CubeCoordinate coordinate = pawn->getCoordinates();
         if(tiles_.at(coordinate)->givePawn(pawn->getId()) == nullptr)
         {
@@ -356,7 +343,6 @@ void GameBoard::checkPawnValidity()
         {
             ++allPawns;
         }
-
     }
 }
 
@@ -367,7 +353,8 @@ void GameBoard::checkActorValidity()
     while(actor != actors_.end())
     {
         std::shared_ptr<Common::Hex> hex = actor->second->getHex();
-        //Check if the actor is in the hexes actor map
+
+        // Check if the actor is in the hexes actor map
         if(hex->giveActor(actor->second->getId()) == nullptr)
         {
             actor = actors_.erase(actor);
@@ -383,7 +370,8 @@ bool GameBoard::checkActor(std::string type)
 {
     std::map<int,std::shared_ptr<Common::Actor>>::const_iterator it
             = actors_.begin();
-    //Checks that there is an actor of the specified type in our actors map
+
+    // Checks that there is an actor of the specified type in our actors map
     while(it != actors_.end())
     {
         if(it->second->getActorType() == type)
@@ -400,7 +388,7 @@ bool GameBoard::checkTransport(std::string type)
 {
     std::map<int,std::shared_ptr<Common::Transport>>::const_iterator it
             = transports_.begin();
-    //Checks that there is an actor of the specified type in our actors map
+    // Checks that there is an actor of the specified type in our actors map
     while(it != transports_.end())
     {
         if(it->second->getTransportType() == type)
@@ -417,12 +405,12 @@ std::shared_ptr<Common::Actor> GameBoard::getActor(Common::CubeCoordinate coord,
 {
     if(tiles_.find(coord)!=tiles_.end())
     {
-        //Get the actors and put them into a vector
+        // Get the actors and put them into a vector
         std::vector<std::shared_ptr<Common::Actor>> actors =tiles_.at(coord)->getActors();
         for(std::shared_ptr<Common::Actor> actor:actors)
         {
-            //If the actors type matches the specific type we're looking for
-            //return a pointer to it
+            // If the actors type matches the specific type we're looking for
+            // return a pointer to it
             if(actor->getActorType()==type)
             {
                 return actor;
@@ -456,7 +444,6 @@ std::shared_ptr<Common::Transport> GameBoard::getTransport(
 
 void GameBoard::zoomIn()
 {
-
     std::map<Common::CubeCoordinate,
             std::shared_ptr<Student::GraphicalHex>>::iterator it;
     std::map<Common::CubeCoordinate,
@@ -470,7 +457,6 @@ void GameBoard::zoomIn()
 
 void GameBoard::zoomOut()
 {
-
     std::map<Common::CubeCoordinate,
             std::shared_ptr<Student::GraphicalHex>>::iterator it;
     std::map<Common::CubeCoordinate,

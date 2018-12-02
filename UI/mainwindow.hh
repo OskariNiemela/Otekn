@@ -142,6 +142,7 @@ public slots:
      * @post exception guarantee: nothrow
      */
     void skipPlayerTurn();
+
 signals:
     /**
      * @brief updates the graphical hexes
