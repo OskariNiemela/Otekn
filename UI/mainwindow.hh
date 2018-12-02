@@ -36,6 +36,8 @@
 
 namespace Student
 {
+const int PLAYER_MOVES = 3;
+
 class Mainwindow : public QMainWindow
 {
     Q_OBJECT
@@ -112,7 +114,7 @@ private:
      */
     void playerTurnSpinning(std::shared_ptr<Common::Hex> hex);
 
-<<<<<<< HEAD
+
     //Variables for showing the gameBoard
     QGraphicsScene* scene_;
     QWidget* widget_;
@@ -123,9 +125,7 @@ private:
 
     QPushButton* increaseButton_ = new QPushButton();
     QPushButton* decreaseButton_ = new QPushButton();
-=======
 
->>>>>>> ce00a8a2d48a404e3d008719de58b47eeae7e4ac
 
 public slots:
     /**

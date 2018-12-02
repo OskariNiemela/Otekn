@@ -38,9 +38,11 @@ Mainwindow::Mainwindow(QWidget *parent)
     connect(trackingScore_.get(),&Student::ScoreTracker::skipPlayerTurn,
             this, &Mainwindow::skipPlayerTurn);
 
-    connect(increaseButton_, &QPushButton::clicked, board_.get(), &Student::GameBoard::zoomIn);
+    connect(increaseButton_, &QPushButton::clicked,
+            board_.get(), &Student::GameBoard::zoomIn);
 
-    connect(decreaseButton_, &QPushButton::clicked, board_.get(), &Student::GameBoard::zoomOut);
+    connect(decreaseButton_, &QPushButton::clicked,
+            board_.get(), &Student::GameBoard::zoomOut);
 }
 
 Mainwindow::~Mainwindow()
@@ -60,96 +62,63 @@ void Mainwindow::changePlayers()
         trackingScore_->displayWinner();
         return;
     }
+
     Common::GamePhase phase = gameState_->currentGamePhase();
-    switch(phase)
+
+    //If there are more players whose turns we need to go to
+    if((gameEngine_->playerAmount()-1) > (gameState_->currentPlayer()))
     {
-        case Common::MOVEMENT:
-            //Change player turn
-            //Check that the next player exists
-            if (gameEngine_->playerAmount()-1 > gameState_->currentPlayer())
-            {
-                gameState_->changePlayerTurn(gameState_->currentPlayer()+1);
-
-                //Update the player display
-                trackingScore_->changePlayer(gameState_->currentPlayer());
-                players_.at(gameState_->currentPlayer())->setActionsLeft(3);
-            }
-            //If they dont exist, that means we need to change the gamephase
-            else
-            {
-                //If were on the last players turn, change the phase
-                gameState_->changeGamePhase(Common::SINKING);
-                //Change the displayed game phase
-                trackingScore_->changeGamePhase(gameState_->currentGamePhase());
-                gameState_->changePlayerTurn(0);
-                trackingScore_->changePlayer(gameState_->currentPlayer());
-                break;
-            }
-            //We need to check that the player has pawns to move, so we do so
-            checkPlayersPawns();
-
-        break;
-
-        case Common::SINKING:
-            if (gameEngine_->playerAmount()-1 > gameState_->currentPlayer())
-            {
-
-                gameState_->changePlayerTurn(gameState_->currentPlayer()+1);
-                trackingScore_->changePlayer(gameState_->currentPlayer());
-            }
-            else
-            {
-                gameState_->changeGamePhase(Common::SPINNING);
-                trackingScore_->changeGamePhase(gameState_->currentGamePhase());
-                gameState_->changePlayerTurn(0);
-                trackingScore_->changePlayer(gameState_->currentPlayer());
-
-            }
-        break;
-
-        default:
-            if (gameEngine_->playerAmount()-1 > gameState_->currentPlayer())
-            {
-                gameState_->changePlayerTurn(gameState_->currentPlayer()+1);
-                trackingScore_->changePlayer(gameState_->currentPlayer());
-            }
-            else
-            {
-                gameState_->changePlayerTurn(0);
-                players_.at(gameState_->currentPlayer())->setActionsLeft(3);
-                gameState_->changeGamePhase(Common::MOVEMENT);
-                trackingScore_->changePlayer(gameState_->currentPlayer());
-                trackingScore_->changeGamePhase(gameState_->currentGamePhase());
-
-                checkPlayersPawns();
-            }
-        break;
-
-
+        gameState_->changePlayerTurn(gameState_->currentPlayer()+1);
+       if(phase == Common::MOVEMENT)
+       {
+           checkPlayersPawns();
+       }
     }
+    // If we need to change the gameState, since we've gone through
+    // all the needed player turns
+    else
+    {
+        gameState_->changePlayerTurn(0);
+        switch(phase)
+        {
+            case Common::MOVEMENT:
+                gameState_->changeGamePhase(Common::SINKING);
+            break;
+
+            case Common::SINKING:
+                gameState_->changeGamePhase(Common::SPINNING);
+            break;
+
+            default:
+                gameState_->changeGamePhase(Common::MOVEMENT);
+                checkPlayersPawns();
+            break;
+
+        }
+    }
+    trackingScore_->changeGamePhase(gameState_->currentGamePhase());
+    trackingScore_->changePlayer(gameState_->currentPlayer());
 
 }
 
 
 void Mainwindow::checkPlayersPawns()
 {
+    players_.at(gameState_->currentPlayer())->setActionsLeft(PLAYER_MOVES);
     //While the current player has no pawns
     while(!board_->playerHasPawns(gameState_->currentPlayer()))
     {
         //Change the player until we either find a player with pawns
-        if (gameEngine_->playerAmount()-1 > gameState_->currentPlayer())
+        if ((gameEngine_->playerAmount()-1) > (gameState_->currentPlayer()))
         {
             gameState_->changePlayerTurn(gameState_->currentPlayer()+1);
             trackingScore_->changePlayer(gameState_->currentPlayer());
-            players_.at(gameState_->currentPlayer())->setActionsLeft(3);
+            players_.at(gameState_->currentPlayer())->setActionsLeft(PLAYER_MOVES);
         }
         //Or we change the gamephase
         else
         {
             gameState_->changeGamePhase(Common::SINKING);
-            trackingScore_->changeGamePhase(gameState_->currentGamePhase());
-            gameState_->changePlayerTurn(0);
-            trackingScore_->changePlayer(gameState_->currentPlayer());
             break;
         }
     }
@@ -163,7 +132,8 @@ void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
         selectedHex_ = hex;
         int currentPlayer = gameState_->currentPlayer();
         //Find a pawn belonging to the current player
-        selectedPawn_ = board_->getPlayerPawn(selectedHex_->getCoordinates(),currentPlayer);
+        selectedPawn_ = board_->getPlayerPawn(selectedHex_->getCoordinates()
+                                              ,currentPlayer);
         if (selectedPawn_ == nullptr)
         {
 
@@ -190,18 +160,20 @@ void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
             bool moved = false;
 
             // Check if there is a transport in the source hex
-            std::vector<std::shared_ptr<Common::Transport>> transports = selectedHex_->getTransports();
+            std::vector<std::shared_ptr<Common::Transport>> transports
+                    = selectedHex_->getTransports();
             for (auto transport : transports) {
                 try {
                     // Player exits the transport
                     if (hex->getPieceType() != "Water") {
                         transport->removePawn(selectedPawn_);
-                        gameEngine_->movePawn(selectedHex_->getCoordinates(),hex->getCoordinates(),selectedPawn_->getId());
+                        gameEngine_->movePawn(selectedHex_->getCoordinates(),
+                                              hex->getCoordinates(),selectedPawn_->getId());
                     }
                     // Player moves the transport
                     else {
-                        gameEngine_->moveTransport(selectedHex_->getCoordinates(),
-                                                   hex->getCoordinates(),
+                        gameEngine_->moveTransport(selectedHex_->getCoordinates()
+                                                   ,hex->getCoordinates(),
                                                    transport->getId());
                     }
                 } catch (Common::IllegalMoveException &exception) {
@@ -213,10 +185,12 @@ void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
 
             // No transport, so move a pawn normally
             if (!moved) {
-                gameEngine_->movePawn(selectedHex_->getCoordinates(),hex->getCoordinates(),selectedPawn_->getId());
+                gameEngine_->movePawn(selectedHex_->getCoordinates(),
+                                      hex->getCoordinates(),selectedPawn_->getId());
 
                 // Check if the pawn moved into a transport
-                std::vector<std::shared_ptr<Common::Transport>> targetTransports = hex->getTransports();
+                std::vector<std::shared_ptr<Common::Transport>> targetTransports
+                        = hex->getTransports();
                 for (auto transport : targetTransports) {
 
                     // Add pawn into the first transport
@@ -267,15 +241,17 @@ void Mainwindow::playerTurnSinking(std::shared_ptr<Common::Hex> hex)
 void Mainwindow::playerTurnSpinning(std::shared_ptr<Common::Hex> hex)
 {
     //If we have clicked the wheel already
-    if (selectedHex_ == nullptr && wheelClicked_)
+    if ((selectedHex_ == nullptr) && (wheelClicked_))
     {
         selectedHex_ = hex;
 
         // Find actor or transport in selected hex
-        selectedActor_ = board_->getActor(selectedHex_->getCoordinates(), pair_.first);
-        selectedTransport_ = board_->getTransport(selectedHex_->getCoordinates(), pair_.first);
+        selectedActor_ = board_->getActor(selectedHex_->getCoordinates(),
+                                          pair_.first);
+        selectedTransport_ = board_->getTransport(selectedHex_->getCoordinates(),
+                                                  pair_.first);
 
-        if (selectedActor_ == nullptr && selectedTransport_ == nullptr)
+        if ((selectedActor_ == nullptr) && (selectedTransport_ == nullptr))
         {
             selectedHex_ = nullptr;
         }
@@ -304,10 +280,11 @@ void Mainwindow::playerTurnSpinning(std::shared_ptr<Common::Hex> hex)
                                        pair_.second);
             }
             else if (selectedTransport_ != nullptr) {
-                gameEngine_->moveTransportWithSpinner(selectedHex_->getCoordinates(),
-                                                      hex->getCoordinates(),
-                                                      selectedTransport_->getId(),
-                                                      pair_.second);
+                gameEngine_->moveTransportWithSpinner(
+                            selectedHex_->getCoordinates(),
+                            hex->getCoordinates(),
+                            selectedTransport_->getId(),
+                            pair_.second);
             }
 
             board_->deSelect(selectedHex_->getCoordinates());
@@ -331,14 +308,14 @@ void Mainwindow::playerTurnSpinning(std::shared_ptr<Common::Hex> hex)
     //If we've not clicked the wheel yet to determine which actor to move
     else
     {
-        std::cout<<"Please spin the wheel before trying to move actors"<<std::endl;
+        std::cout<<"Spin the wheel before trying to move actors"<<std::endl;
     }
 }
 
 void Mainwindow::initializeGame(int players)
 {
     // Setup players
-    for(int a = 0;a<players;a++)
+    for(int a = 0;a<players;++a)
     {
         std::shared_ptr<Common::IPlayer> newPlayer =
                 std::make_shared<Student::Player>(a);
@@ -348,7 +325,8 @@ void Mainwindow::initializeGame(int players)
     // Now the game engine can be initialized
     try
     {
-        gameEngine_ = Common::Initialization::getGameRunner(board_,gameState_,players_);
+        gameEngine_
+                = Common::Initialization::getGameRunner(board_,gameState_,players_);
     }
     catch(Common::IoException &IoException)
     {
@@ -368,9 +346,9 @@ void Mainwindow::initializeGame(int players)
     {
         for(auto player:players_)
         {
-            int ID = player->getPlayerId();
-            board_->addPawn(ID,pawnCount_);
-            pawnCount_++;
+            int id = player->getPlayerId();
+            board_->addPawn(id,pawnCount_);
+            ++pawnCount_;
         }
 
         // Initialize and add the wheel
@@ -442,7 +420,7 @@ void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
 
 void Mainwindow::wheelClick()
 {
-    if(gameState_->currentGamePhase() == Common::SPINNING && !wheelClicked_)
+    if((gameState_->currentGamePhase() == Common::SPINNING) && (!wheelClicked_))
     {
         pair_ = gameEngine_->spinWheel();
         wheel_->setValue(pair_);
@@ -457,8 +435,8 @@ void Mainwindow::wheelClick()
             changePlayers();
             return;
         }
-        //we have clicked the wheel, this ensures a player cant click the wheel twice
-        //in one turn.
+        // we have clicked the wheel, this ensures a player
+        // cant click the wheel twice in one turn.
         wheelClicked_ = true;
     }
 
@@ -473,6 +451,14 @@ void Mainwindow::hexScore()
 
 void Mainwindow::skipPlayerTurn()
 {
+    if(selectedHex_ != nullptr)
+    {
+        board_->deSelect(selectedHex_->getCoordinates());
+        selectedHex_ = nullptr;
+        selectedPawn_ = nullptr;
+        emit updateHexes();
+    }
+
     changePlayers();
 }
 
