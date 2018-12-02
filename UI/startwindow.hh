@@ -12,11 +12,7 @@
 namespace Student
 {
 
-namespace Ui {
-    class startWindow;
-}
-
-class startWindow : public QDialog
+class StartWindow : public QDialog
 {
     Q_OBJECT
 public:
@@ -24,7 +20,7 @@ public:
      * @brief Constructor
      * @param parent of the start window, by default 0
      */
-    explicit startWindow(QWidget *parent = 0);
+    explicit StartWindow(QWidget *parent = 0);
 signals:
     /**
      * @brief Sends the amount of players as a signal
@@ -33,13 +29,12 @@ signals:
     void sendValue(int count);
 
 public slots:
-    void accept();
-    void reject();
+    virtual void accept();
+    virtual void reject();
 
 private:
-    Ui::startWindow *ui;
-    QSpinBox* _playerNumber;
-    QWidget* _widget;
+    QSpinBox *playerNumber_;
+    QWidget *widget_;
 
     /**
      * @brief Initializes all the different things the window displays
@@ -47,5 +42,6 @@ private:
      */
     void initializeWindow();
 };
+
 }
 #endif // STARTWINDOW_HH

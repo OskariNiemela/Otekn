@@ -1,13 +1,6 @@
 #ifndef GAMEBOARD_HH
 #define GAMEBOARD_HH
 
-#include <map>
-#include <unordered_map>
-#include <vector>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QObject>
-
 #include "igameboard.hh"
 #include "hex.hh"
 #include "graphicalhex.hh"
@@ -16,6 +9,13 @@
 #include "actorfactory.hh"
 #include "gameexception.hh"
 #include "transport.hh"
+
+#include <map>
+#include <unordered_map>
+#include <vector>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QObject>
 
 /**
 * @brief contains classess that have been created by students

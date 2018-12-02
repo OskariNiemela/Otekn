@@ -6,6 +6,7 @@
 #include <string>
 #include <QPushButton>
 #include <QVBoxLayout>
+
 namespace Student
 {
 

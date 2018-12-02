@@ -68,13 +68,12 @@ signals:
     void skipPlayerTurn();
 
 private:
-    int currPlayer;
-    QLabel* playerTurn;
-    QLabel* gamePhase;
-    std::vector<int> playerScores;
-    QVBoxLayout* layout;
-    QPushButton* skipTurn;
-    std::vector<QLabel*> playerLabels;
+    QLabel *playerTurn_;
+    QLabel *gamePhase_;
+    std::vector<int> playerScores_;
+    QVBoxLayout *layout_;
+    QPushButton *skipTurn_;
+    std::vector<QLabel *> playerLabels_;
 };
 
 

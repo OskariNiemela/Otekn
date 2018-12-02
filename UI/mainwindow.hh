@@ -30,9 +30,8 @@
 #include <QGraphicsView>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-//Testailuun
 #include <QLabel>
-#include <QPixmap>
+
 
 namespace Student
 {

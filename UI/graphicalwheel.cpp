@@ -146,7 +146,7 @@ void GraphicalWheel::drawSegments(QPainter *painter)
             textArea.setRect(textX, textY, 30, 30);
             painter->drawText(textArea, stepString);
 
-            currentSegment++;
+            ++currentSegment;
         }
     }
 }

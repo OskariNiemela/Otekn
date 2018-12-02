@@ -14,11 +14,11 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
 
-    Student::startWindow* startingInfo = new Student::startWindow;
+    Student::StartWindow* startingInfo = new Student::StartWindow;
 
     Student::Mainwindow* w = new Student::Mainwindow;
 
-    QObject::connect(startingInfo, &Student::startWindow::sendValue,
+    QObject::connect(startingInfo, &Student::StartWindow::sendValue,
                      w, &Student::Mainwindow::initializeGame);
 
     startingInfo->exec();
