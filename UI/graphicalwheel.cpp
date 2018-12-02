@@ -6,35 +6,36 @@ namespace Student {
 void GraphicalWheel::initializeSegments(Common::SpinnerLayout layout)
 {
     // Make a copy of the layout
-    _layout = layout;
+    layout_ = layout;
 
     // Calculate how many segments needs to be drawn
-    _segments = 0;
-    for (auto animal : _layout) {
+    segments_ = 0;
+    for (auto animal : layout_) {
         for (auto steps : animal.second) {
-            _segments++;
+            ++segments_;
         }
     }
 
     // Default position for the wheel is the first item in _layout
-    _toMove = std::pair<std::string, std::string>{_layout.begin()->first, _layout.begin()->second.begin()->first};
+    toMove_ = std::pair<std::string, std::string>{ layout_.begin()->first,
+                layout_.begin()->second.begin()->first };
 }
 
 void GraphicalWheel::setValue(std::pair<std::string, std::string> pair)
 {
-    _toMove = pair;
+    toMove_ = pair;
 
     // Find the position of toMove variable in spinner layout
     int position = 0;
     bool found = false;
-    for (auto animal : _layout) {
+    for (auto animal : layout_) {
         for (auto steps : animal.second) {
-            if (animal.first == std::get<0>(_toMove) &&
-                    steps.first == std::get<1>(_toMove)) {
+            if ((animal.first == std::get<0>(toMove_)) &&
+                    (steps.first == std::get<1>(toMove_))) {
                 found = true;
                 break;
             }
-            position++;
+            ++position;
         }
         if (found) {
             break;
@@ -42,19 +43,22 @@ void GraphicalWheel::setValue(std::pair<std::string, std::string> pair)
     }
 
     // Now we can calculate the new angle for the arrow
-    _arrowAngle = (360.0 * position + 180) / _segments;
+    arrowAngle_ = (360.0 * position + 180) / segments_;
 }
 
-void GraphicalWheel::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void GraphicalWheel::paint(QPainter *painter,
+                           const QStyleOptionGraphicsItem *option,
+                           QWidget *widget)
 {
     drawSegments(painter);
-    drawArrow(painter, _arrowAngle);
+    drawArrow(painter, arrowAngle_);
     drawSpinButton(painter);
 }
 
 QRectF GraphicalWheel::boundingRect() const
 {
-    return QRectF(-RADIUS, -RADIUS, 2*RADIUS, 2*RADIUS);
+    // Square of the size of the wheel
+    return QRectF(-RADIUS, -RADIUS, 2 * RADIUS, 2 * RADIUS);
 }
 
 QPainterPath GraphicalWheel::shape() const
@@ -66,13 +70,13 @@ QPainterPath GraphicalWheel::shape() const
 
 void GraphicalWheel::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
+    QGraphicsItem::mousePressEvent(event);
     emit wheelClicked();
 }
 
 void GraphicalWheel::drawSegments(QPainter *painter)
 {
-    QColor backgroundColor;
-    backgroundColor.setRgb(153, 217, 234);
+    QColor backgroundColor = WATER_COLOR;
 
     QBrush brush;
     brush.setStyle(Qt::SolidPattern);
@@ -83,7 +87,7 @@ void GraphicalWheel::drawSegments(QPainter *painter)
     pen.setWidth(1);
 
     QFont font = painter->font();
-    font.setPixelSize(20);
+    font.setPixelSize(FONT_SIZE);
 
     painter->setPen(pen);
     painter->setBrush(brush);
@@ -95,7 +99,7 @@ void GraphicalWheel::drawSegments(QPainter *painter)
     // Segments
     Common::SpinnerLayout::iterator animal;
     int currentSegment = 0;
-    for (animal = _layout.begin(); animal != _layout.end(); animal++) {
+    for (animal = layout_.begin(); animal != layout_.end(); ++animal) {
 
         // Different image for each animal
         if (animal->first == "dolphin") {
@@ -110,26 +114,35 @@ void GraphicalWheel::drawSegments(QPainter *painter)
         else if (animal->first == "shark") {
             animalImage.load(":/Images/shark.png");
         }
+        // Unknown animal -> no image
+        else {
+            animalImage = QImage();
+        }
 
         for (std::pair<std::string, unsigned> steps : animal->second) {
 
             // Calculate segment size and draw it
-            double startAngle = 360.0 / _segments * currentSegment;
-            double spanAngle = 360.0 / _segments;
-            painter->drawPie(-RADIUS, -RADIUS, 2*RADIUS, 2*RADIUS, 16*startAngle, 16*spanAngle);
+            double startAngle = 360.0 / segments_ * currentSegment;
+            double spanAngle = 360.0 / segments_;
+            painter->drawPie(-RADIUS, -RADIUS, 2 * RADIUS, 2 * RADIUS,
+                             16 * startAngle, 16 * spanAngle);
 
             // Calculate image coordinates and draw it
             QRectF imageArea;
-            double imageX = (4.0/5) * RADIUS * cos((startAngle + (1.0/2) * spanAngle) * M_PI / 180) - 20;
-            double imageY = -(4.0/5) * RADIUS * sin((startAngle + (1.0/2) * spanAngle) * M_PI / 180) - 20;
+            double imageX = (4.0 / 5.0) * RADIUS * cos((startAngle
+                            + (1.0 / 2.0) * spanAngle) * M_PI / 180.0) - 20.0;
+            double imageY = -(4.0 / 5.0) * RADIUS * sin((startAngle
+                            + (1.0 / 2.0) * spanAngle) * M_PI / 180.0) - 20.0;
             imageArea.setRect(imageX, imageY, 40, 40);
             painter->drawImage(imageArea, animalImage);
 
             // Draw the amount of steps
             QString stepString = QString::fromStdString(std::get<0>(steps));
             QRectF textArea;
-            double textX = (3.0/5) * RADIUS * cos((startAngle + (1.0/2) * spanAngle) * M_PI / 180) - 10;
-            double textY = -(3.0/5) * RADIUS * sin((startAngle + (1.0/2) * spanAngle) * M_PI / 180) - 10;
+            double textX = (3.0 / 5.0) * RADIUS * cos((startAngle
+                           + (1.0 / 2.0) * spanAngle) * M_PI / 180.0) - 10.0;
+            double textY = -(3.0 / 5.0) * RADIUS * sin((startAngle
+                           + (1.0 / 2.0) * spanAngle) * M_PI / 180.0) - 10.0;
             textArea.setRect(textX, textY, 30, 30);
             painter->drawText(textArea, stepString);
 
@@ -141,14 +154,14 @@ void GraphicalWheel::drawSegments(QPainter *painter)
 void GraphicalWheel::drawArrow(QPainter *painter, double newAngle)
 {
     // Tip of the arrow
-    double arrowX1 = (2.5/5) * RADIUS * cos(newAngle * M_PI / 180);
-    double arrowY1 = -(2.5/5) * RADIUS * sin(newAngle * M_PI / 180);
+    double arrowX1 = (2.5 / 5.0) * RADIUS * cos(newAngle * M_PI / 180.0);
+    double arrowY1 = -(2.5 / 5.0) * RADIUS * sin(newAngle * M_PI / 180.0);
 
     // Bottom points (will be covered by the spin button)
-    double arrowX2 = 10 * cos((newAngle + 90) * M_PI / 180);
-    double arrowY2 = 10 * sin((newAngle + 90) * M_PI / 180);
-    double arrowX3 = 10 * cos((newAngle - 90) * M_PI / 180);
-    double arrowY3 = 10 * sin((newAngle - 90) * M_PI / 180);
+    double arrowX2 = 10.0 * cos((newAngle + 90.0) * M_PI / 180.0);
+    double arrowY2 = 10.0 * sin((newAngle + 90.0) * M_PI / 180.0);
+    double arrowX3 = 10.0 * cos((newAngle - 90.0) * M_PI / 180.0);
+    double arrowY3 = 10.0 * sin((newAngle - 90.0) * M_PI / 180.0);
 
     QPolygon arrow;
     arrow << QPoint(arrowX1, arrowY1);
@@ -166,8 +179,7 @@ void GraphicalWheel::drawArrow(QPainter *painter, double newAngle)
 
 void GraphicalWheel::drawSpinButton(QPainter *painter)
 {
-    QColor backgroundColor;
-    backgroundColor.setRgb(255, 127, 39);
+    QColor backgroundColor = BUTTON_BGCOLOR;
 
     QBrush brush;
     brush.setStyle(Qt::SolidPattern);
