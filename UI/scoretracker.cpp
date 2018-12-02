@@ -36,7 +36,8 @@ void ScoreTracker::scorePlayer(int playerId)
 {
     playerScores.at(playerId)++;
     //Make the text we want to display
-    std::string scoreText = "Player " + std::to_string(playerId) +" score: " + std::to_string(playerScores.at(playerId));
+    std::string scoreText = "Player " + std::to_string(playerId) + " score: " +
+                            std::to_string(playerScores.at(playerId));
     QString scoreTextQ = QString::fromStdString(scoreText);
     playerLabels.at(playerId)->setText(scoreTextQ);
 }
@@ -71,7 +72,7 @@ void ScoreTracker::displayWinner()
 
         ++nowPlayer;
     }
-    std::string playerText = "Player " + std::to_string(player) +" Wins";
+    std::string playerText = "Player " + std::to_string(player) + " Wins";
     QString playerTextQ = QString::fromStdString(playerText);
     playerTurn->setText(playerTextQ);
 }
@@ -79,7 +80,8 @@ void ScoreTracker::displayWinner()
 
 void ScoreTracker::changePlayer(int currentPlayer)
 {
-    std::string playerText = "Player " + std::to_string(currentPlayer) +" Turn";
+    std::string playerText = "Player " + std::to_string(currentPlayer)
+            + " Turn";
     QString playerTextQ = QString::fromStdString(playerText);
     playerTurn->setText(playerTextQ);
 }
@@ -88,12 +90,13 @@ void ScoreTracker::changePlayer(int currentPlayer)
 void ScoreTracker::initializeScores(int playerAmount)
 {
     //Initializing the number of QLabels we need to display all the scores
-    for(int i=0;i<playerAmount;i++)
+    for(int i=0 ; i < playerAmount; ++i)
     {
         //The initial score is 0 for all players
         playerScores.push_back(0);
         //build the string that displays the player score
-        std::string playerText = "Player " + std::to_string(i) +" score: " + std::to_string(0);
+        std::string playerText = "Player " + std::to_string(i) + " score: " +
+                std::to_string(0);
         QString playerTextQ = QString::fromStdString(playerText);
         //Make the necessary label and push it into a vector
         QLabel* playerLabel = new QLabel(this);
@@ -106,38 +109,32 @@ void ScoreTracker::initializeScores(int playerAmount)
 void ScoreTracker::changeGamePhase(Common::GamePhase phase)
 {
     //Switch the phase text based on the current gamephase
+    std::string phaseText;
     switch (phase)
     {
         case Common::MOVEMENT:
         {
-            std::string phaseText = "Phase: Movement";
-            QString phaseTextQ = QString::fromStdString(phaseText);
-            gamePhase->setText(phaseTextQ);
+            phaseText = "Phase: Movement";
             skipTurn->setEnabled(true);
             break;
         }
 
-
-
         case Common::SINKING:
         {
-            std::string phaseText = "Phase: Sinking";
-            QString phaseTextQ = QString::fromStdString(phaseText);
-            gamePhase->setText(phaseTextQ);
+            phaseText = "Phase: Sinking";
             skipTurn->setEnabled(false);
             break;
         }
 
-
         default:
         {
-            std::string phaseText = "Phase: Spinning";
-            QString phaseTextQ = QString::fromStdString(phaseText);
-            gamePhase->setText(phaseTextQ);
+            phaseText = "Phase: Spinning";
             skipTurn->setEnabled(false);
             break;
         }
 
     }
+    QString phaseTextQ = QString::fromStdString(phaseText);
+    gamePhase->setText(phaseTextQ);
 }
 }

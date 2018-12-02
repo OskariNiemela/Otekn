@@ -101,7 +101,6 @@ void Mainwindow::changePlayers()
     }
     trackingScore_->changeGamePhase(gameState_->currentGamePhase());
     trackingScore_->changePlayer(gameState_->currentPlayer());
-
 }
 
 
@@ -116,7 +115,8 @@ void Mainwindow::checkPlayersPawns()
         {
             gameState_->changePlayerTurn(gameState_->currentPlayer()+1);
             trackingScore_->changePlayer(gameState_->currentPlayer());
-            players_.at(gameState_->currentPlayer())->setActionsLeft(PLAYER_MOVES);
+            players_.at(gameState_->currentPlayer())->
+                    setActionsLeft(PLAYER_MOVES);
         }
         //Or we change the gamephase
         else
@@ -171,12 +171,13 @@ void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
                     if (hex->getPieceType() != "Water") {
                         transport->removePawn(selectedPawn_);
                         gameEngine_->movePawn(selectedHex_->getCoordinates(),
-                                              hex->getCoordinates(),selectedPawn_->getId());
+                                              hex->getCoordinates(),
+                                              selectedPawn_->getId());
                     }
                     // Player moves the transport
                     else {
-                        gameEngine_->moveTransport(selectedHex_->getCoordinates()
-                                                   ,hex->getCoordinates(),
+                        gameEngine_->moveTransport(selectedHex_->getCoordinates(),
+                                                   hex->getCoordinates(),
                                                    transport->getId());
                     }
                 } catch (Common::IllegalMoveException &exception) {
@@ -189,7 +190,8 @@ void Mainwindow::playerTurnMovement(std::shared_ptr<Common::Hex> hex)
             // No transport, so move a pawn normally
             if (!moved) {
                 gameEngine_->movePawn(selectedHex_->getCoordinates(),
-                                      hex->getCoordinates(),selectedPawn_->getId());
+                                      hex->getCoordinates(),
+                                      selectedPawn_->getId());
 
                 // Check if the pawn moved into a transport
                 std::vector<std::shared_ptr<Common::Transport>> targetTransports
@@ -289,6 +291,9 @@ void Mainwindow::playerTurnSpinning(std::shared_ptr<Common::Hex> hex)
                             selectedTransport_->getId(),
                             pair_.second);
             }
+            else {
+                return;
+            }
 
             board_->deSelect(selectedHex_->getCoordinates());
             selectedHex_ = nullptr;
@@ -328,8 +333,9 @@ void Mainwindow::initializeGame(int players)
     // Now the game engine can be initialized
     try
     {
-        gameEngine_
-                = Common::Initialization::getGameRunner(board_,gameState_,players_);
+        gameEngine_ = Common::Initialization::getGameRunner(board_,
+                                                            gameState_,
+                                                            players_);
     }
     catch(Common::IoException &IoException)
     {
@@ -399,8 +405,6 @@ void Mainwindow::initializeGame(int players)
         widget_->show();
         emit updateHexes();
     }
-
-
 }
 
 void Mainwindow::hexClick(std::shared_ptr<Common::Hex> chosenHex)
@@ -444,8 +448,6 @@ void Mainwindow::wheelClick()
     }
 
 }
-
-
 
 void Mainwindow::hexScore()
 {

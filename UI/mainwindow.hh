@@ -49,7 +49,7 @@ public:
     /**
      * @brief destructor that destroys raw pointers
      */
-    ~Mainwindow();
+    virtual ~Mainwindow();
 protected:
 
 

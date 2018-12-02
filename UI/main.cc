@@ -18,12 +18,10 @@ int main(int argc, char *argv[])
 
     Student::Mainwindow* w = new Student::Mainwindow;
 
-    QObject::connect(startingInfo,&Student::startWindow::sendValue,w,&Student::Mainwindow::initializeGame);
+    QObject::connect(startingInfo, &Student::startWindow::sendValue,
+                     w, &Student::Mainwindow::initializeGame);
 
     startingInfo->exec();
 
-
-
-    //w.show();
     return a.exec();
 }

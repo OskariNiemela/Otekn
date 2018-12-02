@@ -60,7 +60,7 @@ public:
      * @param widget
      * @post wheel is painted, exception guarantee: basic
      */
-    void paint(QPainter *painter,
+    virtual void paint(QPainter *painter,
               const QStyleOptionGraphicsItem *option,
               QWidget *widget);
 
@@ -79,13 +79,14 @@ public:
      * @post the shape of the clickable area is set
      * exception guarantee: no throw
      */
-    QPainterPath shape() const;
+    virtual QPainterPath shape() const;
+
 protected:
     /**
      * @brief ReImplemented mousepressevent
      * @param event
      */
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
     /**

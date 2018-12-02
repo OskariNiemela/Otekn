@@ -22,6 +22,7 @@
 */
 namespace Student
 {
+
 /**
 * @brief Implements the intefrace IGameBoard
 */
@@ -33,7 +34,12 @@ public:
      * @brief Constructor.
      */
     GameBoard();
+
+    /**
+     * @brief Destructor
+     */
     virtual ~GameBoard();
+
     /**
      * @copydoc Common::IGameBoard::checkTileOccupation
      */

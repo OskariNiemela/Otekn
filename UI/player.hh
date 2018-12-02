@@ -20,20 +20,20 @@ public:
     /**
      * @copydoc Common::IPlayer::getPlayerId
      */
-    int getPlayerId() const;
+    virtual int getPlayerId() const;
 
     /**
      * @copydoc Common::IPlayer::setActionsLeft
      */
-    void setActionsLeft(unsigned int actionsLeft);
+    virtual void setActionsLeft(unsigned int actionsLeft);
     /**
      * @copydoc Common::IPlayer::getActionsLeft
      */
-    unsigned int getActionsLeft() const;
+    virtual unsigned int getActionsLeft() const;
 
 private:
-    int _playerId ;
-    unsigned int _actions;
+    int playerId_ ;
+    unsigned int actions_;
 };
 }
 #endif // PLAYER_HH
