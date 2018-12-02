@@ -9,14 +9,17 @@ Mainwindow::Mainwindow(QWidget *parent)
       gameState_(std::make_shared<Student::GameState>()),
       gameEngine_(nullptr),
       trackingScore_(std::make_shared<Student::ScoreTracker>()),
-      pawnCount_(1),
+      wheel_(std::make_shared<Student::GraphicalWheel>()),
+
       selectedHex_(nullptr),
       selectedPawn_(nullptr),
+      selectedActor_(nullptr),
+      selectedTransport_(nullptr),
+
       scene_(new QGraphicsScene),
       widget_(nullptr),
       gameView_(nullptr),
       wheelView_(new QGraphicsView),
-      wheel_(std::make_shared<Student::GraphicalWheel>()),
       wheelClicked_(false),
       increaseButton_(new QPushButton),
       decreaseButton_(new QPushButton)

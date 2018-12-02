@@ -9,32 +9,33 @@
 #include <iostream>
 #include <vector>
 #include <utility>
+#include <cmath>
 #include <QWidget>
 #include <QGraphicsItem>
 #include <QPen>
 #include <QPainter>
 #include <QPainterPath>
-#include <cmath>
 #include <QPolygon>
 #include <QPoint>
 #include <QColor>
 #include <QBrush>
 #include <QString>
 #include <QImage>
-#include <QTransform>
-#include <QGraphicsEllipseItem>
 #include <QGraphicsView>
 #include <QFont>
-#include <QString>
 
 
 namespace Student {
 
 const int RADIUS = 200;
+const QColor WATER_COLOR = QColor{153, 217, 234};
+const QColor BUTTON_BGCOLOR = QColor{255, 127, 39};
+const int FONT_SIZE = 20;
 
 class GraphicalWheel : public QObject, public QGraphicsItem
 {
     Q_OBJECT
+    Q_INTERFACES(QGraphicsItem)
 public:
     GraphicalWheel() = default;
     /**
@@ -95,11 +96,11 @@ signals:
 
 
 private:
-    Common::SpinnerLayout _layout;
-    int _segments = 0;
-    QGraphicsScene* _scene;
-    std::pair<std::string,std::string> _toMove;
-    double _arrowAngle = 0.0;
+    Common::SpinnerLayout layout_;
+    int segments_ = 0;
+    QGraphicsScene *scene_;
+    std::pair<std::string,std::string> toMove_;
+    double arrowAngle_ = 0.0;
 
 
     void drawSegments(QPainter *painter);

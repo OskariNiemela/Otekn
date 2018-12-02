@@ -60,8 +60,6 @@ private:
     std::shared_ptr<Student::GraphicalWheel> wheel_;
     Common::SpinnerLayout wheelLayout_;
 
-    int pawnCount_;
-
     // Variables that are used when moving pawns,actors and transports
     std::shared_ptr<Common::Hex> selectedHex_;
     std::shared_ptr<Common::Pawn> selectedPawn_;
@@ -69,17 +67,18 @@ private:
     std::shared_ptr<Common::Transport> selectedTransport_;
     std::pair<std::string,std::string> pair_;
 
+    //Variables for showing the gameBoard
+    QGraphicsScene* scene_;
+    QWidget* widget_;
+    QGraphicsView* gameView_;
+    QGraphicsView* wheelView_;
+    QGraphicsScene wheelScene_;
+    bool wheelClicked_;
 
-    // Variables for showing the gameBoard
-    QGraphicsScene* _scene;
-    QWidget* _widget;
-    QGraphicsView* _gameView;
-    QGraphicsView* _wheelView = new QGraphicsView();
-    QGraphicsScene _wheelScene;
-    bool wheelClicked;
+    QPushButton* increaseButton_ = new QPushButton();
+    QPushButton* decreaseButton_ = new QPushButton();
 
-    QPushButton* _increaseButton = new QPushButton();
-    QPushButton* _decreaseButton = new QPushButton();
+    int pawnCount_ = 1;
 
     /**
      * @brief changes the player to the next one in line
@@ -111,21 +110,6 @@ private:
      * @post exception guarantee: nothrow
      */
     void playerTurnSpinning(std::shared_ptr<Common::Hex> hex);
-
-<<<<<<< HEAD
-    //Variables for showing the gameBoard
-    QGraphicsScene* scene_;
-    QWidget* widget_;
-    QGraphicsView* gameView_;
-    QGraphicsView* wheelView_;
-    QGraphicsScene wheelScene_;
-    bool wheelClicked_;
-
-    QPushButton* increaseButton_ = new QPushButton();
-    QPushButton* decreaseButton_ = new QPushButton();
-=======
-
->>>>>>> ce00a8a2d48a404e3d008719de58b47eeae7e4ac
 
 public slots:
     /**
