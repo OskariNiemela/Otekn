@@ -1,6 +1,13 @@
 #ifndef STARTWINDOW_HH
 #define STARTWINDOW_HH
 
+
+/* Oskari Niemelä 263440
+ * Aki Kaipio 267041
+ * Header file for the StartWindow class
+ * asks for relevant info when starting the game
+ */
+
 #include <QDialog>
 #include <QHBoxLayout>
 #include <QVBoxLayout>

@@ -1,3 +1,9 @@
+/* Oskari Niemelä 263440
+ * Aki Kaipio 267041
+ *
+ * Main program, starts the game
+ */
+
 #include "gameboard.hh"
 #include "gamestate.hh"
 #include "player.hh"

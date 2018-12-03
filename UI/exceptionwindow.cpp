@@ -1,3 +1,9 @@
+/* Oskari Niemelä 263440
+ * Aki Kaipio 267041
+ *
+ * Implementation of the exceptionwindow class
+ */
+
 #include "exceptionwindow.hh"
 namespace Student
 {

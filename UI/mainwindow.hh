@@ -1,6 +1,14 @@
 #ifndef MAINWINDOW_HH
 #define MAINWINDOW_HH
 
+
+/* Oskari Niemelä 263440
+ * Aki Kaipio 267041
+ *
+ * Header file for the Mainwindow class
+ * Holds all the different variables needed to play the game
+ */
+
 #include "gameboard.hh"
 #include "gamestate.hh"
 #include "player.hh"

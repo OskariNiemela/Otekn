@@ -1,6 +1,13 @@
 #ifndef GAMEBOARD_HH
 #define GAMEBOARD_HH
 
+/* Oskari Niemelä 263440
+ * Aki Kaipio 267041
+ * Header file for the GameBoard class
+ * Implements the IGameBoard inteface class
+ */
+
+
 #include "igameboard.hh"
 #include "hex.hh"
 #include "graphicalhex.hh"

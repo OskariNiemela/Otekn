@@ -1,6 +1,13 @@
 #ifndef SCORETRACKER_HH
 #define SCORETRACKER_HH
 
+/* Oskari Niemelä 263440
+ * Aki Kaipio 267041
+ *
+ * Header file for the ScoreTracker class
+ * tracks player scores
+ */
+
 #include "igamestate.hh"
 
 #include <QFrame>

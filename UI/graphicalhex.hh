@@ -1,6 +1,14 @@
 #ifndef GRAPHICALHEX_HH
 #define GRAPHICALHEX_HH
 
+/* Oskari Niemelä 263440
+ * Aki Kaipio 267041
+ *
+ * Header file for the GraphicalHex class
+ * Takes care of drawing the hex and any game pieces
+ * within it
+ */
+
 #include "cubecoordinate.hh"
 #include "hex.hh"
 #include "pawn.hh"

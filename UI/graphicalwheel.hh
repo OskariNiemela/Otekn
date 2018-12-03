@@ -1,6 +1,13 @@
 #ifndef GRAPHICALWHEEL_HH
 #define GRAPHICALWHEEL_HH
 
+/* Oskari Niemelä 263440
+ * Aki Kaipio 267041
+ *
+ * Headerfile for GraphicalWheel class
+ * Draws the wheel used in game graphically
+ */
+
 #include "wheellayoutparser.hh"
 #include "igamerunner.hh"
 //Included for pi

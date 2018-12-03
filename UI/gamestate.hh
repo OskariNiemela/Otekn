@@ -1,7 +1,14 @@
 #ifndef GAMESTATE_HH
 #define GAMESTATE_HH
 
+/* Oskari Niemelä 263440
+ * Aki Kaipio 267041
+ *
+ * Implements the IGameState interface class
+ */
+
 #include "igamestate.hh"
+
 
 namespace Student
 {

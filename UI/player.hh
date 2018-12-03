@@ -1,6 +1,13 @@
 #ifndef PLAYER_HH
 #define PLAYER_HH
 
+/* Oskari Niemelä 263440
+ * Aki Kaipio 267041
+ *
+ * Implements the IPlayer interface class
+ * Holds the player information
+ */
+
 #include "iplayer.hh"
 
 namespace Student

@@ -1,3 +1,10 @@
+/* Oskari Niemelä 263440
+ * Aki Kaipio 267041
+ *
+ * Implementation of the MainWindow class
+ */
+
+
 #include "mainwindow.hh"
 
 namespace Student

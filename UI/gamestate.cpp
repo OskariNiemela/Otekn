@@ -1,3 +1,9 @@
+/* Oskari Niemelä 263440
+ * Aki Kaipio 267041
+ *
+ * Implementation of the GameState class
+ */
+
 #include "gamestate.hh"
 
 namespace Student
